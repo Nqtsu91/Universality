@@ -801,6 +801,10 @@ def SettingEntityForced(e):
 			else:
 				a = "CommonTier"
 
+			NameList = e.npc.world.getTempdata().get("NameTier"+str(a))
+			NameList.remove(NameNow)
+			e.npc.world.getTempdata().put("NameTier"+str(a),NameList)
+
 			e.npc.getTempdata().put("SelectedType", a)
 
 			if a in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
