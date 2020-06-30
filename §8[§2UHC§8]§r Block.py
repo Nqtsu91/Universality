@@ -62,14 +62,16 @@ def CheckTimer(e):
                         
                         if e.npc.world.getStoreddata().get("BotsToSpawn") > 0 : 
                             TeamList = e.npc.world.getTempdata().get("TeamNameList")
-                            SelectedID = random.randint(-1, len(TeamList)-1) 
-                            ToSend = TeamList[SelectedID]
-                            TeamList.pop(SelectedID)
-                            e.npc.world.getTempdata().put("TeamNameList", TeamList)
+                            try:
+                                SelectedID = random.randint(-1, len(TeamList)-1) 
+                                ToSend = TeamList[SelectedID]
+                                TeamList.pop(SelectedID)
+                                e.npc.world.getTempdata().put("TeamNameList", TeamList)
+                            except:
+                                ToSend = "None"
                             for i in range (0, TeamMode):
                                 e.npc.world.spawnClone( int(X), 150, int(Z), 2, "Disabled").setFaction(int(IdHere))             #Spawning a team with the deleted faction id
                                 e.npc.world.getTempdata().put(str(IdHere)+"Team", ToSend)
-                                e.npc.world.broadcast(str(e.npc.world.getTempdata().get(str(int(IdHere))+"Team")))
                                 e.npc.world.getStoreddata().put("BotsToSpawn", int(e.npc.world.getStoreddata().get("BotsToSpawn")-1))
 
 

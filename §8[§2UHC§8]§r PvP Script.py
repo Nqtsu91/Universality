@@ -773,9 +773,12 @@ def SettingResistance(e):
 def SettingEntityForced(e):
 	try:
 		GameStarted = e.npc.world.getTempdata().get("GameStarted")
-		if (GameStarted == 1) and (e.npc.getDisplay().getName() == "Disabled") :
+		if (GameStarted == 1) and (e.npc.getDisplay().getName() == "Disabled") and (e.npc.world.getTempdata().get(str(int(e.npc.getFaction().getId()))+"Team")) != str("None"):
 			TeamListHere = e.npc.world.getTempdata().get(str(int(e.npc.getFaction().getId()))+"Team")
-			NameHere = TeamListHere.split("//")
+			try:
+				NameHere = TeamListHere.split("//")
+			except:
+				pass
 			NameNow = str(NameHere[0])
 			e.npc.getDisplay().setName(str(NameHere[0]))
 			NameHere.pop(0)
@@ -796,7 +799,7 @@ def SettingEntityForced(e):
 				a = "UHCEliteTier"
 
 			else:
-				a = "Commontier"
+				a = "CommonTier"
 
 			e.npc.getTempdata().put("SelectedType", a)
 
@@ -815,7 +818,9 @@ def SettingEntityForced(e):
 			if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
 				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
 			else :
-				pass			
+				pass	
+		else:
+			SettingEntity(e)	
 		
 	except:
 		pass
@@ -1320,8 +1325,7 @@ def ScoreBoardUpdateVI(e):
 	try :
 		RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")
 		if RedditUHCDisplay == True :
-			Name = e.source.getName()
-			e.npc.executeCommand('/scoreboard players remove Players Kills -1')
+			e.npc.executeCommand('/scoreboard players remove Players Kills 1')
 	except:
 		pass
 
