@@ -1366,14 +1366,23 @@ def CountingPlayers(e):
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"There is 3 last players alive !","color" : aqua,"bold":true}]')
 	if e.npc.world.getStoreddata().get("Players") == 1 or e.npc.world.getStoreddata().get("TeamsAlive") == 0.0 :
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
-		EndGame(e)
+		try:
+			e.source.getName()
+			EndGame(e)
+		except:
+			pass
 	if e.npc.world.getStoreddata().get("Players") == 0 :
 		pass
+	
 
 def CountingPlayersOnKill(e):
 	if e.npc.world.getStoreddata().get("TeamsAlive") == 1.0 :
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
 		e.npc.getStoreddata().put("IsLastKiller", 1)
+	if e.npc.world.getStoreddata().get("Players") == 1 or e.npc.world.getStoreddata().get("TeamsAlive") == 0.0 :
+		CountingKills(e)
+		EndGame(e)
+	
 
 def TeamReduction(e):
 	try :
