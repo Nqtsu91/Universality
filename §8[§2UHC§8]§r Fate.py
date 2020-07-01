@@ -11,6 +11,10 @@ def AcceptFate(e):
     Source = e.player.getName()
     Killer = e.npc.world.getTempdata().get(str(Source)+"Killer")
     KilledKills = e.npc.world.getStoreddata().get(str(Source) +"Kills")
+    try :
+        int(KilledKills)
+    except:
+        KilledKills = 0
 
     e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")-1)
 

@@ -697,48 +697,48 @@ def SettingResistance(e):
 
 
 		if int(Armor[0]) == 1 :							# Diamond Helmet
-			ProtEffect = int(Prot[0]) * 0.0125
+			ProtEffect = int(Prot[0]) * 0.0135
 			ProjEffect = int(Proj[0]) * 0.02
 			MeleeResToSet += 0.13 + ProtEffect
 			ProjToSet += 0.15 + ProjEffect
 		else :
-			ProtEffect = int(Prot[0]) * 0.0125
+			ProtEffect = int(Prot[0]) * 0.0135
 			ProjEffect = int(Proj[0]) * 0.02
 			MeleeResToSet += 0.1 + ProtEffect
 			ProjToSet += 0.1 + ProjEffect
 		
 
 		if int(Armor[1]) == 1 :							# Diamond Chestplate
-			ProtEffect = int(Prot[1]) * 0.0125
+			ProtEffect = int(Prot[1]) * 0.0135
 			ProjEffect = int(Proj[1]) * 0.02
 			MeleeResToSet += 0.33 + ProtEffect
 			ProjToSet += 0.25 + ProjEffect
 		else :
-			ProtEffect = int(Prot[1]) * 0.0125
+			ProtEffect = int(Prot[1]) * 0.0135
 			ProjEffect = int(Proj[1]) * 0.02
 			MeleeResToSet += 0.3 + ProtEffect
 			ProjToSet += 0.2 + ProjEffect
 
 
 		if int(Armor[2]) == 1 :							# Diamond Leggings
-			ProtEffect = int(Prot[2]) * 0.0125
+			ProtEffect = int(Prot[2]) * 0.0135
 			ProjEffect = int(Proj[2]) * 0.02
 			MeleeResToSet += 0.22 + ProtEffect
 			ProjToSet += 0.1 + ProjEffect
 		else :
-			ProtEffect = int(Prot[2]) * 0.0125
+			ProtEffect = int(Prot[2]) * 0.0135
 			ProjEffect = int(Proj[2]) * 0.02
 			MeleeResToSet += 0.19 + ProtEffect
 			ProjToSet += 0.12 + ProjEffect
 
 
 		if int(Armor[3]) == 1 :							# Diamond Boots
-			ProtEffect = int(Prot[3]) * 0.0125
+			ProtEffect = int(Prot[3]) * 0.0135
 			ProjEffect = int(Proj[3]) * 0.02
 			MeleeResToSet += 0.13 + ProtEffect
 			ProjToSet += 0.15 + ProjEffect
 		else :
-			ProtEffect = int(Prot[3]) * 0.0125
+			ProtEffect = int(Prot[3]) * 0.0135
 			ProjEffect = int(Proj[3]) * 0.02
 			MeleeResToSet += 0.1 + ProtEffect
 			ProjToSet += 0.1 + ProjEffect
@@ -748,7 +748,7 @@ def SettingResistance(e):
 		ProjToSet += 1
 
 		if MeleeResToSet >= 2 :
-			MeleeResToSet = 1.95
+			MeleeResToSet = 1.96
 
 		e.npc.getStats().setResistance(0, (MeleeResToSet))
 		e.npc.getStats().setResistance(1, (ProjToSet))
@@ -758,10 +758,10 @@ def SettingResistance(e):
 			e.npc.getInventory().setRightHand(e.npc.world.createItem("minecraft:diamond_sword",0,1))
 			
 		if e.npc.getInventory().getRightHand().getName() == "minecraft:diamond_sword" :	# Diamond sword
-			SwordEffect = int(Sword[0]) * 1.1
+			SwordEffect = int(Sword[0]) * 1.25
 			DamageToSet = 7 + int(SwordEffect)
 		else :													# iron Sword
-			SwordEffect = int(Sword[0]) * 1.1
+			SwordEffect = int(Sword[0]) * 1.25
 			DamageToSet = 6 + int(SwordEffect)
 
 		e.npc.getStats().getMelee().setStrength(DamageToSet)
@@ -1103,11 +1103,13 @@ def Missing(e):
 
 def Targeting(e):
 	try:
-        Target = e.npc.getAttackTarget()
-        if (abs(Target.getX() - e.npc.getX()) <= 16 )and (abs(Target.getZ() - e.npc.getZ()) <= 16):
-            e.npc.setAttackTarget(None)
-    except:
-        pass
+		Target = e.npc.getAttackTarget()
+		if (abs(Target.getX() - e.npc.getX()) <= 20 )and (abs(Target.getZ() - e.npc.getZ()) <= 20):
+			pass
+		else:
+			e.npc.setAttackTarget(None)
+	except:
+		pass
 	"""
 	TeamID = e.npc.getFaction().getId()
 	TeamList = e.npc.world.getStoreddata().get(str(TeamID))
@@ -1202,7 +1204,7 @@ def UsingGap(e):
 		e.npc.executeCommand("/playsound customnpcs:gun.pistol.shot @a")				# Playing eating sound ( only if you have the right texture/sound pack )
 
 	if IsSlowed != -1 :										# Testing if he finished eating
-		if Timer == 3 :
+		if Timer == 2 :
 			e.npc.getStoreddata().put("IsEating", False)						# Allow his reach to change from 0 		( UpdatingReach(e) )
 			e.npc.addPotionEffect(10, 4, 1, False)						# Adding the 2 regeneration and absorption effects
 			if e.npc.world.getTempdata().get('AbsoLess') != True :
@@ -1222,7 +1224,7 @@ def UsingGap(e):
 def WantToGap(e):
 	Health = e.npc.getHealth()
 	HealthNerfed = round(Health)
-	LifeLimit = [1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+	LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 	LimitChoice = random.choice(LifeLimit)
 	GapCount = e.npc.getTempdata().get("GapCount")
 	if GapCount == None :
