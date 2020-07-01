@@ -1102,6 +1102,13 @@ def Missing(e):
 			e.setCanceled(True)
 
 def Targeting(e):
+	try:
+        Target = e.npc.getAttackTarget()
+        if (abs(Target.getX() - e.npc.getX()) <= 16 )and (abs(Target.getZ() - e.npc.getZ()) <= 16):
+            e.npc.setAttackTarget(None)
+    except:
+        pass
+	"""
 	TeamID = e.npc.getFaction().getId()
 	TeamList = e.npc.world.getStoreddata().get(str(TeamID))
 	TeamMode = e.npc.world.getTempdata().get("TeamSize")
@@ -1133,7 +1140,7 @@ def Targeting(e):
 				TeamPresence.append(NearestPlayers[i].getFaction().getId())
 			
 			for i in range (0, len(TeamPresence)-1):
-				if Max <= (TeamPresence.count(TeamPresence[i])):
+				if Max  (TeamPresence.count(TeamPresence[i])):
 					Max = TeamPresence[i]
 
 			for i in range (0, len(NearestPlayers)-1):
@@ -1141,7 +1148,7 @@ def Targeting(e):
 					e.npc.setAttackTarget(NearestPlayers[i])
 	else :
 		pass
-
+		"""
 def UsingWater(e):
 	WaterAllowed = e.npc.world.getTempdata().get("WaterAllowed")
 	if WaterAllowed == True and  e.npc.getTempdata().get("WaterUsed") == None:			# Checking if the npc didnt spawned a water bucket already to avoid spamming water and create lags and annoying fights
