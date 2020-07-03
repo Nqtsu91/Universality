@@ -96,8 +96,13 @@ def CheckTimer(e):
 
 
             except:
-                MinTimeSpread = int(e.npc.world.getTempdata().get("MinTimeSpread"))
-                MaxTimeSpread = int(e.npc.world.getTempdata().get("MaxTimeSpread"))
+                try:
+                    MinTimeSpread = int(e.npc.world.getTempdata().get("MinTimeSpread"))
+                    MaxTimeSpread = int(e.npc.world.getTempdata().get("MaxTimeSpread"))
+                except:
+                    MinTimeSpread = 0
+                    MaxTimeSpread = 5
+                    
                 Random = random.randint(MinTimeSpread,MaxTimeSpread)                       # Selecting a random time to spawn the npcs
                 e.npc.say("&7 Except")
                 TimeSelected = 8 

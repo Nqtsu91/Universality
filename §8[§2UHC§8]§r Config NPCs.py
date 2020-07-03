@@ -88,3 +88,11 @@ def damaged(e):
 	except:
 		e.setCanceled(True)
 
+
+
+
+
+
+
+
+

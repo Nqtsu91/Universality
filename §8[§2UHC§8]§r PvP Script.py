@@ -580,16 +580,16 @@ def SettingEntity(e):
 			if a in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
 				Random = random.randint(1, 71)
 				e.npc.getDisplay().setName(str(SelectedName))
-				e.npc.getDisplay().setSkinTexture('customnpcs:textures/entity/UHC_Skins/Random'+str(Random)+'.png')
+				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
 
 			else :
-				e.npc.getDisplay().setSkinTexture('customnpcs:textures/entity/UHC_Skins/'+SelectedName+'.png')
+				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+SelectedName+'.png')
 				e.npc.getDisplay().setName(str(SelectedName))
 
 			RandomForCape = random.randint(1, 3)
 			if RandomForCape == 3:
 				RandomCape = random.randint(1, 25)
-				e.npc.getDisplay().setCapeTexture('customnpcs:textures/cloak/'+str(RandomCape)+'.png')
+				e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
 
 			if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
 				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
@@ -669,6 +669,7 @@ def SettingArmor(e) :
 		e.npc.getStoreddata().put("Armor", ArmorList)
 		e.npc.getStoreddata().put("Bow", BowList)
 		e.npc.getStoreddata().put("Sword", SwordList)
+		e.npc.getTempdata().put("WaterRemaining", random.randint(1, 3))
 
 def SettingResistance(e):
 	if e.npc.world.getTempdata().get("OneShot") != True :
@@ -809,15 +810,15 @@ def SettingEntityForced(e):
 
 			if a in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
 				Random = random.randint(1, 71)
-				e.npc.getDisplay().setSkinTexture('customnpcs:textures/entity/UHC_Skins/Random'+str(Random)+'.png')
+				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
 
 			else :
-				e.npc.getDisplay().setSkinTexture('customnpcs:textures/entity/UHC_Skins/'+NameNow+'.png')
+				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+NameNow+'.png')
 
 			RandomForCape = random.randint(1, 3)
 			if RandomForCape == 3:
 				RandomCape = random.randint(1, 25)
-				e.npc.getDisplay().setCapeTexture('customnpcs:textures/cloak/'+str(RandomCape)+'.png')
+				e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
 
 			if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
 				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
@@ -1157,7 +1158,7 @@ def UsingWater(e):
 		Health = e.npc.getHealth()
 		HealthNerfed = round(Health)
 		WaterRemaining = e.npc.getTempdata().get("WaterRemaining")
-		LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]						# Making a low probability f water using to avoid spam
+		LifeLimit = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0]						# Making a low probability f water using to avoid spam
 		LimitChoice = random.choice(LifeLimit)
 		PosList = [e.npc.getX(),e.npc.getY(),e.npc.getZ()]
 		if (LimitChoice == 1) and ( WaterRemaining > 1):
@@ -1170,9 +1171,10 @@ def UsingWater(e):
 
 		InFire = e.npc.inFire()
 		InLava = e.npc.inLava()
-		if InFire == True :
+
+		if (InFire == True) and ( WaterRemaining >= 1):
 			e.npc.extinguish()												# Remove fire if he have water ====== Subject to update =======
-		elif InLava == True  and ( WaterRemaining >= 1):						# Trying to replace lava bucket with water ====== Subject to update =======
+		if (InLava == True) and ( WaterRemaining >= 1):						# Trying to replace lava bucket with water ====== Subject to update =======
 			e.npc.executeCommand('/setblock ~ ~ ~ minecraft:water')
 			WaterRemaining -= 1
 			e.npc.getTempdata().put("WaterRemaining", WaterRemaining)
@@ -1304,15 +1306,15 @@ def MeetUpChecking(e):
 	MeetUp = e.npc.world.getStoreddata().get("MeetUp")
 	if (e.npc.world.getTotalTime() >= MeetUp) and (e.npc.getAttackTarget() == None):		# Navigating to 0 0 when Meet Up start
 
-		if e.npc.getX() >= 0 :
+		if e.npc.getX() >= 50 :
 			X = -5
-		else :
-			X = 5
+		elif -50 >= e.npc.getX():
+			X = +5
 
-		if e.npc.getZ() >= 0 :
+		if e.npc.getZ() >= 50 :
 			Z = -5
-		else :
-			Z = 5
+		elif -50 >= e.npc.getZ():
+			Z = +5
 
 		e.npc.navigateTo(e.npc.getX()+X, e.npc.getY(), e.npc.getZ()+Z, 3)
 
@@ -1642,12 +1644,11 @@ def tick(e):
 		Rod(e)
 		LastSending(e)
 
+
 def interact(e):
 	GappleSharing(e)
+	e.npc.setCanceled(True)
 	
-
-
-
 
 
 

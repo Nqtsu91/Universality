@@ -14,6 +14,20 @@ def SpawningBots(e) :
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 	TeamMode = e.npc.world.getTempdata().get("TeamSize")
 	
+	e.npc.executeCommand("/spawnpoint @a 0 201 20")
+
+	Total = 0
+	TierToList = ["NoobTier","CasualTier","CommonTier","GoodTier","ProTier","UHCEliteTier"]
+	ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
+	for i in range (0, len(TierToList)):
+		with open ("C:\\Program Files (x86)\\CustomNPC Config\\UHC\\Pseudos\\"+str(TierToList[i])+".txt", "r") as TierList :
+			TierList = TierList.read()
+			TierList = TierList.split(",")
+			e.npc.world.getTempdata().put(str(ToSend[i]), TierList)
+			Total += len(TierList)
+	if BotsToSpawn > Total :
+		BotsToSpawn = Total
+		
 	if BotsToSpawn%TeamMode == 1 :
 		BotsToSpawn = TeamMode * round(BotsToSpawn/TeamMode)
 
@@ -89,20 +103,13 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.world.getTempdata().put("KillList", [])								# Clearing the Kill list, to not clone kill leaderboard
 
 	# Sending potential name in the cloud data
-	Total = 0
-	TierToList = ["NoobTier","CasualTier","CommonTier","GoodTier","ProTier","UHCEliteTier"]
-	ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
-	for i in range (0, len(TierToList)):
-		with open ("C:\\Program Files (x86)\\CustomNPC Config\\UHC\\Pseudos\\"+str(TierToList[i])+".txt", "r") as TierList :
-			TierList = TierList.read()
-			TierList = TierList.split(",")
-			e.npc.world.getTempdata().put(str(ToSend[i]), TierList)
-			Total += len(TierList)
+
 
 	with open ("C:\\Program Files (x86)\\CustomNPC Config\\UHC\\Teams\\Teams.txt", "r") as TierList :
 		TierList = TierList.read()
 		TierList = TierList.split(\n)
 		e.npc.world.getTempdata().put("TeamNameList", TierList)
+		
 
 
 	if e.npc.world.getTempdata().get("CreateBorder") == True :
@@ -153,12 +160,12 @@ def VisualEffects(e):
 def damaged(e):
 	e.npc.getTempdata().put("SpecialsOn", True)
 	e.npc.getTempdata().put("Spawned", 0)
-	#try :
-	e.source.getName()
-	StartingGame(e)
-	SpawningBots(e)
-	#except :
-		#pass
+	try :
+		e.source.getName()
+		StartingGame(e)
+		SpawningBots(e)
+	except :
+		e.npc.executeCommand('/tellraw @a ["",{"text":"Oops, cannot start your game !","color":"dark_red"},{"text":" Make sure you loaded or done the config, or that you hit me with you hand.","color":"red"}]')
 	
 
 def tick(e):

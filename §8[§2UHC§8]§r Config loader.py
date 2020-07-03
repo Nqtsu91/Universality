@@ -23,7 +23,6 @@ def LoadConfig(e):
         List = Config[i].split(":")
         try :
             e.npc.world.getTempdata().put(str(ToConfigList[i]), int(List[1]))
-            e.npc.say(str(ToConfigList[i]))
         except:
             if List[1] == "True":
                 List[1] = True
