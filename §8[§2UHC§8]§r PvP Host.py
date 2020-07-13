@@ -1,11 +1,53 @@
 import random
 import math
+import os
 #API Link :http://www.kodevelopment.nl/customnpcs/api/1.8.9/
 #Credits : Script UHC vs Bots Bot Scattering By Natsu91
 
 #===================================#
 #_______{ Creating Algorithm }______#
 #===================================#
+
+def GiveInventory(e):
+    Path = os.path.dirname(os.path.abspath("__file__"))
+    Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
+    Path = Path.replace("\\", str(os.path.sep))
+    e.npc.getTempdata().put("InvToRead", 1)
+    with open (str(Path)+str(e.npc.getTempdata().get("InvToRead"))+".txt", "r") as Config :
+        e.npc.executeCommand("/clear @a")
+        Config = Config.read()
+        Config = Config.split('\n')
+        for i in range(0, len(e.npc.world.getAllPlayers())):
+            Players = e.npc.world.getAllPlayers()
+            for z in range (0, len(Config)):                # Getting item + enchant level ( Hardcooooore )
+                try:
+                    A = Config[z].split("//")
+                    if A[3] != 'None' :
+                        B = A[3]
+                        B = B.replace("s", "")
+                        
+                        
+                        Enchant = ""
+
+                        B = B.replace("]", "")
+                        B = B.replace("}", "")
+                        B = B.split(",")
+
+                        for b in range(0, len(B)):
+                            if (b+1)%2 == 1 :
+                                Ench = B[b][-1]
+                            else:
+                                id = B[b].replace("id:", "")                
+                                Enchant += "{id:"+str(id)+",lvl:"+str(Ench)+"},"     
+                        
+                        #e.npc.say("/give "+str(Players[i].getName())+" "+str(A[0])+" "+str(A[1])+" "+str(A[2])+" {ench:"+str(Enchant)+"}")
+                        e.npc.executeCommand("/give "+str(Players[i].getName())+" "+str(A[0])+" "+str(A[1])+" "+str(A[2])+" {ench:["+str(Enchant)+"]}")
+
+                    else:
+                        e.npc.executeCommand("/give "+str(Players[i].getName())+" "+str(A[0])+" "+str(A[1])+" "+str(A[2])+"")
+                except Exception as err:
+                    pass
+
 def SpawningBots(e) :
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 
@@ -20,26 +62,34 @@ def SpawningBots(e) :
 	TierToList = ["NoobTier","CasualTier","CommonTier","GoodTier","ProTier","UHCEliteTier"]
 	ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
 	for i in range (0, len(TierToList)):
-		with open ("C:\\Program Files (x86)\\CustomNPC Config\\UHC\\Pseudos\\"+str(TierToList[i])+".txt", "r") as TierList :
+		Path = os.path.dirname(os.path.abspath("__file__"))
+		Path += "\\CustomNPC Config\\UHC\\Pseudos\\"
+		Path = Path.replace("\\", str(os.path.sep))
+		with open (str(Path)+str(TierToList[i])+".txt", "r") as TierList :
 			TierList = TierList.read()
 			TierList = TierList.split(",")
 			e.npc.world.getTempdata().put(str(ToSend[i]), TierList)
 			Total += len(TierList)
+
 	if BotsToSpawn > Total :
 		BotsToSpawn = Total
 		
 	if BotsToSpawn%TeamMode == 1 :
 		BotsToSpawn = TeamMode * round(BotsToSpawn/TeamMode)
 
+	e.npc.executeCommand("/scoreboard objectives add Gravel stat.mineBlock.minecraft.gravel")
+	e.npc.executeCommand("/scoreboard objectives add Apple stat.mineBlock.minecraft.leaves")
+	e.npc.executeCommand("/scoreboard objectives add Iron stat.mineBlock.minecraft.iron_ore")
+	e.npc.executeCommand("/scoreboard objectives add Gold stat.mineBlock.minecraft.gold_ore")
 
-
-	TeamsAlive = BotsToSpawn/TeamMode + 1
+	TeamsAlive = (BotsToSpawn/TeamMode) + 1
 	e.npc.world.getStoreddata().put("TeamsAlive", TeamsAlive)
 
 	e.npc.world.getStoreddata().put("BotsToSpawn", BotsToSpawn)				# For the latest scatter method
 
-	for i in range(0,26):					# Initialize team data
+	for i in range(0,27):					# Initialize team data
 		e.npc.world.getStoreddata().put(str(i), TeamMode)
+		e.npc.world.getStoreddata().put(str(i)+"Aggro", 0)
 
 	PlayerList = len(e.npc.world.getAllPlayers())
 	e.npc.world.getStoreddata().put("Players", BotsToSpawn + PlayerList)			# Getting data for bots spawn
@@ -60,9 +110,8 @@ def SpawningBots(e) :
 
 	i = 0      # Tick for spawning specials bot
 	
-	e.npc.executeCommand('/tellraw @a ["",{"text":"----------------------------------------------","color": gray,"bold":true}]')						# Because i like arctic UHC style :D
-	e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Waiting for scatter to finish...", "color" : dark_red}]')
-	e.npc.executeCommand('/tellraw @a ["",{"text":"----------------------------------------------","color": gray,"bold":true}]')
+	e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chuks......","color":"gray"}]')
+
 	e.npc.executeCommand('/playsound note.pling @a')
 
 	for i in range (0, 20):
@@ -104,69 +153,97 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 
 	# Sending potential name in the cloud data
 
-
-	with open ("C:\\Program Files (x86)\\CustomNPC Config\\UHC\\Teams\\Teams.txt", "r") as TierList :
+	if e.npc.getTempdata().get("TeamsToRead") == None :
+		e.npc.getTempdata().put("TeamsToRead", 1)
+	Path = os.path.dirname(os.path.abspath("__file__"))
+	Path += "\\CustomNPC Config\\UHC\\Teams\\Teams_"
+	Path = Path.replace("\\", str(os.path.sep))
+	with open (str(Path)+str(e.npc.getTempdata().get("TeamsToRead"))+".txt", "r") as TierList :
 		TierList = TierList.read()
 		TierList = TierList.split(\n)
 		e.npc.world.getTempdata().put("TeamNameList", TierList)
 		
 
+	e.npc.world.getStoreddata().put("KillList", "")
 
-	if e.npc.world.getTempdata().get("CreateBorder") == True :
-		e.npc.executeCommand("/worldborder center 0 0")
-		e.npc.executeCommand("/worldborder set 400")
+	e.npc.executeCommand("/worldborder center 0 0")
+	e.npc.executeCommand("/worldborder set 40000")
 
 
 def VisualEffects(e):
 	if e.npc.world.getTempdata().get("GameStarted") == 1 :
 		if e.npc.getTempdata().get("Tick") == None :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"All Chunks loaded, ready !", "color" : dark_red}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Chunks loaded","color":"gray"}]')
+			e.npc.executeCommand("/clear @a")
+			e.npc.executeCommand("/gamemode 0 @a")
 			e.npc.executeCommand('/playsound note.bass @a')
 
 		if e.npc.getTempdata().get("Tick") == 2 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Scatter finished !", "color" : dark_red},{"text":" Now starting in 5 seconds... ","color": gray}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing Bots data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.hat @a')
 
+			
 
 		if e.npc.getTempdata().get("Tick") == 4 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game starts in ", "color" : dark_red},{"text":"4","color": white}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing border data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 6 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game starts in ", "color" : dark_red},{"text":"3","color": white}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing CutClean.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 8 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game starts in ", "color" : dark_red},{"text":"2","color": white}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Saving scenarios.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 10 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game starts in ", "color" : dark_red},{"text":"1","color": white}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Scattering players.....","color":"gray"}]')
+			e.npc.executeCommand("/tp @a 0 72 0")
+			e.npc.executeCommand("/effect @a minecraft:slowness 10 45 true")
+			e.npc.executeCommand("/effect @a minecraft:blindness 10 45 true")
 			e.npc.executeCommand('/playsound note.pling @a')
+			GiveInventory(e)
 			
-		if e.npc.getTempdata().get("Tick") == 12 :
+		if e.npc.getTempdata().get("Tick") == 20 :
 			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game started ", "color" : white}]')
+			e.npc.executeCommand('/effect @a minecraft:instant_health 1 45 true')
+			for i in range (0, len(e.npc.world.getAllPlayers())):
+				e.npc.executeCommand('/tellraw '+str(e.npc.world.getAllPlayers()[i].getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Players CrossTeaming is allowed","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Final Heal in 10 minutes !","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Good luck have fun ","color":"gray"},{"text":"'+str(e.npc.world.getAllPlayers()[i].getName())+'","color":"red"},{"text":" !","color":"gray"}]')
+
 			e.npc.executeCommand('/playsound note.pling @a')
 
 
 			PvPTime = int(e.npc.world.getTempdata().get("PvPTime")) * 1200
 			MeetUp = e.npc.world.getStoreddata().put("MeetUp", e.npc.world.getTotalTime() + PvPTime)
+
+			PvPTime = int(e.npc.world.getTempdata().get("FirstBorder")) * 1200
+			MeetUp = e.npc.world.getStoreddata().put("FirstBorder", e.npc.world.getTotalTime() + PvPTime)
+
+			PvPTime = int(e.npc.world.getTempdata().get("SecondBorder")) * 1200
+			MeetUp = e.npc.world.getStoreddata().put("SecondBorder", e.npc.world.getTotalTime() + PvPTime)
+
+			PvPTime = int(e.npc.world.getTempdata().get("FinalBorder")) * 1200
+			MeetUp = e.npc.world.getStoreddata().put("FinalBorder", e.npc.world.getTotalTime() + PvPTime)
+			e.npc.world.spawnClone( 0, 250, 0, 2, "Border")
+			
 			e.npc.despawn()
 
 
+
+
 def damaged(e):
+	e.npc.reset()
 	e.npc.getTempdata().put("SpecialsOn", True)
 	e.npc.getTempdata().put("Spawned", 0)
 	try :
 		e.source.getName()
 		StartingGame(e)
 		SpawningBots(e)
-	except :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"Oops, cannot start your game !","color":"dark_red"},{"text":" Make sure you loaded or done the config, or that you hit me with you hand.","color":"red"}]')
-	
+	except Exception as err :
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
 
 def tick(e):
 	VisualEffects(e)
@@ -175,4 +252,13 @@ def tick(e):
 			e.npc.getTempdata().put("Tick", 1)
 		else :
 			e.npc.getTempdata().put("Tick", e.npc.getTempdata().get("Tick")+1)
+		
+def interact(e):
+	e.setCanceled(True)
+	if e.npc.getTempdata().get("TeamsToRead") == None :
+		e.npc.getTempdata().put("TeamsToRead", 1)
+	if e.npc.getTempdata().get("TeamsToRead") == 10 :
+		e.npc.getTempdata().put("TeamsToRead", 1)
+	else:
+		e.npc.getTempdata().put("TeamsToRead", e.npc.getTempdata().get("TeamsToRead")+1)
 

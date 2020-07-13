@@ -60,8 +60,3 @@ def interact(e):
                 e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"We ran into a problem, sorry !","color":"gray"}]')
         else :
             NeverDie(e)
-
-
-
-
-

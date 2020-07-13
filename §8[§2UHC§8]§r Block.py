@@ -28,12 +28,12 @@ def CheckTimer(e):
 
     MeetUp = e.npc.world.getStoreddata().get("MeetUp")
     Factions = e.npc.world.getStoreddata().get("Factions")
-    e.npc.say("&1=====================")
-    e.npc.say("&5MeetUp : " + str(MeetUp))
-    e.npc.say("&4Time : " + str(e.npc.world.getTotalTime()))
-    e.npc.say("&6SpawnChoice : " + str(e.npc.getTempdata().get("Spawn")))
-    e.npc.say("&1Players left : "+ str(e.npc.world.getStoreddata().get("BotsToSpawn")))
-    e.npc.say("&bPlayers left : "+ str(Players))
+    #e.npc.say("&1=====================")
+    #e.npc.say("&5MeetUp : " + str(MeetUp))
+    #e.npc.say("&4Time : " + str(e.npc.world.getTotalTime()))
+    #e.npc.say("&6SpawnChoice : " + str(e.npc.getTempdata().get("Spawn")))
+    #e.npc.say("&1Players left : "+ str(e.npc.world.getStoreddata().get("BotsToSpawn")))
+    #e.npc.say("&bPlayers left : "+ str(Players))
 
     TeamMode = e.npc.world.getTempdata().get("TeamSize")
     Factions = Factions.split("/")
@@ -47,11 +47,6 @@ def CheckTimer(e):
             try :
                 Test = float(e.npc.getTempdata().get("Spawn")) + 1                # Just make the try except bug at the first loop, maybe not ideal
                 if e.npc.world.getTotalTime() >= e.npc.getTempdata().get("Spawn") :             # If TimeSelected is passed
-                    if (e.npc.world.getStoreddata().get("PvPDisplayed") != "True"):
-                        e.npc.executeCommand('/title @a times 20 100 20')
-                        e.npc.executeCommand('/title @a subtitle {"text":"Good luck and have fun !","color":"dark_gray"}')
-                        e.npc.executeCommand('/title @a title {"text":"PvP Enabled !","color":"dark_red"}')
-                        e.npc.world.getStoreddata().put("PvPDisplayed", "True")
                     if len(Factions) != 0:                      # If there is empty faction 
                         IdHere = random.choice(Factions)
                         Factions.remove(IdHere)
@@ -104,7 +99,6 @@ def CheckTimer(e):
                     MaxTimeSpread = 5
                     
                 Random = random.randint(MinTimeSpread,MaxTimeSpread)                       # Selecting a random time to spawn the npcs
-                e.npc.say("&7 Except")
                 TimeSelected = 8 
                 Chosed = 1
                 e.npc.getTempdata().put("Spawn", MeetUp + (Random * 1200))
@@ -120,6 +114,12 @@ def CheckTimer(e):
 #===============================#
 #_______{ Calling Events }______#
 #===============================#
+
+def init(e):
+    if e.npc.getStoreddata().get("Test") == None :
+        e.npc.getStoreddata().put("Test", 1)
+        e.npc.reset()
+        e.npc.setPosition(e.npc.getX(), 200, e.npc.getZ())
 
 def tick(e):
     GameStarted = e.npc.world.getTempdata().get("GameStarted")
