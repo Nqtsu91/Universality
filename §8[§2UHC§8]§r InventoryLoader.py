@@ -13,7 +13,6 @@ def SaveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
     Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
     Path = Path.replace("\\", str(os.path.sep))
-    e.npc.getTempdata().put("InvToRead", 1)
     with open (str(Path)+str(e.npc.getTempdata().get("InvToRead"))+".txt", "w") as Config :
         for i in range(0, len(e.player.getInventory())):
             try:
@@ -34,12 +33,12 @@ def interact(e):
     e.setCanceled(True)
 
 def damaged(e):
-    e.setCanceled(True)
     if e.npc.getTempdata().get("InvToRead") == None :
         e.npc.getTempdata().put("InvToRead", 1)
     if e.npc.getTempdata().get("InvToRead") == 10 :
         e.npc.getTempdata().put("InvToRead", 1)
     else:
         e.npc.getTempdata().put("InvToRead", e.npc.getTempdata().get("InvToRead")+1)
+    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Inventory","color":"light_purple"},{"text":"]","color":"dark_gray"},{"text":" Slot selected :","color":"gray"},{"text":" '+str(e.npc.getTempdata().get("InvToRead"))+'","color":"aqua"}]')
+    e.setCanceled(True)
 
-    

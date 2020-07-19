@@ -1143,40 +1143,6 @@ def Targeting(e):
 				e.npc.setAttackTarget(None)
 		except:
 			pass
-		
-		#try:
-		Target = e.entity
-		Aggro = 0 
-		TargetAggro = 0	
-		MyId = e.npc.getFaction().getId()
-		RunOn = e.npc.getTempdata().get("RunOn")
-		if Target.getType() == 2 : 
-			TheirId = Target.getFaction().getId()
-		elif Target.getType() == 1:
-			TargetAggro = int(e.npc.world.getStoreddata().get(str(Target.getName()) +"Kills"))	
-			TheirId = None	
-				
-
-		Ennemy = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 8, 2).tolist()
-
-		for i in range (0, len(Ennemy)):
-			if Ennemy[i].getFaction().getId() == TheirId :
-				TargetAggro += Ennemy[i].getStoreddata().get("Aggro")
-			if Ennemy[i].getFaction().getId() == MyId :
-				Aggro += Ennemy[i].getStoreddata().get("Aggro")		
-
-		if Aggro+2 < TargetAggro :
-			e.npc.getAi().setRetaliateType(3)
-			e.npc.getTempdata().put("RunOn", 30)
-
-				
-
-
-		elif RunOn <= 0:
-			e.npc.getAi().setRetaliateType(0) 
-
-		#except:
-			#pass
 
 	"""
 	TeamID = e.npc.getFaction().getId()
@@ -1237,7 +1203,7 @@ def UsingWater(e):
 
 def CancelFire(e):
 	if e.npc.isBurning() == True :
-		if (random.randint(0, 8) == 0) and (e.npc.getTempdata().get("WaterUsed") == None):
+		if (random.randint(0, 5) == 0) and (e.npc.getTempdata().get("WaterUsed") == None):
 			e.npc.executeCommand('/setblock ~ ~ ~ minecraft:water')					# Creating 2 water blocks to update the first and make the water flow
 			e.npc.executeCommand('/setblock ~ ~ ~+1 minecraft:water 1')
 			PosList = [e.npc.getX(),e.npc.getY(),e.npc.getZ()]
@@ -1256,6 +1222,10 @@ def UsingGap(e):
 	Health = e.npc.getHealth()
 	HealthNerfed = round(Health)
 	Timer = e.npc.getTempdata().get("Timer")
+
+	if GapCount == None :
+		GapCount = random.randint(8, 16)
+		e.npc.getTempdata().put("GapCount", GapCount)
 
 	if Timer == None :
 		Timer = 0
@@ -1413,16 +1383,6 @@ def BadlionKB(e):
 
 def CountingPlayers(e):
 	e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")-1)
-	if e.npc.world.getStoreddata().get("Players") == 50 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"There is 50 players alive !","color" : aqua,"bold":true}]')
-	if e.npc.world.getStoreddata().get("Players") == 25 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"There is 25 players alive !","color" : aqua,"bold":true}]')
-	if e.npc.world.getStoreddata().get("Players") == 10 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"There is 10 players alive !","color" : aqua,"bold":true}]')
-	if e.npc.world.getStoreddata().get("Players") == 3 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"There is 3 last players alive !","color" : aqua,"bold":true}]')
-	if e.npc.world.getStoreddata().get("Players") == 1 or e.npc.world.getStoreddata().get("TeamsAlive") == 0.0 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
 
 
 def ScoreBoardUpdateVI(e):
@@ -1439,27 +1399,29 @@ def CountingKills(e):
 		MyKills = 0
 
 	KillList = e.npc.world.getStoreddata().get("KillList")
-	NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(MyKills))
+	NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills)))
 	if KillList == None :
 		e.npc.world.getStoreddata().put("KillList", NewList)
 
 	else:
 		KillList = e.npc.world.getStoreddata().get("KillList")
-		NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(MyKills))
-		OldList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(MyKills-1))
+		NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills)))
+		OldList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills-1)))
 		if OldList in KillList :
-			KillList = KillList.replace(str("//" + e.npc.getDisplay().getName())+ '|' +(str(MyKills-1)), str(NewList))
+			KillList = KillList.replace(str("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills-1))), str(NewList))
 			e.npc.world.getStoreddata().put("KillList", KillList)
 		else:
-			NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(MyKills))
+			NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills)))
 			e.npc.world.getStoreddata().put("KillList", KillList+NewList)
 
 	
 def CountingPlayersOnKill(e):
-	if e.npc.world.getStoreddata().get("TeamsAlive") == 1 :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
-
-	
+	try:
+		List = [200, 150, 100, 50, 25, 10, 5, 3]
+		if int(e.npc.world.getStoreddata().get("TeamsAlive")) in List :
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": dark_gray,"bold":false},{"text":"Players","color" : dark_green},{"text":"] ","color": dark_gray,"bold":false},{"text":" - There is ","color": gray,"bold":false},{"text":"'+str(int(e.npc.world.getStoreddata().get("TeamsAlive")))+'","color": light_purple,"bold":false},{"text":" teams alive. ","color": gray,"bold":false},{"text":" (With","color":"white"},{"text":" '+str(int(e.npc.world.getStoreddata().get("Players")))+'","color":"aqua"},{"text":" players)","color":"white"}]')
+	except:
+		pass
 
 def TeamReduction(e):
 	try :
@@ -1509,7 +1471,7 @@ def EndGame(e):
 	try :
 		PlayerList = e.npc.world.getAllPlayers()
 		for i in range (0, len(PlayerList)):
-			NewList = (("//" + PlayerList[i].getName())+ '|' +str(e.npc.world.getStoreddata().get(str(PlayerList[i].getName()) +"Kills")))
+			NewList = (("//" + PlayerList[i].getName())+ '|' +str(e.npc.world.getStoreddata().get(str(int(PlayerList[i].getName()) +"Kills"))))
 			e.npc.world.getStoreddata().put("KillList", e.npc.world.getStoreddata().get("KillList") + NewList)
 	except:
 		pass
@@ -1629,27 +1591,30 @@ def GettingZone(e):
     return(str(Zone))
 
 def TryStack(e):
-    Around = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 8, 2).tolist()
-    if 2*3 <= len(Around) :
-        List = []
-        for i in range(0, len(Around)):
-            if not ([Around[i].getFaction().getId(), e.npc.world.getStoreddata().get(str(Around[i].getFaction().getId())+"Aggro")]) in List :
-                List.append([Around[i].getFaction().getId(), e.npc.world.getStoreddata().get(str(Around[i].getFaction().getId())+"Aggro")])
+	try:
+		Around = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 8, 2).tolist()
+		if int(e.npc.world.getTempdata().get("TeamSize"))*3 <= len(Around) :
+			List = []
+			for i in range(0, len(Around)):
+				if not ([Around[i].getFaction().getId(), e.npc.world.getStoreddata().get(str(Around[i].getFaction().getId())+"Aggro")]) in List :
+					List.append([Around[i].getFaction().getId(), e.npc.world.getStoreddata().get(str(Around[i].getFaction().getId())+"Aggro")])
 
-        Min = 99999999
-        Int = None
-        NewList = []
-        for i in range (len(List)-1, -1, -1):
-            if int(List[i][1]) <= Min :
-                Min = int(List[i][1])
-                Int = List[i][0]
-        
+			Min = 99999999
+			Int = None
+			NewList = []
+			for i in range (len(List)-1, -1, -1):
+				if int(List[i][1]) <= Min :
+					Min = int(List[i][1])
+					Int = List[i][0]
+			
 
-        if int(e.npc.getFaction().getId()) == Int :
-            ChooseZone(e)
-            
-    else:
-        pass
+			if int(e.npc.getFaction().getId()) == Int :
+				ChooseZone(e)
+				
+		else:
+			pass
+	except:
+		pass
 
 def ChooseZone(e):
     CurrentZone = GettingZone(e)
@@ -1848,7 +1813,6 @@ def init(e):
 		
 		
 def damaged(e):
-	AntiGapHit(e)
 	e.npc.world.getTempdata().put("GameRunning", 1)
 	SwordDebug(e)
 	SettingResistance(e)
@@ -1860,6 +1824,7 @@ def damaged(e):
 	AbsoLess(e)
 
 def meleeAttack(e):
+	AntiGapHit(e)
 	Crit(e)
 	UpdatingReach(e)
 	Strafing(e)
@@ -1874,14 +1839,14 @@ def kill(e):
 	SettingResistance(e)
 	StuffUpgradeOnKill(e)
 	CountingKills(e)
-	#CountingPlayersOnKill(e)
+	CountingPlayersOnKill(e)
 	KillingPlayer(e)
 	UpdateAggro(e)
 
 def died(e):
-	CountingPlayers(e)
 	InventorySpawn.isDone = False		# To spawn a full inv if he had kills ( more armor and blocks)
 	e.npc.getTempdata().put("Respawn", 0) 			# To avoid glitched respawn, which will make the player counter false
+	CountingPlayers(e)
 	ThunderStrike(e)
 	ScoreBoardUpdateII(e)
 	BadlionDeathTchatMessage(e)
@@ -1920,6 +1885,7 @@ def tick(e):
 		WeatherClear(e)
 		WantToRod(e)
 		Rod(e)
+		Targeting(e)
 		#LastSending(e)
 		try:
 			e.npc.getTempdata().put("RunOn", e.npc.getTempdata().get("RunOn")-1 )
@@ -1934,7 +1900,7 @@ def interact(e):
 	e.setCanceled(True)
 	
 def target(e):
-	#Targeting(e)
+	Targeting(e)
 	pass
 
 

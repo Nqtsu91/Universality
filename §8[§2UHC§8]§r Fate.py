@@ -41,6 +41,7 @@ def AcceptFate(e):
   
     if e.npc.world.getTempdata().get("PlayerDeads") == 0 or e.npc.world.getTempdata().get("PlayerDeads") == 0.0 :
         e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"Team ","color":"gray"},{"text":"Players, is now eliminated","color":"red"}]')
+        e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")-1)
 
 
 def NeverDie(e):
@@ -60,3 +61,8 @@ def interact(e):
                 e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"We ran into a problem, sorry !","color":"gray"}]')
         else :
             NeverDie(e)
+
+
+def damaged(e):
+    e.setCanceled(True)
+

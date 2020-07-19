@@ -12,8 +12,7 @@ def GiveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
     Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
     Path = Path.replace("\\", str(os.path.sep))
-    e.npc.getTempdata().put("InvToRead", 1)
-    with open (str(Path)+str(e.npc.getTempdata().get("InvToRead"))+".txt", "r") as Config :
+    with open (str(Path)+str(e.npc.world.getTempdata().get("LoadInventory"))+".txt", "r") as Config :
         e.npc.executeCommand("/clear @a")
         Config = Config.read()
         Config = Config.split('\n')
@@ -49,6 +48,8 @@ def GiveInventory(e):
                     pass
 
 def SpawningBots(e) :
+	List = [100, 50, 25, 10, 5, 3, 2]
+	e.npc.world.getTempdata().put("TeamToDisplay", List)
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 
 	e.npc.world.getStoreddata().put("Factions", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25")				# For the latest scatter method
@@ -115,8 +116,8 @@ def SpawningBots(e) :
 	e.npc.executeCommand('/playsound note.pling @a')
 
 	for i in range (0, 20):
-		SpawnerX = random.randint(-120,120)
-		SpawnerY = random.randint(-120,120)
+		SpawnerX = random.randint(-150,150)
+		SpawnerY = random.randint(-150,150)
 		e.npc.world.spawnClone( int(SpawnerX), 150, int(SpawnerY), 2, "Spawner").setFaction(0)			# spawning classic bots
 			
 
@@ -202,8 +203,9 @@ def VisualEffects(e):
 		if e.npc.getTempdata().get("Tick") == 10 :
 			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Scattering players.....","color":"gray"}]')
 			e.npc.executeCommand("/tp @a 0 72 0")
-			e.npc.executeCommand("/effect @a minecraft:slowness 10 45 true")
-			e.npc.executeCommand("/effect @a minecraft:blindness 10 45 true")
+			e.npc.executeCommand("/effect @a minecraft:resistance 7 45 true")
+			e.npc.executeCommand("/effect @a minecraft:slowness 7 45 true")
+			e.npc.executeCommand("/effect @a minecraft:blindness 7 45 true")
 			e.npc.executeCommand('/playsound note.pling @a')
 			GiveInventory(e)
 			
@@ -252,13 +254,15 @@ def tick(e):
 			e.npc.getTempdata().put("Tick", 1)
 		else :
 			e.npc.getTempdata().put("Tick", e.npc.getTempdata().get("Tick")+1)
-		
+			
+
 def interact(e):
-	e.setCanceled(True)
 	if e.npc.getTempdata().get("TeamsToRead") == None :
 		e.npc.getTempdata().put("TeamsToRead", 1)
 	if e.npc.getTempdata().get("TeamsToRead") == 10 :
 		e.npc.getTempdata().put("TeamsToRead", 1)
 	else:
 		e.npc.getTempdata().put("TeamsToRead", e.npc.getTempdata().get("TeamsToRead")+1)
+	e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Teams","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Ready to load team slot ","color":"gray"},{"text":"' +str(e.npc.getTempdata().get("TeamsToRead"))+'","color":"aqua"}]')
+	e.setCanceled(True)
 

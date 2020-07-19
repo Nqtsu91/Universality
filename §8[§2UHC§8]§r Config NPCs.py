@@ -15,7 +15,7 @@ def GettingVarToMod(e):
 def ModifingVar(e):
     Name = e.npc.getDisplay().getName()
     VarToMod = GettingVarToMod(e)
-    VarToAdd = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate"]
+    VarToAdd = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","LoadInventory"]
     VarToReWrite = ["CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled"]
     if VarToMod in VarToAdd :
 		VarValue = e.npc.world.getTempdata().get(VarToMod)
@@ -52,7 +52,7 @@ def Switching(e):
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 	
 	elif CurrentConfig == "Bots" :
-		ListOfVar = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam"]
+		ListOfVar = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","LoadInventory"]
 		e.npc.world.getTempdata().put("CurrentVarToMod" , ListOfVar[Tick])
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 
@@ -67,7 +67,7 @@ def damaged(e):
 				if (Tick == 31):
 					Tick = 0
 					e.npc.world.getTempdata().put("Tick", 0)
-			if CurrentConfig == "Bots" and (Tick == 10):
+			if CurrentConfig == "Bots" and (Tick == 11):
 				Tick = 0
 				e.npc.world.getTempdata().put("Tick", 0)
 			else :
@@ -87,8 +87,6 @@ def damaged(e):
 		e.setCanceled(True)
 	except:
 		e.setCanceled(True)
-
-
 
 
 

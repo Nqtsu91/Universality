@@ -53,7 +53,7 @@ def CheckTimer(e):
                         Factions = "/".join(Factions)                           # Deleting the faction from the list
                         e.npc.world.getStoreddata().put("Factions", str(Factions))    
                         X = e.npc.getX()
-                        Z = e.npc.getZ()        
+                        Z = e.npc.getZ()     
                         
                         if e.npc.world.getStoreddata().get("BotsToSpawn") > 0 : 
                             TeamList = e.npc.world.getTempdata().get("TeamNameList")
@@ -65,7 +65,7 @@ def CheckTimer(e):
                             except:
                                 ToSend = "None"
                             for i in range (0, TeamMode):
-                                e.npc.world.spawnClone( int(X), 150, int(Z), 2, "Disabled").setFaction(int(IdHere))             #Spawning a team with the deleted faction id
+                                e.npc.world.spawnClone( int(X), 120, int(Z), 2, "Disabled").setFaction(int(IdHere))             #Spawning a team with the deleted faction id
                                 e.npc.world.getTempdata().put(str(IdHere)+"Team", ToSend)
                                 e.npc.world.getStoreddata().put("BotsToSpawn", int(e.npc.world.getStoreddata().get("BotsToSpawn")-1))
 
@@ -79,7 +79,7 @@ def CheckTimer(e):
                             if BotsToSpawn <= 0 :
                                 e.npc.despawn()
                             else :
-                               e.npc.world.spawnClone( X, 150, Z, 2, "Spawner").setFaction(0)
+                               e.npc.world.spawnClone( X, 120, Z, 2, "Spawner").setFaction(0)
 
                             e.npc.world.getStoreddata().put(str(IdHere), TeamMode)
 
@@ -125,6 +125,7 @@ def tick(e):
     GameStarted = e.npc.world.getTempdata().get("GameStarted")
     if GameStarted == 1:
         CheckTimer(e)
+
 
 def interact(e):
     e.npc.getStoreddata().clear()
