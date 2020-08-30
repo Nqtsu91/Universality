@@ -54,6 +54,18 @@ def CutClean(e):
                             e.npc.executeCommand("/give "+str(Players[i].getName())+" minecraft:gold_ingot "+str(Stack)+"")
                     except Exception as ess:
                         pass
+
+
+            #Food CutClean
+            for z in range(0, len(Players[i].getInventory())):          # Replacing ore with ingot
+                    try:
+                        List = ["Raw Beef","Raw Chicken","Raw Mutton","Raw Rabbit","Potato","Raw Porkchop"]
+                        if Players[i].getInventory()[z].getItemName() in List:
+                            Stack = int(Players[i].getInventory()[z].getStackSize())
+                            Players[i].removeAllItems(Players[i].getInventory()[z])
+                            e.npc.executeCommand("/give "+str(Players[i].getName())+" minecraft:cooked_beef "+str(Stack)+"")
+                    except Exception as ess:
+                        pass
     else:
         pass
 
@@ -205,11 +217,12 @@ def Counter(e):
 
 def CountingPlayersOnKill(e):
     if (e.npc.world.getStoreddata().get("TeamsAlive") == 1 ) and (e.npc.getStoreddata().get("EndGameSaid") != True):
-        e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
+        #e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Players","color" : dark_green},{"text":"] ","color": gray,"bold":true},{ "text" :"We now have a winner ! Congratulation !","color" : aqua,"bold":true}]')
         e.npc.getStoreddata().put("EndGameSaid", True)
         EndGame(e)
         UpdatingStats(e)
-
+        e.npc.world.getTempdata().clear()
+        e.npc.world.getStoreddata().clear()
 
 def UpdatingStats(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
@@ -222,7 +235,15 @@ def UpdatingStats(e):
         Config.pop(0)
         # Config = file in list
 
-        WinnerList = ["KOALOO","TryHard"]
+        WinnerList = e.npc.world.getTempdata().get("WinnerList")
+        if WinnerList == None :
+            WinnerList = []
+            for i in range (0, len(e.npc.world.getAllPlayers())):
+                WinnerList.append(e.npc.world.getAllPlayers()[i].getName())
+
+        e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - ","color":"gray"},{"text":"Winner","color":"gold"},{"text":"(","color":"gray"},{"text":"s","color":"gold"},{"text":") ","color":"gray"},{"text":":","color":"white"}]')
+        for i in range(0, len(WinnerList)):
+            e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - ","color":"gray"},{"text":"'+str(WinnerList[i])+'","color":"white"}]')
 
         KillList = e.npc.world.getStoreddata().get("KillList")
 
@@ -235,31 +256,39 @@ def UpdatingStats(e):
                 KillList[i][1] = 0
 
         FinalList = []
+        
+        for z in range(len(Config)-1, -1, -1):
+            try:
+                for i in range (len(KillList)-1, -1, -1):
+                    Line = Config[z].split(",")
+                    if Line[0] == KillList[i][0] :                      # Adding kills
+                        Newz = str(KillList[i][1].replace(".0", ""))
+                        KillList[i][1] = Newz
+                        New = int(Line[1]) + int(KillList[i][1])
+                        Line[1] = str(New) 
+                        if not Line[0] in WinnerList :
+                            New = int(Line[2]) + 1        # Adding Deaths
+                            Line[2] = str(New) 
+                        else:
+                            New = int(Line[3]) + 1        # Adding Wins
+                            Line[3] = str(New) 
 
-        for z in range(0, len(Config)):
-            for i in range (len(KillList)-1, -1, -1):
-                Line = Config[z].split(",")
-                if Line[0] == KillList[i][0] :                      # Adding kills
-                    New = int(Line[1]) + int(KillList[i][1])
-                    Line[1] = str(New) 
-                    if not Line[0] in WinnerList :
-                        New = int(Line[2]) + 1        # Adding Deaths
-                        Line[2] = str(New) 
-                    else:
-                        New = int(Line[3]) + 1        # Adding Wins
-                        Line[3] = str(New) 
+                        New = int(Line[1])/int(Line[2])        # Updating KDR
+                        Line[4] = str(New)   
 
-                    New = int(Line[1])/int(Line[2])        # Updating KDR
-                    Line[4] = str(New)   
+                        Config[z] = ",".join(Line)                  
+                        FinalList.append(Config[z])
+                        KillList.pop(i)
+                        Config.pop(z)
+            except:
+                pass
 
-                    Config[z] = ",".join(Line)                  
-                    FinalList.append(Config[z])
-                    KillList.pop(i)
+        for i in range(0, len(Config)):
+            FinalList.append(Config[i])
 
-        for i in range(0, len(KillList)):     
-            e.npc.world.broadcast(str(KillList))       
+        for i in range(0, len(KillList)):         
             Line = []
-            Line.append(KillList[i][0])
+            Line.append(str(KillList[i][0]))
             Line.append("0")
             Line.append("0")
             Line.append("0")
@@ -267,7 +296,8 @@ def UpdatingStats(e):
             Done = True
             if KillList[i][1] == None:
                 KillList[i][1] = 0
-            KillList[i][1] = int(str(KillList[i][1]).replace(".0", ""))
+
+                
             New = int(KillList[i][1])
             Line[1] = str(New) 
             if not Line[0] in WinnerList :
@@ -289,24 +319,23 @@ def UpdatingStats(e):
             FinalList.append(Config)                   
 
 
-    Path = os.path.dirname(os.path.abspath("__file__"))                 # Updating Final stats file
-    Path += "\\CustomNPC Config\\UHC\\Stats\\stats"
-    Path = Path.replace("\\", str(os.path.sep))
-    with open (str(Path)+".csv", "w") as File :
-        File.write(str(Title))
-        for i in range(0, len(FinalList)):
-            File.write(u'\n')
-            File.write(str(FinalList[i]))
+        Path = os.path.dirname(os.path.abspath("__file__"))                 # Updating Final stats file
+        Path += "\\CustomNPC Config\\UHC\\Stats\\stats"
+        Path = Path.replace("\\", str(os.path.sep))
+        with open (str(Path)+".csv", "w") as File :
+            File.write(str(Title))
+            for i in range(0, len(FinalList)):
+                File.write(u'\n')
+                File.write(str(FinalList[i]))
     
-    e.npc.world.broadcast("Stats updated succesfuly")
+    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Stats saved","color":"gray"},{"text":" successfully","color":"red"}]')
     e.npc.world.getTempdata().put("GameStarted", 0)
-
 
 def EndGame(e):
 	try :
 		PlayerList = e.npc.world.getAllPlayers()
 		for i in range (0, len(PlayerList)):
-			NewList = (("//" + PlayerList[i].getName())+ '|' +str(e.npc.world.getStoreddata().get(str(PlayerList[i].getName()) +"Kills")))
+			NewList = (("//" + PlayerList[i].getName())+ '|' +str(int(e.npc.world.getStoreddata().get(str(PlayerList[i].getName()) +"Kills"))))
 			e.npc.world.getStoreddata().put("KillList", e.npc.world.getStoreddata().get("KillList") + NewList)
 	except:
 		pass
@@ -358,8 +387,6 @@ def EndGame(e):
 		pass
 	
 	e.npc.world.spawnClone(13, 203, 0, 2, "Host UHC")
-
-
 
 def PlayerTP(e):
     Players = e.npc.world.getAllPlayers()
@@ -439,11 +466,13 @@ def init(e):
 
 def tick(e):
     if e.npc.world.getTempdata().get("GameStarted") == 1 :
-        CountingPlayersOnKill(e)
-        Counter(e)
-        ShrinkBorder(e)
-        CutClean(e)
-        AppleFlintRate(e)
-        
+        try:
+            CountingPlayersOnKill(e)
+            Counter(e)
+            ShrinkBorder(e)
+            CutClean(e)
+            AppleFlintRate(e)
+        except:
+            pass
     else:
         e.npc.despawn()

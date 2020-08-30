@@ -52,31 +52,31 @@ def SpawningBots(e) :
 	e.npc.world.getTempdata().put("TeamToDisplay", List)
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 
-	e.npc.world.getStoreddata().put("Factions", "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25")				# For the latest scatter method
+	Faction = ""
+	if e.npc.world.getTempdata().get("TeamAliveLimit") >= 26 :
+		e.npc.world.getTempdata().put("TeamAliveLimit", 25)
+
+	if 0 >= e.npc.world.getTempdata().get("TeamAliveLimit") :
+		e.npc.world.getTempdata().put("TeamAliveLimit", 1)
+
+	for i in range(1, int(e.npc.world.getTempdata().get("TeamAliveLimit"))):
+		Faction += str("/"+str(i))
+	e.npc.world.getStoreddata().put("Factions", str(Faction))				# For the latest scatter method
 
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 	TeamMode = e.npc.world.getTempdata().get("TeamSize")
 	
-	e.npc.executeCommand("/spawnpoint @a 0 201 20")
+	e.npc.executeCommand("/spawnpoint @a 0 196 0")
 
-	Total = 0
-	TierToList = ["NoobTier","CasualTier","CommonTier","GoodTier","ProTier","UHCEliteTier"]
-	ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
-	for i in range (0, len(TierToList)):
-		Path = os.path.dirname(os.path.abspath("__file__"))
-		Path += "\\CustomNPC Config\\UHC\\Pseudos\\"
-		Path = Path.replace("\\", str(os.path.sep))
-		with open (str(Path)+str(TierToList[i])+".txt", "r") as TierList :
-			TierList = TierList.read()
-			TierList = TierList.split(",")
-			e.npc.world.getTempdata().put(str(ToSend[i]), TierList)
-			Total += len(TierList)
-
-	if BotsToSpawn > Total :
-		BotsToSpawn = Total
 		
 	if BotsToSpawn%TeamMode == 1 :
 		BotsToSpawn = TeamMode * round(BotsToSpawn/TeamMode)
+
+	e.npc.executeCommand("/scoreboard objectives remove Gravel ")
+	e.npc.executeCommand("/scoreboard objectives remove Apple ")
+	e.npc.executeCommand("/scoreboard objectives remove Iron ")
+	e.npc.executeCommand("/scoreboard objectives remove Gold")
+	e.npc.executeCommand("/scoreboard objectives remove Kills")
 
 	e.npc.executeCommand("/scoreboard objectives add Gravel stat.mineBlock.minecraft.gravel")
 	e.npc.executeCommand("/scoreboard objectives add Apple stat.mineBlock.minecraft.leaves")
@@ -111,7 +111,7 @@ def SpawningBots(e) :
 
 	i = 0      # Tick for spawning specials bot
 	
-	e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chuks......","color":"gray"}]')
+	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chuks......","color":"gray"}]')
 
 	e.npc.executeCommand('/playsound note.pling @a')
 
@@ -128,6 +128,12 @@ def SpawningBots(e) :
 
 
 def StartingGame(e) :						# Initiating in-game objectives for the sidebar display 
+	try:
+		e.npc.getTimers().start(2, 0, True)				# The Rod block timer
+	except:
+		pass
+
+
 	e.npc.executeCommand("/scoreboard teams add green")
 	e.npc.executeCommand("/scoreboard teams option green color green")
 	e.npc.executeCommand("/scoreboard teams add blue")
@@ -144,7 +150,11 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.executeCommand("/scoreboard teams option purple color purple")
 	e.npc.executeCommand("/scoreboard teams add yellow")
 	e.npc.executeCommand("/scoreboard teams option yellow color yellow")
-
+	e.npc.executeCommand("/scoreboard teams add deads")
+	e.npc.executeCommand("/scoreboard teams option deads color black")
+	e.npc.executeCommand("/scoreboard teams add Players")
+	e.npc.executeCommand("/scoreboard teams option Players color dark_aqua")
+	e.npc.executeCommand("/scoreboard teams join Players Players")
 
 	e.npc.executeCommand("/gamerule doFireTick false")								# Few gamerules to avoid game lags and to add more game stability
 	e.npc.executeCommand("/gamerule naturalRegeneration false")
@@ -176,7 +186,7 @@ def VisualEffects(e):
 		if e.npc.getTempdata().get("Tick") == None :
 			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Chunks loaded","color":"gray"}]')
 			e.npc.executeCommand("/clear @a")
-			e.npc.executeCommand("/gamemode 0 @a")
+			e.npc.executeCommand("/gamemode 2 @a")
 			e.npc.executeCommand('/playsound note.bass @a')
 
 		if e.npc.getTempdata().get("Tick") == 2 :
@@ -191,8 +201,8 @@ def VisualEffects(e):
 			
 
 		if e.npc.getTempdata().get("Tick") == 6 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing CutClean.....","color":"gray"}]')
-			e.npc.executeCommand('/playsound note.pling @a')
+			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing CutClean.....","color":"gray"}]')
+			e.npc.executeCommand('/playsound note.pling @p')
 			
 
 		if e.npc.getTempdata().get("Tick") == 8 :
@@ -206,16 +216,20 @@ def VisualEffects(e):
 			e.npc.executeCommand("/effect @a minecraft:resistance 7 45 true")
 			e.npc.executeCommand("/effect @a minecraft:slowness 7 45 true")
 			e.npc.executeCommand("/effect @a minecraft:blindness 7 45 true")
-			e.npc.executeCommand('/playsound note.pling @a')
+			e.npc.executeCommand('/playsound note.pling @p')
 			GiveInventory(e)
 			
 		if e.npc.getTempdata().get("Tick") == 20 :
 			e.npc.executeCommand('/tellraw @a ["",{"text":">>> ","color": gray},{"text":"Game started ", "color" : white}]')
 			e.npc.executeCommand('/effect @a minecraft:instant_health 1 45 true')
+			e.npc.executeCommand("/gamemode 0 @a")
 			for i in range (0, len(e.npc.world.getAllPlayers())):
 				e.npc.executeCommand('/tellraw '+str(e.npc.world.getAllPlayers()[i].getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Players CrossTeaming is allowed","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Final Heal in 10 minutes !","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Good luck have fun ","color":"gray"},{"text":"'+str(e.npc.world.getAllPlayers()[i].getName())+'","color":"red"},{"text":" !","color":"gray"}]')
 
-			e.npc.executeCommand('/playsound note.pling @a')
+			e.npc.executeCommand('/playsound note.pling @p')
+
+			e.npc.world.spawnClone(1, 195, 3, 2, "Accept Fate")
+			e.npc.world.spawnClone(1, 195, -3, 2, "Accept Fate").getDisplay().setName("Respawn")
 
 
 			PvPTime = int(e.npc.world.getTempdata().get("PvPTime")) * 1200
@@ -229,7 +243,7 @@ def VisualEffects(e):
 
 			PvPTime = int(e.npc.world.getTempdata().get("FinalBorder")) * 1200
 			MeetUp = e.npc.world.getStoreddata().put("FinalBorder", e.npc.world.getTotalTime() + PvPTime)
-			e.npc.world.spawnClone( 0, 250, 0, 2, "Border")
+			e.npc.world.spawnClone( 0, 250, 0, 2, "Border").reset()
 			
 			e.npc.despawn()
 
@@ -237,15 +251,19 @@ def VisualEffects(e):
 
 
 def damaged(e):
-	e.npc.reset()
-	e.npc.getTempdata().put("SpecialsOn", True)
-	e.npc.getTempdata().put("Spawned", 0)
-	try :
-		e.source.getName()
-		StartingGame(e)
-		SpawningBots(e)
-	except Exception as err :
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
+	if e.npc.getTempdata().get("Confirmed") == True :
+		e.npc.getTempdata().put("SpecialsOn", True)
+		e.npc.getTempdata().put("Spawned", 0)
+		try :
+			e.source.getName()
+			StartingGame(e)
+			SpawningBots(e)
+		except Exception as err :
+			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
+		e.npc.getTempdata().put("Confirmed", False)
+	else :
+		e.npc.getTempdata().put("Confirmed", True)
+		e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Reminder","color":"dark_aqua"},{"text":"]","color":"dark_gray"},{"text":" - Click again to start but please ensure you loaded the right team file by right clicking this NPC.","color":"gray"}]')
 
 def tick(e):
 	VisualEffects(e)
@@ -263,6 +281,6 @@ def interact(e):
 		e.npc.getTempdata().put("TeamsToRead", 1)
 	else:
 		e.npc.getTempdata().put("TeamsToRead", e.npc.getTempdata().get("TeamsToRead")+1)
-	e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Teams","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Ready to load team slot ","color":"gray"},{"text":"' +str(e.npc.getTempdata().get("TeamsToRead"))+'","color":"aqua"}]')
+	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Teams","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Ready to load team slot ","color":"gray"},{"text":"' +str(e.npc.getTempdata().get("TeamsToRead"))+'","color":"aqua"}]')
 	e.setCanceled(True)
 

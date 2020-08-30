@@ -17,14 +17,18 @@ def LoadConfig(e):
     Path = Path.replace("\\", str(os.path.sep))
     with open (str(Path)+str(e.npc.getTempdata().get("ConfigToRead"))+".txt", "r") as Config :
         Config = Config.read()
-        Config = Config.split(\n)
+        Config = Config.split(u'\n')
         Name = Config[0]
         e.npc.world.getStoreddata().put("ConfigName", str(Name))
         del Config[0]
-        ToConfigList = ["CutClean","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","GoldenHeads","FireAspectAllowed","AbsoLess","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","BotNumber","TeamSize","PvPTime","MinTimeSpread","MaxTimeSpread","NoCleanRegen","DiamondProbability","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam","WaterAllowed","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled","XpMultiplicator","LoadTeams","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","LoadInventory"]
+        ToConfigList = ["BotNumber","TeamSize","LoadInventory","TeamAliveLimit","PvPTime","MinTimeSpread","MaxTimeSpread","FinalBorder","SecondBorder","FirstBorder","CutClean","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","BleedingSweets","Rodless","Mole","OneShot","GoldenHeads","FireAspectAllowed","AbsoLess","DiamondProbability","WaterAllowed","ForcedType","BadlionKB","ArcticMeta","XpMultiplicator","LoadTeams","AppleRate","FlintRate","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled","NoCleanRegen","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam"]
 
     for i in range (len(Config)-1, -1, -1):
-        if Config[i][0] == "#" :
+        if Config[i] == "" :
+            del Config[i]
+        elif Config[i] == " " :
+            del Config[i]
+        elif Config[i][0] == "#" :
             del Config[i]
     for i in range (0, len(ToConfigList)):
         List = Config[i].split(":")
@@ -55,3 +59,12 @@ def damaged(e):
 
     e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":"[","color":"dark_gray"},{"text":"Config","color":"purple"},{"text":"]","color":"dark_gray"},{"text":" Ready to load config number ","color": green,"bold":true,"italic":false},{"text":"'+str(e.npc.getTempdata().get("ConfigToRead"))+'", "color" : dark_green, "underlined" : true}]')
 
+
+
+def Despawn(e):
+    if e.npc.world.getTempdata().get("ConfigMode") != True:
+        e.npc.despawn()
+
+
+def tick(e):
+    Despawn(e)

@@ -52,7 +52,7 @@ def Switching(e):
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 	
 	elif CurrentConfig == "Bots" :
-		ListOfVar = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","LoadInventory"]
+		ListOfVar = ["BotNumber","TeamSize","TeamAliveLimit","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","LoadInventory"]
 		e.npc.world.getTempdata().put("CurrentVarToMod" , ListOfVar[Tick])
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 
@@ -67,7 +67,7 @@ def damaged(e):
 				if (Tick == 31):
 					Tick = 0
 					e.npc.world.getTempdata().put("Tick", 0)
-			if CurrentConfig == "Bots" and (Tick == 11):
+			if CurrentConfig == "Bots" and (Tick == 12):
 				Tick = 0
 				e.npc.world.getTempdata().put("Tick", 0)
 			else :
@@ -89,7 +89,13 @@ def damaged(e):
 		e.setCanceled(True)
 
 
+def Despawn(e):
+    if e.npc.world.getTempdata().get("ConfigMode") != True:
+        e.npc.despawn()
 
+
+def tick(e):
+    Despawn(e)
 
 
 

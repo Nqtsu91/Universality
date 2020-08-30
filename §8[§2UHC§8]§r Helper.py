@@ -3,7 +3,7 @@ def SayingConfig(e):
 	if Name == None :
 		Name = "Unamed"
 
-	List = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled"]
+	List = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled","LoadTeams"]
 
 	e.npc.executeCommand('/tellraw '+str(e.player.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Displaying config ","color":"gray"},{"text":"'+str(Name)+'","color":"dark_purple"},{"text":" :","color":"gray"}]')
 	for i in range(0, len(List)):
@@ -28,3 +28,19 @@ def interact(e):
 		
 		
 		
+def damaged(e):
+	e.setCanceled(True)
+
+
+
+def damaged(e):
+	#e.npc.say(str(e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()),15,0)))
+	List = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()),15,0).tolist()
+	for i in range (0, len(List)):
+		try:
+			e.npc.say(str(List[i].getMCEntity().field_71104_cf.field_146043_c))
+			List[i].getMCEntity().field_71104_cf.field_146043_c = None
+			List[i].setHeldItem(e.npc.world.createItem("minecraft:fishing_rod",0,1))
+		except Exception as err:
+			e.npc.say(str(err))
+

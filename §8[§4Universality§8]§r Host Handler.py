@@ -14,15 +14,18 @@ def FirstSay(e):
 	if e.npc.getStoreddata().get('FirstSay') != True :
 		e.npc.executeCommand("/gamerule commandBlockOutput false")
 		e.npc.executeCommand("/gamerule keepInventory true")
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Thank for downloading the","color":"gray"},{"text":" Universality scripts","color":"dark_red"},{"text":" !"}]')
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" You can start a Host on this map by hitting this NPC","color":"gray"}]')
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Right-click the NPC to change the game you host","color":"gray"}]')
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"Need Help ?","color":"gray"},{"text":" Right click the NPC with the helper item!","color":"dark_green"}]')
+
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Thanks for downloading the ","color":"dark_green"},{"text":"Universality","color":"dark_red","hoverEvent":{"action":"show_text","value":"Universality by Natsu91"}},{"text":" scripts !","color":"dark_green"}]')
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Hit the Universality NPC with the items to use them.","color":"gray"}]')
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Hit the NPC with an empty hand to change the selected game","color":"gray"}]')
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - If you can only see NPCs name, then a mod is interfering with NPCs rendering ","color":"gray"},{"text":"( Like OldAnimation )","underlined":true,"color":"aqua"}]')
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - If you are lost, hit the NPC with the ","color":"gray"},{"text":"help item","underlined":true,"color":"green","insertion":"The compass"},{"text":".","color":"gray"}]')
+
 		e.npc.getStoreddata().put('FirstSay', True)
 		e.npc.executeCommand('/give @a compass 1 0 {display:{Name:Help,Lore:[" Hit the NPC with this item to get help"]}}')
 		e.npc.executeCommand('/give @a comparator 1 0 {display:{Name:Start,Lore:[" Hit the NPC with this item to start the host"]}}')
 		e.npc.executeCommand('/give @a paper 1 0 {display:{Name:Games list,Lore:[" Hit the NPC with this item to get the list of playable games"]}}')
-		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" If the NPC is invisble, but you can still see his name, then a mod may be having problem with NPCs rendering","color":"gray"},{"text":" ( Like OldAnimation )","color":"aqua"}]')
+		#e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" If the NPC is invisble, but you can still see his name, then a mod may be having problem with NPCs rendering","color":"gray"},{"text":" ( Like OldAnimation )","color":"aqua"}]')
 
 def Help(e):
 	try:
@@ -56,7 +59,7 @@ def Start(e):
 def GameList(e):
 	try:
 		if e.source.getHeldItem().getDisplayName() == "Games list":
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"GameList","color":"dark_purple"},{"text":"]","color":"dark_gray"},{"text":" You have ","color":"gray"},{"text":"7 ","color":"white"},{"text":"games installed :","color":"gray"},{"text":" UHC, ","color":"dark_red"},{"text":"LGUHC, ","color":"blue"},{"text":"UHC MeetUp, ","color":"dark_green"},{"text":"Arena FFA, ","color":"dark_blue"},{"text":"Arena 2v2, ","color":"gold"},{"text":"1v1. ","color":"pink"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Info","color":"gold"},{"text":"]","color":"dark_gray"},{"text":" Youre selected game is : ","color":"gray"},{"text":"'+str(e.npc.getStoreddata().get("GameSelected"))+'","color":"dark_red"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"GameList","color":"dark_purple"},{"text":"]","color":"dark_gray"},{"text":" - For now, ","color":"gray"},{"text":"UHC","color":"dark_blue"},{"text":" is playable, and ","color":"gray"},{"text":"Arena","color":"red"},{"text":" and ","color":"gray"},{"text":"Practice","color":"red"},{"text":" are in developement.","color":"gray"},{"text":"\n "},{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Info","color":"gold"},{"text":"]","color":"dark_gray"},{"text":" Youre selected game is : ","color":"gray"},{"text":"'+str(e.npc.getStoreddata().get("GameSelected"))+'","color":"dark_red"}]')
 
 		else :
 			SwitchGame(e)
@@ -64,7 +67,7 @@ def GameList(e):
 		SwitchGame(e)
 
 def SwitchGame(e):
-	GameList = ["UHC","LGUHC","UHC MeetUp","Arena FFA","Arena 2v2","1v1"]			#Playable Games List
+	GameList = ["UHC"]			#Playable Games List
 
 	if e.npc.getStoreddata().get("GameTick") == None :				# Initiating List tick data
 		e.npc.getStoreddata().put("GameTick", "0")
@@ -104,67 +107,73 @@ def SpawningHubUHC(e):
 
 	e.npc.world.getTempdata().put("GameMode", "UHC")
 
-	e.npc.executeCommand('/tp @a 0 202 0')
+	e.npc.executeCommand('/tp @a 0 196 0')
+	e.npc.executeCommand('/gamemode 2 @a')
+	e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 202 0')
 	e.npc.executeCommand('/fill 120 58 120 -120 58 0 minecraft:dirt')
 	e.npc.executeCommand('/fill 120 58 0 -120 58 -120 minecraft:dirt')
 
-	e.npc.executeCommand('/fill -15 200 -15 15 200 15 minecraft:stained_glass')
+	e.npc.executeCommand('/fill -15 200 -15 15 200 15 minecraft:stained_glass')					# Hub
 	e.npc.executeCommand('/fill -15 201 -15 -15 205 15 minecraft:stained_glass_pane 11')
 	e.npc.executeCommand('/fill -15 201 -15 15 205 -15 minecraft:stained_glass_pane 11')
 	e.npc.executeCommand('/fill 15 201 15 -15 205 15 minecraft:stained_glass_pane 11')
 	e.npc.executeCommand('/fill 15 201 15 15 205 -15 minecraft:stained_glass_pane 11')
+
+
+	e.npc.executeCommand('/fill -15 194 -15 15 194 15 minecraft:stained_glass')					# Hub
+	e.npc.executeCommand('/fill -15 195 -15 -15 199 15 minecraft:stained_glass_pane 11')
+	e.npc.executeCommand('/fill -15 195 -15 15 199 -15 minecraft:stained_glass_pane 11')
+	e.npc.executeCommand('/fill 15 195 15 -15 199 15 minecraft:stained_glass_pane 11')
+	e.npc.executeCommand('/fill 15 195 15 15 199 -15 minecraft:stained_glass_pane 11')
+
+
 	e.npc.executeCommand('/fill -1 200 -1 1 200 1 minecraft:bedrock')
+
+	e.npc.executeCommand("/fill 0 200 13 0 201 13 minecraft:bedrock")		# Config
+	e.npc.executeCommand("/setblock -1 201 13 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 1 201 13 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 0 201 12 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 0 201 14 minecraft:stone_slab")
 	
-	e.npc.executeCommand('/setblock -13 201 0 minecraft:stone') # For the settings NPCs
+	e.npc.executeCommand('/setblock -13 200 0 minecraft:bedrock') 		# Start
+
+	e.npc.executeCommand("/fill 0 200 -13 0 201 -13 minecraft:bedrock")		# Inventories
+	e.npc.executeCommand("/setblock -1 201 -13 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 1 201 -13 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 0 201 -12 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 0 201 -14 minecraft:stone_slab")
+
+	
+	# Helper + Credits
+
 	e.npc.executeCommand("/fill -12 201 7 -14 201 -7 minecraft:stone_slab")
-	e.npc.executeCommand('/setblock -13 201 -2 minecraft:stone')
-	e.npc.executeCommand('/setblock -13 201 -4 minecraft:stone')
-	e.npc.executeCommand('/setblock -13 201 -6 minecraft:stone')
-	
-	e.npc.executeCommand('/setblock -13 201 2 minecraft:stone')
-	e.npc.executeCommand('/setblock -13 201 4 minecraft:stone')
-	e.npc.executeCommand('/setblock -13 201 6 minecraft:stone')
-	
-	
-	e.npc.executeCommand('/setblock 13 201 0 minecraft:stone') # For the settings choosers NPCs
-	e.npc.executeCommand('/setblock 13 201 4 minecraft:stone')
-	e.npc.executeCommand('/setblock 13 201 -4 minecraft:stone')
-	
-	e.npc.executeCommand('/setblock 0 201 -13 minecraft:stone') # For the helper NPC
-	e.npc.executeCommand('/setblock 2 201 -13 minecraft:stone')
 
-	e.npc.executeCommand('/setblock 13 201 12 minecraft:stone') # for the config loader NPC
+	e.npc.executeCommand('/setblock -13 201 -3 minecraft:stone')
 
-	e.npc.executeCommand("/fill 1 200 19 -1 200 21 minecraft:bedrock")		# For the "Fate" zone
+	e.npc.executeCommand('/setblock -13 201 3 minecraft:stone')
 
-	e.npc.executeCommand("/fill 2 200 18 -2 200 22 minecraft:stained_glass")
-	e.npc.executeCommand("/fill 1 201 22 -1 201 22 minecraft:fence")
-	e.npc.executeCommand("/fill 1 201 18 -1 201 18 minecraft:fence")
-	e.npc.executeCommand("/fill 2 201 19 2 201 21 minecraft:fence")
-	e.npc.executeCommand("/fill -2 201 19 -2 201 21 minecraft:fence")
+	e.npc.executeCommand("/setblock 13 201 0 minecraft:stone")
+	e.npc.executeCommand("/setblock 13 200 0 minecraft:stone")
+	e.npc.executeCommand("/setblock 13 201 -1 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 13 201 1 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 14 201 0 minecraft:stone_slab")
+	e.npc.executeCommand("/setblock 12 201 0 minecraft:stone_slab")
 
-	e.npc.executeCommand("/setblock 13 201 -13 minecraft:stone")
-
-	e.npc.executeCommand('/tp @a 0 202 0')
-	e.npc.executeCommand("/title @a UHC")
+	e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 202 0')
 	
 def SpawningNPCUHC(e):
-	e.npc.world.spawnClone(-13, 203, 0, 2, "Host Settings UHC").getDisplay().setName("Hit me to change variable")
-	e.npc.world.spawnClone(-13, 203, 2, 2, "Host Settings UHC").getDisplay().setName("+1")
-	e.npc.world.spawnClone(-13, 203, 4, 2, "Host Settings UHC").getDisplay().setName("+5")
-	e.npc.world.spawnClone(-13, 203, 6, 2, "Host Settings UHC").getDisplay().setName("+10")
-	e.npc.world.spawnClone(-13, 203, -2, 2, "Host Settings UHC").getDisplay().setName("-1")
-	e.npc.world.spawnClone(-13, 203, -4, 2, "Host Settings UHC").getDisplay().setName("-5")
-	e.npc.world.spawnClone(-13, 203, -6, 2, "Host Settings UHC").getDisplay().setName("-10")
-	e.npc.world.spawnClone(13, 203, -4, 2, "Host Settings UHC").getDisplay().setName("Config Bots")
+
 	e.npc.world.spawnClone(13, 203, 0, 2, "Host UHC")
-	e.npc.world.spawnClone(13, 203, 4, 2, "Host Settings UHC").getDisplay().setName("Config Scenarios")
-	e.npc.world.spawnClone(13, 203, 12, 2, "Config loader").getDisplay()
-	e.npc.world.spawnClone(0, 203, -13, 2, "Helper")
-	e.npc.world.spawnClone(2, 203, -13, 2, "Helper").getDisplay().setName("Whats my current Config ?")
-	e.npc.world.spawnClone(1, 203, 19, 2, "Accept Fate").getDisplay().setName("Respawn")
-	e.npc.world.spawnClone(-1, 203, 21, 2, "Accept Fate")
-	e.npc.world.spawnClone(13, 203, -13, 2, "Inventory loader")
+
+	e.npc.world.spawnClone(0, 203, -13, 2, "Handler").getDisplay().setName("Config")
+	e.npc.world.spawnClone(0, 203, 13, 2, "Handler").getDisplay().setName("Inventories")
+	e.npc.world.spawnClone(14, 195, 0, 2, "Helper").getDisplay().setName("Display Config")
+	e.npc.world.spawnClone(13, 202, -13, 2, "Helper").getDisplay().setName("Display Config")
+
+	e.npc.world.spawnClone(-13, 202, 0, 2, "Dev")
+	e.npc.world.spawnClone(13, 202, 13, 2, "Helper")
+	e.npc.world.spawnClone(-13, 202, -3, 2, "Dev").getDisplay().setName("Discord")
+	e.npc.world.spawnClone(-13, 202, 3, 2, "Dev").getDisplay().setName("Youtube")
 
 def SpawningHubFFA(e):
 	e.npc.executeCommand('/tp @a 0 202 0')
