@@ -11,9 +11,10 @@ import os
 
 def LoadConfig(e):
     if e.npc.getTempdata().get("ConfigToRead") == None :
-        e.npc.getTempdata().put("ConfigToRead", 1)
+        e.npc.getTempdata().put("ConfigToRead", "bow")
+    e.npc.world.getTempdata().put("CurrentGame", e.npc.getTempdata().get("ConfigToRead"))
     Path = os.path.dirname(os.path.abspath("__file__"))
-    Path += "\\CustomNPC Config\\UHC\\configs\\config_"
+    Path += "\\CustomNPC Config\\FFA\\configs\\"
     Path = Path.replace("\\", str(os.path.sep))
     with open (str(Path)+str(e.npc.getTempdata().get("ConfigToRead"))+".txt", "r") as Config :
         Config = Config.read()
@@ -21,7 +22,7 @@ def LoadConfig(e):
         Name = Config[0]
         e.npc.world.getStoreddata().put("ConfigName", str(Name))
         del Config[0]
-        ToConfigList = ["BotNumber","TeamSize","LoadInventory","TeamAliveLimit","PvPTime","MinTimeSpread","MaxTimeSpread","FinalBorder","SecondBorder","FirstBorder","CutClean","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","BleedingSweets","Rodless","Mole","OneShot","GoldenHeads","FireAspectAllowed","AbsoLess","DiamondProbability","WaterAllowed","ForcedType","BadlionKB","ArcticMeta","XpMultiplicator","LoadTeams","AppleRate","FlintRate","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled","NoCleanRegen","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam"]
+        ToConfigList = ["TeamSize","TeamAliveLimit","NoCleanUpEnabled","CatEyes","Rodless","AbsoLess","WaterAllowed","ForcedType","BadlionKB","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled","NoCleanRegen"]
 
     for i in range (len(Config)-1, -1, -1):
         if Config[i] == "" :
@@ -30,6 +31,9 @@ def LoadConfig(e):
             del Config[i]
         elif Config[i][0] == "#" :
             del Config[i]
+        elif Config[i] == u'\r' :
+            del Config[i]
+
     for i in range (0, len(ToConfigList)):
         List = Config[i].split(":")
         try :
@@ -40,7 +44,7 @@ def LoadConfig(e):
             else :
                 List[1] = False  
             e.npc.world.getTempdata().put(str(ToConfigList[i]), List[1])
-    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":"[","color":"dark_gray"},{"text":"Config","color":"purple"},{"text":"]","color":"dark_gray"},{"text":" Loaded config ","color": green,"bold":true,"italic":false},{"text":"'+str(Name)+'", "color" : dark_green, "underlined" : true} , { "text" :" succesfully", "color" : green, "bold":true}]')
+    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Arena","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":"[","color":"dark_gray"},{"text":"Config","color":"purple"},{"text":"]","color":"dark_gray"},{"text":" Loaded config ","color": green,"bold":true,"italic":false},{"text":"'+str(Name)+'", "color" : dark_green, "underlined" : true} , { "text" :" succesfully", "color" : green, "bold":true}]')
 
 
 def interact(e):
@@ -51,11 +55,11 @@ def interact(e):
 def damaged(e):
     e.setCanceled(True)
     if e.npc.getTempdata().get("ConfigToRead") == None :
-        e.npc.getTempdata().put("ConfigToRead", 1)
-    if e.npc.getTempdata().get("ConfigToRead") == 10 :
-        e.npc.getTempdata().put("ConfigToRead", 1)
-    else:
-        e.npc.getTempdata().put("ConfigToRead", e.npc.getTempdata().get("ConfigToRead")+1)
+        e.npc.getTempdata().put("ConfigToRead", "bow")
+    elif e.npc.getTempdata().get("ConfigToRead") == "bow" :
+        e.npc.getTempdata().put("ConfigToRead", "melee")
+    elif e.npc.getTempdata().get("ConfigToRead") == "melee" :
+        e.npc.getTempdata().put("ConfigToRead", "bow")
 
     e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":"[","color":"dark_gray"},{"text":"Config","color":"purple"},{"text":"]","color":"dark_gray"},{"text":" Ready to load config number ","color": green,"bold":true,"italic":false},{"text":"'+str(e.npc.getTempdata().get("ConfigToRead"))+'", "color" : dark_green, "underlined" : true}]')
 

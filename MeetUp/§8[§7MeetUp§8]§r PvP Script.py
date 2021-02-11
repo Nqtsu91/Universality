@@ -12,6 +12,11 @@ import math
 #DEATH STYLE functions :
 
 def InventorySpawn(e) :
+	'''Spawn the whole inventory of the bot depending of the Kills amount he had, double armor drops if he was stacked
+
+		EXCEPTION : if OneShot is enabled, stuff dont drop
+	'''
+	IsEnchanted = True
 	if e.npc.world.getTempdata().get("OneShot") != True :
 		import random
 		# Spawning enchanted armor
@@ -31,27 +36,29 @@ def InventorySpawn(e) :
 			element = ItemList[i]
 			Damage = random.randint(10, 250)			# Damaging items to make it feeling real
 			
+
 			MyX = e.npc.getX()			# Attributing coordinates to the item
 			MyY = e.npc.getY()
 			MyZ = e.npc.getZ()
-			SpawnX = int(MyX) + random.uniform(-1.25, 1.25)
-			SpawnY = int(MyY) + 1
-			SpawnZ = int(MyZ) + random.uniform(-1.25, 1.25)
-		
-			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(element)+",Damage:"+str(Damage)+",Count:1,tag:{ench:[{id:"+str(EnchID)+",lvl:"+str(EnchLvL)+"}]}}}") # Looting item
+			SpawnX = int(round(MyX))
+			SpawnY = int(round(MyY)) + 1
+			SpawnZ = int(round(MyZ))
+			
+			if (int(Prot[i]) ==0) and (int(Proj[i]) == 0):
+				IsEnchanted = False
+				e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(element)+",Damage:"+str(Damage)+",Count:1},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting item
+			else:
+				e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(element)+",Damage:"+str(Damage)+",Count:1,tag:{ench:[{id:"+str(EnchID)+",lvl:"+str(EnchLvL)+"}]}},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting item
 
 		# Spawning other items
-		ItemList = [["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:apple","3"],["minecraft:cooked_beef","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:log","64"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:lava_bucket","1"],["minecraft:fishing_rod","1"],["minecraft:book","2"],["minecraft:flint_and_steel","1"],["minecraft:planks","64"],["minecraft:anvil","1"],["minecraft:enchanting_table","1"],["minecraft:wheat_seeds","12"],["minecraft:string","1"],["minecraft:coal","20"],["minecraft:flint","16"],["minecraft:dirt","64"],["minecraft:leather","11"],["minecraft:reeds","15"],["minecraft:feather","4"],["minecraft:gunpowder","2"],["minecraft:sand","64"],["minecraft:gravel","64"],["minecraft:sapling","16"],["minecraft:red_flower","6"],["minecraft:torch","64"],["minecraft:redstone","64"],["minecraft:bone","3"]]																			
+		if (int(e.npc.world.getStoreddata().get("TeamsAlive")) > 12 ) and (e.npc.world.getTempdata().get("ClearedLoot") != True):
+			ItemList = [["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:apple","3"],["minecraft:cooked_beef","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:log","64"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:lava_bucket","1"],["minecraft:fishing_rod","1"],["minecraft:book","2"],["minecraft:flint_and_steel","1"],["minecraft:planks","64"],["minecraft:anvil","1"],["minecraft:enchanting_table","1"],["minecraft:wheat_seeds","12"],["minecraft:string","1"],["minecraft:coal","20"],["minecraft:flint","16"],["minecraft:dirt","64"],["minecraft:leather","11"],["minecraft:reeds","15"],["minecraft:feather","4"],["minecraft:gunpowder","2"],["minecraft:sand","64"],["minecraft:gravel","64"],["minecraft:sapling","16"],["minecraft:red_flower","6"],["minecraft:torch","64"],["minecraft:redstone","64"],["minecraft:bone","3"]]																			
+		else:
+			ItemList = [["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:cobblestone","64"],["minecraft:log","64"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:water_bucket","1"],["minecraft:lava_bucket","1"],["minecraft:fishing_rod","1"],["minecraft:flint_and_steel","1"],["minecraft:planks","64"],["minecraft:anvil","1"],["minecraft:enchanting_table","1"]]																			
 		for i in range(0, len(ItemList)-1):	
-			MyX = e.npc.getX()			# Attributing coordinates to the item
-			MyY = e.npc.getY()
-			MyZ = e.npc.getZ()
-			SpawnX = int(MyX) + random.uniform(-1.25, 1.25)
-			SpawnY = int(MyY) + 1
-			SpawnZ = int(MyZ) + random.uniform(-1.25, 1.25)
 			Count = random.randint(0,int(ItemList[i][1]))
 			
-			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(ItemList[i][0])+",Count:"+str(Count)+"}}") # Looting item
+			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(ItemList[i][0])+",Count:"+str(Count)+"},Motion:["+str(random.uniform(0.00,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting item
 		
 		# Looting other items
 		EnchLvL = random.randint(3,4)
@@ -79,26 +86,41 @@ def InventorySpawn(e) :
 				EnchList += ",{id:34,lvl:"+Sword[3]+"}"
 		
 		EnchList += "]}"
+		if IsEnchanted == True:
+			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(Item5)+",Damage:"+str(Damage)+",Count:1,tag:"+str(EnchList)+"},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting sword
+		else:
+			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:"+str(Item5)+",Damage:"+str(Damage)+",Count:1},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting item
+	
 
-		e.npc.executeCommand("/summon Item ~ ~ ~ {Item:{id:"+str(Item5)+",Damage:"+str(Damage)+",Count:1,tag:"+str(EnchList)+"}}") # Looting sword
 		if InventorySpawn.isDone != True :
 			GoldenAppleLoot = e.npc.getTempdata().get("GapCount")
 			if (GoldenAppleLoot == None) or (GoldenAppleLoot == 0):
 				GoldenAppleLoot = 1
-			e.npc.executeCommand("/summon Item ~ ~ ~ {Item:{id:322,Damage:0,Count:"+str(GoldenAppleLoot)+"}}") # Looting golden apple based on the amount he had
-			
-			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:278,Damage:187,Count:1,tag:{ench:[{id:32,lvl:5}]}}}")		# Looting a pickaxe
+			e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:322,Damage:0,Count:"+str(GoldenAppleLoot)+"},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}") # Looting golden apple based on the amount he had
+			if IsEnchanted == True:
+				e.npc.executeCommand("/summon Item "+str(SpawnX)+" "+str(SpawnY)+" "+str(SpawnZ)+" {Item:{id:278,Damage:187,Count:1,tag:{ench:[{id:32,lvl:5}]}},Motion:["+str(random.uniform(0.02,0.1)*random.randint(-1,1))+",0.05,"+str(random.uniform(0.02,0.1)*random.randint(-1,1))+"]}")		# Looting a pickaxe
 			try:
 				e.npc.executeCommand("/xp 40 "+ str(e.source.getName()))		# Looting xp
 			except :
 				pass
 
-		if e.npc.getStoreddata().get("Kills") >= 2 and (InventorySpawn.isDone != True ):
+		if e.npc.getStoreddata().get("Kills") >= 4 and (InventorySpawn.isDone != True ):
 			InventorySpawn.isDone = True
 			InventorySpawn(e)
 			
 def BadlionDeathTchatMessage(e):
+	'''Display chat message at death with custom colors depending on the killler and killed type and faction
+	
+		format : Killed["kill amount"] was slain by Killer["kill amount"]
+
+		TRIGGER : InventorySpawn(e)
+
+		EXCEPTION : if no killer is found, "PVE" death message is diplayed instead
+	'''
 	if e.npc.world.getTempdata().get("BadlionKillsSystem") == True :
+		Special = '{"text":"","color":"light_purple"}'
+		SpecialKiller = '{"text":"","color":"light_purple"}'
+		SpecialList = ["Natsu91","Yvant2000Games","Frizou","iKowz","MASTEEKH","jdegoederen","reb_hi","Strykerss","Etoiles","xGokuuuh","Pikachu","TryHqrd_","_Mik0GODESS","SqndSt0rm","Divinity_Kirito","slooonay","Pxdro","Restump","Nardcoo","Ladak","VERSKUUUH","seltix_x","Pacoima","MarkiLokuras","Boosta","DANTEH","Rzmeur","GrzyLight","Mqyland_hi","Mentally","BiboyQG"]
 		NameKilled = e.npc.getDisplay().getName()				# Looking for own data
 		KilledFaction = e.npc.getFaction().getId()
 		KilledKills = e.npc.getStoreddata().get("Kills")
@@ -108,8 +130,11 @@ def BadlionDeathTchatMessage(e):
 		ItalicKiller = "false"
 		if KilledKills == None :
 			KilledKills = 0
-			
-		FactionArgList = [["green","false","false"],["green","false","false"],["blue","false","false"],["red","false","false"],["yellow","false","false"],["dark_gray","false","false"],["dark_blue","false","false"],["dark_red","false","false"],["dark_green","false","false"],["gold","false","false"],["aqua","false","false"],["light_purple","false","false"],["dark_aqua","false","false"],["dark_purple","false","false"],["green","false","true"],["blue","false","true"],["red","false","true"],["yellow","false","true"],["dark_gray","false","true"],["dark_blue","false","true"],["dark_red","false","true"],["dark_green","false","true"],["gold","false","true"],["aqua","false","true"],["light_purple","false","true"],["dark_aqua","false","true"],["dark_purple","false","true"]]
+	
+		if NameKilled in SpecialList :
+			Special = '{"text":"['+u'\u2764'+']","color":"light_purple"}'
+
+		FactionArgList = [["green","false","false"],["green","false","false"],["blue","false","false"],["red","false","false"],["yellow","false","false"],["dark_gray","false","false"],["dark_blue","false","false"],["dark_red","false","false"],["dark_green","false","false"],["gold","false","false"],["aqua","false","false"],["light_purple","false","false"],["dark_aqua","false","false"],["dark_purple","false","false"],["green","false","true"],["blue","false","true"],["red","false","true"],["yellow","false","true"],["dark_gray","false","true"],["dark_blue","false","true"],["dark_red","false","true"],["dark_green","false","true"],["gold","false","true"],["aqua","false","true"],["light_purple","false","true"],["dark_aqua","false","true"],["white","false","false"]]
 		TeamColorKilled = FactionArgList[KilledFaction][0]
 		UnderlinedKilled = FactionArgList[KilledFaction][1]
 		ItalicKilled = FactionArgList[KilledFaction][2]
@@ -125,7 +150,19 @@ def BadlionDeathTchatMessage(e):
 			if KillerKills == None :
 				KillerKills = 0
 			ActualisedKillerKills = int(KillerKills) ++ 1
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" was slain by ","color":"gray"},{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"},{"text":"[","color":"white"},{"text":"'+str(ActualisedKillerKills) +'","color":"white"},{"text":"]","color":"white"}]')
+
+			if NameKiller in SpecialList :
+				SpecialKiller = '{"text":"['+u'\u2764'+']","color":"light_purple"}'	
+
+			if e.npc.world.getTempdata().get("TeamSize") == 1 :
+				TeamColorKiller = "red"
+				UnderlinedKiller = "false"
+				ItalicKiller = "false"
+				UnderlinedKilled = "false"
+				ItalicKilled = "false"
+				TeamColorKilled = "green"
+
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"},{"text":"[","color":"white"},{"text":"'+str(ActualisedKillerKills) +'","color":"white"},{"text":"]","color":"white"}]')
 		except :
 			try :							 # If killed by a Player
 				NameKiller = e.source.getName()
@@ -138,36 +175,71 @@ def BadlionDeathTchatMessage(e):
 				AddingKillsToPlayer = KillerKills + 1
 				ActualisedKillerKills = int(KillerKills) ++ 1
 				e.npc.world.getStoreddata().put(str(NameKiller)+"Kills", AddingKillsToPlayer)
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" was slain by ","color":"gray"},{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"},{"text":"[","color":"white"},{"text":"'+str(ActualisedKillerKills) +'","color":"white"},{"text":"]","color":"white"}]')
+				if NameKiller in SpecialList :
+					SpecialKiller = '{"text":"['+u'\u2764'+']","color":"light_purple"}'	
+		
+				if e.npc.world.getTempdata().get("TeamSize") == 1 :
+					TeamColorKiller = "red"
+					UnderlinedKiller = "false"
+					ItalicKiller = "false"
+					UnderlinedKilled = "false"
+					ItalicKilled = "false"
+					TeamColorKilled = "green"
+
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"},{"text":"[","color":"white"},{"text":"'+str(ActualisedKillerKills) +'","color":"white"},{"text":"]","color":"white"}]')
 				InventorySpawn(e)
 				BleedingSweets(e)
-			except :				# If Killed by PvE
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" died in PvE ","color":"gray"}]')
+			except Exception as err:				# If Killed by PvE
+				#e.npc.world.broadcast(str(err))
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},'+SpecialKiller+',{"text":" died in PvE ","color":"gray"}]')
 				InventorySpawn(e)
 								
 def DeathTchatMessage(e):
+	'''Display chat message at death with custom colors depending on the killler and killed type and faction
+	
+		format : Killed was slain by Killer
+
+		TRIGGER : InventorySpawn(e)
+		
+		EXCEPTION : if no killer is found, "PVE" death message is diplayed instead
+	'''
 	if e.npc.world.getTempdata().get("BadlionKillsSystem") == False :
+		Special = '{"text":"","color":"light_purple"}'
+		SpecialKiller = '{"text":"","color":"light_purple"}'
+		SpecialList = ["Natsu91","Yvant2000Games","Frizou","iKowz","MASTEEKH","jdegoederen","reb_hi","Strykerss","Etoiles","xGokuuuh","Pikachu","TryHqrd_","_Mik0GODESS","SqndSt0rm","Divinity_Kirito","slooonay","Pxdro","Restump","Nardcoo","Ladak","VERSKUUUH","seltix_x","Pacoima","MarkiLokuras","Boosta","DANTEH","Rzmeur","GrzyLight","Mqyland_hi","Mentally","BiboyQG"]
 		NameKilled = e.npc.getDisplay().getName()				# Looking for own data
 		KilledFaction = e.npc.getFaction().getId()
 		UnderlinedKilled = "false"
 		UnderlinedKiller = "false"
 		ItalicKilled = "false"
 		ItalicKiller = "false"
-
+		if NameKilled in SpecialList :
+			Special = '{"text":"['+u'\u2764'+']","color":"light_purple"}'
 				
-		FactionArgList = [["green","false","false"],["green","false","false"],["blue","false","false"],["red","false","false"],["yellow","false","false"],["dark_gray","false","false"],["dark_blue","false","false"],["dark_red","false","false"],["dark_green","false","false"],["gold","false","false"],["aqua","false","false"],["light_purple","false","false"],["dark_aqua","false","false"],["dark_purple","false","false"],["green","false","true"],["blue","false","true"],["red","false","true"],["yellow","false","true"],["dark_gray","false","true"],["dark_blue","false","true"],["dark_red","false","true"],["dark_green","false","true"],["gold","false","true"],["aqua","false","true"],["light_purple","false","true"],["dark_aqua","false","true"],["dark_purple","false","true"]]
+		FactionArgList = [["green","false","false"],["green","false","false"],["blue","false","false"],["red","false","false"],["yellow","false","false"],["dark_gray","false","false"],["dark_blue","false","false"],["dark_red","false","false"],["dark_green","false","false"],["gold","false","false"],["aqua","false","false"],["light_purple","false","false"],["dark_aqua","false","false"],["dark_purple","false","false"],["green","false","true"],["blue","false","true"],["red","false","true"],["yellow","false","true"],["dark_gray","false","true"],["dark_blue","false","true"],["dark_red","false","true"],["dark_green","false","true"],["gold","false","true"],["aqua","false","true"],["light_purple","false","true"],["dark_aqua","false","true"],["white","false","false"]]
 		TeamColorKilled = FactionArgList[KilledFaction][0]
 		UnderlinedKilled = FactionArgList[KilledFaction][1]
 		ItalicKilled = FactionArgList[KilledFaction][2]
-			
+
 		try :											# If killed by a bot
 			KillerFaction = e.source.getFaction().getId()
 			NameKiller = e.source.getDisplay().getName()
 			TeamColorKiller = FactionArgList[KillerFaction][0]
 			UnderlinedKiller = FactionArgList[KillerFaction][1]
 			ItalicKiller = FactionArgList[KillerFaction][2]
-				
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" was slain by ","color":"gray"},{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"}]')
+
+			if NameKiller in SpecialList :
+				SpecialKiller = '{"text":"['+u'\u2764'+']","color":"light_purple"}'	
+
+			if e.npc.world.getTempdata().get("TeamSize") == 1 :
+				TeamColorKiller = "white"
+				UnderlinedKiller = "false"
+				ItalicKiller = "false"
+				UnderlinedKilled = "false"
+				ItalicKilled = "false"
+				TeamColorKilled = "white"
+
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"}]')
 		except :
 			try :							 # If killed by a Player
 				NameKiller = e.source.getName()
@@ -180,14 +252,28 @@ def DeathTchatMessage(e):
 				AddingKillsToPlayer = KillerKills + 1
 				ActualisedKillerKills = int(KillerKills) ++ 1
 				e.npc.world.getStoreddata().put(str(NameKiller)+"Kills", AddingKillsToPlayer)
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" was slain by ","color":"gray"},{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"}]')
+
+				if NameKiller in SpecialList :
+					SpecialKiller = '{"text":"['+u'\u2764'+']","color":"light_purple"}'	
+
+				if e.npc.world.getTempdata().get("TeamSize") == 1 :
+					TeamColorKiller = "white"
+					UnderlinedKiller = "false"
+					ItalicKiller = "false"
+					UnderlinedKilled = "false"
+					ItalicKilled = "false"
+					TeamColorKilled = "white"
+
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"}]')
 				InventorySpawn(e)
 				BleedingSweets(e)
 			except :				# If Killed by PvE
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" died in PvE ","color":"gray"}]')
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(NameKilled)+'","color":"'+str(TeamColorKilled)+'","underlined":"'+str(UnderlinedKilled)+'","italic":"'+str(ItalicKilled)+'"},{"text":" died in PvE ","color":"gray"}]')
 				InventorySpawn(e)
 
 def VanillaDeathStyle(e):
+	'''Cancel the display of bot's armor if he die, to make it looks like player, or despawn it instantly, depending on the UHC rules
+	'''
 	if e.npc.world.getTempdata().get("VanillaDeathStyle") == True :	# Clearing Npc's armor before he die to show only his skin
 		e.npc.getInventory().setArmor(0, None)
 		e.npc.getInventory().setArmor(1, None)
@@ -200,6 +286,8 @@ def VanillaDeathStyle(e):
 		pass
 
 def HeadPost(e):
+	'''Spawn a head on a fence at the location of the death of the bot
+	'''
 	try:
 		e.source.getName()
 		if e.npc.world.getTempdata().get("GoldenHeads") == True :
@@ -209,6 +297,8 @@ def HeadPost(e):
 		pass
 
 def ExplodeOnDeath(e):
+	'''Display an explosion at the location of the death of the bot
+	'''
 	if e.npc.world.getTempdata().get("ExplodeOnDeath") == True :
 		e.npc.world.explode(e.npc.getX(),e.npc.getY()+1,e.npc.getZ(),0, False, False)
 
@@ -217,7 +307,38 @@ def ExplodeOnDeath(e):
 
 #ON KILL ONLY functions :	
 
+def UpdateStackedList(e):                                          # Setting stacked list
+    '''Update the global list of the bots who are considered as "Stacked" to prevent them from fighting
+
+        Automatically limit to 10 bots, also push and pop herself if more stacked bots enter the list.
+    '''
+    if e.npc.world.getTempdata().get("TeamAliveLimit") >= 12:			# Prevent 'everynoe alive is stacked" problem
+        MaxLimit = 10
+    else:
+        MaxLimit = 5
+
+    Kills = e.npc.getStoreddata().get("Kills")
+    List = e.npc.world.getTempdata().get("StackedList")
+    if Kills >= 4 :            
+        try:
+            List.remove([str(e.npc.getDisplay().getName()), str(int(Kills)-1)])
+            List.append([str(e.npc.getDisplay().getName()), str(int(Kills))])
+
+        except:
+            if len(List) >= MaxLimit :
+                for i in range (0, len(List)):
+                    if Kills > List[i][1]:
+                        List.remove(List[i])
+                        List.append([str(e.npc.getDisplay().getName()), str(int(Kills))])
+                        i = len(List)
+            else:
+                List.append([str(e.npc.getDisplay().getName()), str(int(Kills))])
+    else:
+        pass
+
 def IronGolemSound(e):
+	'''Play the IronGolem death sound to the killer of the bot
+	'''
 	try :
 		IronGolemSound = e.npc.world.getTempdata().get("IronGolemSound")
 		NameKiller = e.source.getName()
@@ -230,6 +351,8 @@ def IronGolemSound(e):
 		pass
 
 def WitherSoundI(e):
+	'''Play the Wither death sound to the killer of the bot
+	'''
 	try :
 		IronGolemSound = e.npc.world.getTempdata().get("WitherSoundI")
 		NameKiller = e.source.getName()
@@ -242,6 +365,8 @@ def WitherSoundI(e):
 		pass	
 
 def WitherSoundII(e):
+	'''Play the Wither spawn sound to the killer of the bot
+	'''
 	try :
 		IronGolemSound = e.npc.world.getTempdata().get("WitherSoundII")
 		NameKiller = e.source.getName()
@@ -254,6 +379,8 @@ def WitherSoundII(e):
 		pass	
 
 def BadlionKillsSystem(e):
+	'''Count every kills the bot make to be displayed in the BadlionDeathMessage(e)
+	'''
 	Name = e.npc.getDisplay().getName()
 	Kills = e.npc.getStoreddata().get("Kills")
 	if Kills == None :
@@ -264,12 +391,17 @@ def BadlionKillsSystem(e):
 		e.npc.getStoreddata().put("Kills", Kills)
 
 def ScoreBoardUpdateI(e):
+	'''Count kills of the bot in the sidebar
+		- must have RedditUHCDisplay to True
+	'''
 	RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")
 	if RedditUHCDisplay == True :
 		Name = e.npc.getDisplay().getName()
 		e.npc.executeCommand('/scoreboard players add '+str(Name)+' Kills 1')
 
 def StuffUpgradeOnKill(e) :
+	'''Update armor and sword tier, and enchant levels like if he anvil-ed the stuff he looted on his kill
+	'''
 	try :
 		KillProt = e.entity.getStoreddata().get("Prot")
 		KillProj = e.entity.getStoreddata().get("Proj")
@@ -295,36 +427,44 @@ def StuffUpgradeOnKill(e) :
 				e.npc.getInventory().setArmor(0,e.npc.world.createItem("minecraft:diamond_helmet",0,1))
 				e.npc.getStoreddata().put("Prot", KillProt[0])
 				e.npc.getStoreddata().put("Proj", KillProj[0])
-				ArmorList.replace("4", "1")
+				ArmorList = ArmorList.replace("4", "1")
 			else :
-				ArmorList.replace("6", "0")
+				ArmorList = ArmorList.replace("4", "0")
+		else:
+			ArmorList = ArmorList.replace("4", "1")
 
 		if (e.npc.getInventory().getArmor(1).getDisplayName() == "Iron Chestplate"): 
 			if (KillStuff[1] == "1"):
 				e.npc.getInventory().setArmor(1,e.npc.world.createItem("minecraft:diamond_chestplate",0,1))
 				e.npc.getStoreddata().put("Prot", KillProt[1])
 				e.npc.getStoreddata().put("Proj", KillProj[1])
-				ArmorList.replace("5", "1")
+				ArmorList = ArmorList.replace("5", "1")
 			else :
-				ArmorList.replace("6", "0")
+				ArmorList = ArmorList.replace("5", "0")
+		else:
+			ArmorList = ArmorList.replace("5", "1")
 
 		if (e.npc.getInventory().getArmor(2).getDisplayName() == "Iron Leggings"):
 			if (KillStuff[2] == "1"):
 				e.npc.getInventory().setArmor(2,e.npc.world.createItem("minecraft:diamond_leggings",0,1))
 				e.npc.getStoreddata().put("Prot", KillProt[2])
 				e.npc.getStoreddata().put("Proj", KillProj[2])
-				ArmorList.replace("6", "1")
+				ArmorList = ArmorList.replace("6", "1")
 			else :
-				ArmorList.replace("6", "0")
+				ArmorList = ArmorList.replace("6", "0")
+		else :
+			ArmorList = ArmorList.replace("6", "1")
 
 		if (e.npc.getInventory().getArmor(3).getDisplayName() == "Iron Boots"):
 			if (KillStuff[3] == "1"):
 				e.npc.getInventory().setArmor(3,e.npc.world.createItem("minecraft:diamond_boots",0,1))
 				e.npc.getStoreddata().put("Prot", KillProt[3])
 				e.npc.getStoreddata().put("Proj", KillProj[3])
-				ArmorList.replace("7", "1")
+				ArmorList = ArmorList.replace("7", "1")
 			else :
-				ArmorList.replace("7", "0")
+				ArmorList = ArmorList.replace("7", "0")
+		else:
+			ArmorList = ArmorList.replace("7", "1")
 
 		if (e.npc.getStoreddata().get("TickForUpgrade") == None) or (e.npc.getStoreddata().get("TickForUpgrade") == "0"):
 			e.npc.getStoreddata().put("TickForUpgrade", "1") 
@@ -355,7 +495,7 @@ def StuffUpgradeOnKill(e) :
 			Sword.pop(1)
 			Sword.insert(1, "1")
 
-		
+
 		
 		ProtList = "/".join(MyProt)
 		ProjList = "/".join(MyProj)
@@ -367,11 +507,14 @@ def StuffUpgradeOnKill(e) :
 		e.npc.getStoreddata().put("Sword", SwordList)
 		Gap = e.npc.getTempdata().get("GapCount")
 		if Gap != None :
-			Gap += 10
 			try:
-				Gap += e.entity.getTempdata().get("Gap")
+				Gap += e.entity.getTempdata().get("GapCount")
+				if e.entity.getTempdata().get("GapCount") == 0:
+					Gap += 3
 			except:
-				Gap += 5
+				Gap += 6
+			if Gap >= 128 :
+				Gap = 220
 			e.npc.getTempdata().put("GapCount", Gap)
 		else :
 			e.npc.getTempdata().put("GapCount", 8)
@@ -386,6 +529,8 @@ def StuffUpgradeOnKill(e) :
 		pass
 
 def ThunderStrike(e):
+	'''Display a thunder ABOVE the kill to avoid item burning or insta-killing killer
+	'''
 	ThunderActivated = e.npc.world.getTempdata().get("ThunderStrike")
 	if ThunderActivated == True :
 		X = e.npc.getX()
@@ -394,6 +539,8 @@ def ThunderStrike(e):
 		e.npc.world.thunderStrike(X, Y+5, Z)
 
 def UpdateAggro(e):
+	'''Update the team aggro by 1
+	'''
 	e.npc.world.getStoreddata().put(str(e.npc.getFaction().getId())+"Aggro", str(int(e.npc.world.getStoreddata().get(str(e.npc.getFaction().getId())+"Aggro"))+1))
 
 
@@ -401,45 +548,47 @@ def UpdateAggro(e):
 #SCENARIOS functions :				
 
 def AbsoLess(e):
+	'''Remove absorption effect every tick to everyone
+	'''
 	if e .npc.world.getTempdata().get("AbsoLess") == True :
 		e.npc.executeCommand("/effect @a minecraft:absorption 0")
 
-def MasterLevel(e):
-	MasterLevelOn = e.npc.world.getTempdata().get("MasterLevel")
-	if MasterLevelOn == True:
-		e.npc.executeCommand("/xp 1000l @a")
-
-def CatEyes(e):
-	CatEyesOn = e.npc.world.getTempdata().get("CatEyes")
-	if CatEyesOn == True :
-		e.npc.executeCommand('/effect @a minecraft:night_vision 1000000 0 true')
-
 def SuperHeroes(e):
+	'''Give a random effect to the bot, choosing between :
+		- Resistance II
+		- Speed I
+		- Strength I
+		- Double Health
+		- Jump Boost IV
+	'''
 	SheroesOn = e.npc.world.getTempdata().get("SuperHeroes")
-	PowerList = random.randint(1, 6)
-	if SheroesOn == True :
-		if PowerList == 1 :
-			e.npc.addPotionEffect(11, 100000, 1, True)
-		elif PowerList == 2 :
-			e.npc.addPotionEffect(1, 100000, 0, True)
-		elif PowerList == 3 :
-			e.npc.addPotionEffect(5, 100000, 0, True)
-		elif PowerList == 4 :
-			e.npc.addPotionEffect(21, 100000, 4, True)
-		elif PowerList == 5 :
-			e.npc.addPotionEffect(10, 100000, 0, True)
-		elif PowerList == 6 :
-			e.npc.addPotionEffect(21, 100000, 0, True)
-			e.npc.addPotionEffect(11, 100000, 0, True)
-			e.npc.addPotionEffect(1, 100000, 0, True)
+	if e.npc.getStoreddata().get("HasPower") != 1 :
+		PowerList = random.randint(1, 5)
+		if SheroesOn == True :
+			if PowerList == 1 :					# Resistance II
+				e.npc.addPotionEffect(11, 100000, 1, True)
+			elif PowerList == 2 :					# Speed I
+				e.npc.addPotionEffect(1, 100000, 0, True)
+			elif PowerList == 3 :					# Force I
+				e.npc.addPotionEffect(5, 100000, 0, True)
+			elif PowerList == 4 :					# Health Boost
+				e.npc.addPotionEffect(21, 100000, 4, True)
+			elif PowerList == 5 :					# Jump Boost
+				e.npc.addPotionEffect(8, 100000, 3, True)
+				e.npc.addPotionEffect(12, 100000, 0, True)
+			e.npc.getStoreddata().put("HasPower", 1)
 
 def DoubleHealth(e):
+	'''Add 10 max hearths to the bot
+	'''
 	DoubleHealth = e.npc.world.getTempdata().get("DoubleHealth")
 	if DoubleHealth == True :
 		e.npc.getStats().setMaxHealth(40)
 		e.npc.setHealth(40)
 
 def BookCeption(e):
+	'''Spawn a randomly enchanted book at death
+	'''
 	BookCeption = e.npc.world.getTempdata().get("BookCeption")
 	if BookCeption == True :
 		Tier4 = ["16","0","1","17","3","32","48","2","4","18"]
@@ -464,6 +613,8 @@ def BookCeption(e):
 			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:403,Count:1,tag:{StoredEnchantments:[{id:"+str(randomBook)+",lvl:"+str(randomLevel)+"}]}}}")
 
 def OneShot(e):
+	'''Set bot HP to 1 with no healing
+	'''
 	OneShot = e.npc.world.getTempdata().get("OneShot")
 	if OneShot == True :
 		e.npc.setHealth(1)
@@ -471,16 +622,26 @@ def OneShot(e):
 		e.npc.getTempdata().put("GapCount", 0)
 	
 def BleedingSweets(e):
-	BleedingSweets = e.npc.world.getTempdata().get("BleedingSweets")
-	if BleedingSweets == True :
-		BleedingDiamond = e.npc.world.getTempdata().get("BleedingDiamond")
-		BleedingIron = e.npc.world.getTempdata().get("BleedingIron")
-		BleedingGold = e.npc.world.getTempdata().get("BleedingGold")
-		e.npc.executeCommand("/summon Item ~+0.35 ~ ~+0.35 {Item:{id:264,Damage:0,Count:"+str(BleedingDiamond)+"}}")
-		e.npc.executeCommand("/summon Item ~-0.35 ~ ~-0.35 {Item:{id:265,Damage:0,Count:"+str(BleedingIron)+"}}")
-		e.npc.executeCommand("/summon Item ~-0.35 ~ ~+0.35 {Item:{id:266,Damage:0,Count:"+str(BleedingGold)+"}}")
+	'''Drop the configured amount of :
+		- diamonds
+		- gold
+		- iron
+	'''
+	try:
+		BleedingSweets = e.npc.world.getTempdata().get("BleedingSweets")
+		if BleedingSweets == True :
+			BleedingDiamond = e.npc.world.getTempdata().get("BleedingDiamond")
+			BleedingIron = e.npc.world.getTempdata().get("BleedingIron")
+			BleedingGold = e.npc.world.getTempdata().get("BleedingGold")
+			e.npc.executeCommand("/summon Item ~+0.35 ~ ~+0.35 {Item:{id:264,Damage:0,Count:"+str(BleedingDiamond)+"}}")
+			e.npc.executeCommand("/summon Item ~-0.35 ~ ~-0.35 {Item:{id:265,Damage:0,Count:"+str(BleedingIron)+"}}")
+			e.npc.executeCommand("/summon Item ~-0.35 ~ ~+0.35 {Item:{id:266,Damage:0,Count:"+str(BleedingGold)+"}}")
+	except:
+		pass
 		
 def MoleReveal(e):
+	'''Reveal the bot if he is a mole and join his new team
+	'''
 	Mole = e.npc.world.getTempdata().get("Mole")
 	if Mole == True :
 		TimeLimit = e.npc.getStoreddata().get("TimeLimit")
@@ -505,10 +666,12 @@ def MoleReveal(e):
 
 		if (e.npc.getStoreddata().get("ImMole") == 1) and (TimeLimit-100 <= e.npc.world.getTime() <= TimeLimit+100) and (e.npc.getStoreddata().get("Revealed") != 1):
 			e.npc.getStoreddata().put("Revealed", 1)
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Mole","color":"pink"},{"text":"] ","color":"gold"},{"text":"'+str(e.npc.getDisplay().getName())+'","color":"red"},{"text":" is a mole ! ","color":"gray"}]')
-			e.npc.setFaction(23)
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Mole","color":"light_purple"},{"text":"] ","color":"gold"},{"text":"'+str(e.npc.getDisplay().getName())+'","color":"red"},{"text":" is a mole ! ","color":"gray"}]')
+			e.npc.setFaction(27)
 
 def NoCleanUpActivation(e) :
+	'''Instantly give the configured amount of HP to the killer
+	'''
 	try:
 		NoCleanScenario = e.npc.world.getTempdata().get("NoCleanUpEnabled")
 		if NoCleanScenario == True :
@@ -521,6 +684,8 @@ def NoCleanUpActivation(e) :
 		pass
 
 def RodlessActivation(e):
+	'''Different reach attribution if RodLess is enabled
+	'''
 	if e.npc.getStoreddata().get("IsEating") != True :
 		SelectedType = e.npc.getTempdata().get("SelectedType")
 		Rodless = e.npc.world.getTempdata().get("Rodless")
@@ -558,15 +723,19 @@ def RodlessActivation(e):
 		e.npc.getStats().getMelee().setRange(0)
 
 
+
 #INIT GAME functions :
 
 def SettingEntity(e):
+	"""
+	Generate a bot with a tier, a skin, a cape, and a name depending of the lists and the config
+	"""
 	import random
 	Name = e.npc.getDisplay().getName()
 	GameStarted = e.npc.world.getTempdata().get("GameStarted")
 	tick = 0
 	try :
-		if (GameStarted == 1) and (Name == "Disabled") :
+		if (GameStarted == 1) and ((Name == "Disabled") or (Name == "-") or (Name == "") or (Name == "None") or (Name == " ")):
 
 			ChoosingList = ["NoobTier","CasualTier","CommonTier","GoodTier","ProTier","UHCEliteTier"]
 
@@ -583,49 +752,76 @@ def SettingEntity(e):
 			if len(e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier"))) == 0:
 				ChoosingList.remove("UHCEliteTier")
 
-			a = random.choice(ChoosingList)
+			Level = random.choice(ChoosingList)
 				
 			if (e.npc.world.getTempdata().get("ForcedType") == True) and (len(e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier"))) != 0 ):
-				a = "UHCEliteTier" 
+				Level = "UHCEliteTier" 
 
 
 
-			e.npc.getTempdata().put("SelectedType", a)
-			SelectedName = random.choice(e.npc.world.getTempdata().get("NameTier"+str(a)))
-			NameList = e.npc.world.getTempdata().get("NameTier"+str(a))
-			NameList.remove(SelectedName)
-			e.npc.world.getTempdata().put("NameTier"+str(a),NameList)
+			e.npc.getTempdata().put("SelectedType", Level)
+			SelectedName = random.choice(e.npc.world.getTempdata().get("NameTier"+str(Level)))
+			AllowedList = ["_"]
+			if not SelectedName in e.npc.world.getTempdata().get("AlreadyTaken") :
+				NameList = e.npc.world.getTempdata().get("NameTier"+str(Level))
+				NameList.remove(SelectedName)
+				e.npc.world.getTempdata().put("NameTier"+str(Level),NameList)
 
-			if a in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
-				Random = random.randint(1, 71)
-				e.npc.getDisplay().setName(str(SelectedName))
-				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
+				if Level in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
+					Random = random.randint(1, 71)
+					SelectedName = list(SelectedName)
+					for i in range(0, len(SelectedName)):
+						if (SelectedName[i].isalnum() == True) or (SelectedName[i] in AllowedList):
+							pass
+						else:
+							SelectedName.pop(i)
+					SelectedName = "".join(SelectedName)
+					e.npc.getDisplay().setName(str(SelectedName))
+					e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
 
-			else :
-				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+SelectedName+'.png')
-				e.npc.getDisplay().setName(str(SelectedName))
+				else :
+					e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+SelectedName+'.png')
+					SelectedName = list(SelectedName)
+					for i in range(0, len(SelectedName)):
+						if (SelectedName[i].isalnum() == True) or (SelectedName[i] in AllowedList):
+							pass
+						else:
+							SelectedName.pop(i)
+					SelectedName = "".join(SelectedName)
+					e.npc.getDisplay().setName(str(SelectedName))
 
-			RandomForCape = random.randint(1, 3)
-			if RandomForCape == 3:
-				RandomCape = random.randint(1, 35)
-				e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
+				RandomForCape = random.randint(1, 3)
+				if RandomForCape == 3:
+					RandomCape = random.randint(1, 35)
+					e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
 
-			if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
-			else :
+				if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
+					e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
+				else :
+					pass
+			else:
 				pass
-	except:
+	except Exception as err:
+		#e.npc.world.broadcast(str(err))
 		e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")-1)
-		e.npc.world.broadcast("Deleting because of NoName " + str(e.npc.world.getStoreddata().get("Players")))
 		TeamReduction(e)
 		e.npc.despawn()
 
 def SettingArmor(e) :
+	"""
+	Initialize the bot armor display + enchants
+	"""
 	if e.npc.getInventory().getArmor(0) == None :
 		DiamondProbability = e.npc.world.getTempdata().get("DiamondProbability")
+		EnchantProbability = e.npc.world.getTempdata().get("EnchantProbability")
 		PartList = ["_helmet","_chestplate","_leggings","_boots"]
 		FireAspectAllowed = e.npc.world.getTempdata().get("FireAspectAllowed")
 		ArcticMeta = e.npc.world.getTempdata().get("ArcticMeta")
+
+		MaxProt = e.npc.world.getTempdata().get("MaxProt")
+		MaxGap = e.npc.world.getTempdata().get("MaxGap")
+		MaxSharp = e.npc.world.getTempdata().get("MaxSharp")
+
 		ProtList = []			# The protection enchant list
 		ProjList = []			# The projectile protection enchant list
 		ArmorList = []			# The Armor material list
@@ -638,29 +834,33 @@ def SettingArmor(e) :
 		PowerArcticList = [1,1,2,2,2,3,3,3,3,4,4,5]
 
 
-
 		for i in range(0,4):
 			if e.npc.getInventory().getArmor(i) == None :
-				if random.randint(0, 100) >= int(DiamondProbability) :										# Random between 1 - Max to know if it is a diamond piece or a iron piece
+				if random.randint(0, 100) >= int(DiamondProbability) :										# Random between 1 - 100 to know if it is a diamond piece or a iron piece
 					e.npc.getInventory().setArmor(i,e.npc.world.createItem("minecraft:iron"+str(PartList[i]),0,1))
 					ArmorList.append("0")
 				else :
 					e.npc.getInventory().setArmor(i,e.npc.world.createItem("minecraft:diamond"+str(PartList[i]),0,1))
 					ArmorList.append("1")
+
 				if ArcticMeta == True :
-					pass
-					#if random.randint(0, 5) == 5 :
-						#ProjList.append(str(random.randint(1,2)))									# Enchanting it randomly
+					if random.randint(1, 4) == 2:
+						ProjList.append(str(random.randint(1,MaxProt)))	
+						ProtList.append("0")								# Enchanting it randomly
+					else :
+						ProtList.append(str(random.randint(1,MaxProt)))
+						ProjList.append("0")
 				else :
-					ProtList.append(str(random.randint(1,2)))
+					ProtList.append(str(random.randint(1,MaxProt)))
 					ProjList.append("0")
+
 
 		if e.npc.getInventory().getRightHand() == None :
 			if random.randint(0, 100) >= int(DiamondProbability) :
 				e.npc.getInventory().setRightHand(e.npc.world.createItem("minecraft:iron_sword",0,1))
 			else :
 				e.npc.getInventory().setRightHand(e.npc.world.createItem("minecraft:diamond_sword",0,1))
-			SwordList.append(str(random.randint(3,4)))						# Giving a sharpness enchant
+			SwordList.append(str(random.randint(3,MaxSharp)))						# Giving a sharpness enchant
 			if FireAspectAllowed == True :									# And a fire one if allowed
 				if random.randint(0,10) == 10 :
 					SwordList.append("1")
@@ -678,6 +878,20 @@ def SettingArmor(e) :
 			else :
 				BowList.append(str(random.choice(PowerList)))
 			
+
+		if random.randint(0, 100) <= int(EnchantProbability) :
+			IsEnchanted = True
+		else:
+			IsEnchanted = False
+			ProjList = ["0","0","0","0"]
+			BowList = ["0","0","0","0"]
+			SwordList = ["0","0","0","0"]
+			ProtList = ["0","0","0","0"]
+
+		if e.npc.getTempdata().get("GapCount") == None:
+			e.npc.getTempdata().put("GapCount", random.randint(3, MaxGap))
+
+
 		ProtList = "/".join(ProtList)
 		ProjList = "/".join(ProjList)
 		SwordList = "/".join(SwordList)
@@ -692,6 +906,11 @@ def SettingArmor(e) :
 		e.npc.getTempdata().put("WaterRemaining", random.randint(1, 3))
 
 def SettingResistance(e):
+	"""
+	Calculation of resistance melee/arrow depending of the armor and enchants the bot have.
+	Also set the melee damage
+	"""
+	
 	if e.npc.world.getTempdata().get("OneShot") != True :
 		# resistance melee du fer : 10 30 20 10 // Arrow : 5 20 20 5  // Degat : 9
 		# resistance melee du diamant : 12.5 40 25 12.5 // Arrow : 5  30 20 5 // Degat : 11
@@ -718,57 +937,57 @@ def SettingResistance(e):
 
 
 		if int(Armor[0]) == 1 :							# Diamond Helmet
-			ProtEffect = int(Prot[0]) * 0.012
-			ProjEffect = int(Proj[0]) * 0.02
-			MeleeResToSet += 0.13 + ProtEffect
-			ProjToSet += 0.15 + ProjEffect
-		else :
-			ProtEffect = int(Prot[0]) * 0.012
+			ProtEffect = int(Prot[0]) * 0.01
 			ProjEffect = int(Proj[0]) * 0.02
 			MeleeResToSet += 0.1 + ProtEffect
+			ProjToSet += 0.15 + ProjEffect
+		else :
+			ProtEffect = int(Prot[0]) * 0.01
+			ProjEffect = int(Proj[0]) * 0.01
+			MeleeResToSet += 0.08 + ProtEffect
 			ProjToSet += 0.1 + ProjEffect
 		
 
 		if int(Armor[1]) == 1 :							# Diamond Chestplate
-			ProtEffect = int(Prot[1]) * 0.012
+			ProtEffect = int(Prot[1]) * 0.01
 			ProjEffect = int(Proj[1]) * 0.02
-			MeleeResToSet += 0.33 + ProtEffect
+			MeleeResToSet += 0.4 + ProtEffect
 			ProjToSet += 0.3 + ProjEffect
 		else :
-			ProtEffect = int(Prot[1]) * 0.012
-			ProjEffect = int(Proj[1]) * 0.02
+			ProtEffect = int(Prot[1]) * 0.01
+			ProjEffect = int(Proj[1]) * 0.01
 			MeleeResToSet += 0.3 + ProtEffect
 			ProjToSet += 0.2 + ProjEffect
 
 
 		if int(Armor[2]) == 1 :							# Diamond Leggings
-			ProtEffect = int(Prot[2]) * 0.012
+			ProtEffect = int(Prot[2]) * 0.005
 			ProjEffect = int(Proj[2]) * 0.02
-			MeleeResToSet += 0.22 + ProtEffect
+			MeleeResToSet += 0.2 + ProtEffect
 			ProjToSet += 0.15 + ProjEffect
 		else :
-			ProtEffect = int(Prot[2]) * 0.012
-			ProjEffect = int(Proj[2]) * 0.02
-			MeleeResToSet += 0.19 + ProtEffect
+			ProtEffect = int(Prot[2]) * 0.01
+			ProjEffect = int(Proj[2]) * 0.01
+			MeleeResToSet += 0.17 + ProtEffect
 			ProjToSet += 0.2 + ProjEffect
 
 
 		if int(Armor[3]) == 1 :							# Diamond Boots
-			ProtEffect = int(Prot[3]) * 0.012
-			ProjEffect = int(Proj[3]) * 0.02
-			MeleeResToSet += 0.13 + ProtEffect
-			ProjToSet += 0.15 + ProjEffect
-		else :
-			ProtEffect = int(Prot[3]) * 0.012
+			ProtEffect = int(Prot[3]) * 0.01
 			ProjEffect = int(Proj[3]) * 0.02
 			MeleeResToSet += 0.1 + ProtEffect
+			ProjToSet += 0.15 + ProjEffect
+		else :
+			ProtEffect = int(Prot[3]) * 0.01
+			ProjEffect = int(Proj[3]) * 0.01
+			MeleeResToSet += 0.08 + ProtEffect
 			ProjToSet += 0.1 + ProjEffect
 
 
 		MeleeResToSet += 1
 		ProjToSet += 1
 
-		if MeleeResToSet >= 2 :
+		if MeleeResToSet >= 1.96 :
 			MeleeResToSet = 1.96
 
 		e.npc.getStats().setResistance(0, (MeleeResToSet))
@@ -786,77 +1005,103 @@ def SettingResistance(e):
 			DamageToSet = 6 + int(SwordEffect)
 
 		e.npc.getStats().getMelee().setStrength(DamageToSet)
+		
 	else :
 		e.npc.getStats().setResistance(0, -1)
 		e.npc.getStats().setResistance(1, -1)
 		e.npc.getStats().getMelee().setStrength(100)
 
 def SettingEntityForced(e):
+	"""
+	Same as SettingEntity(e) but with a already choosen name, contained in the teams.txt file
+	"""
 	try:
 		GameStarted = e.npc.world.getTempdata().get("GameStarted")
-		if (e.npc.getDisplay().getName() == "Disabled") and (e.npc.world.getTempdata().get("AllyTeam")) != str("None"):
-			TeamListHere = e.npc.world.getTempdata().get("AllyTeam")
+		Name = e.npc.getDisplay().getName()		
+		if ((GameStarted == 1) and ((Name == "Disabled"))) or ((e.npc.getDisplay().getName() == "Disabled") and (e.npc.world.getTempdata().get("26Team")) != str("None") and (e.npc.getFaction().getId() == 26)):
+			TeamListHere = e.npc.world.getTempdata().get(str(int(e.npc.getFaction().getId()))+"Team")
 			try:
 				NameHere = TeamListHere.split("//")
 			except:
 				pass
 			NameNow = str(NameHere[0])
-			e.npc.getDisplay().setName(str(NameHere[0]))
-			NameHere.pop(0)
+			if (NameNow == '') and (e.npc.getFaction().getId() == 26):
+				e.npc.despawn()
+			if ((NameNow != "Disabled") and (NameNow != "-")) and (not str(NameNow) in e.npc.world.getTempdata().get("ListOfTakenNames")):
+				e.npc.getDisplay().setName(str(NameNow))
+				NameHere.pop(0)
+				NameHere = "//".join(NameHere)
 
+				GlobalNamesList = e.npc.world.getTempdata().get("ListOfTakenNames")						#Prevent duplicated players
+				if GlobalNamesList != None:
+					GlobalNamesList.append(str(NameNow))
+				else:
+					GlobalNamesList = [str(NameNow),""]
 
-			if NameNow in e.npc.world.getTempdata().get("NameTier"+str("NoobTier")):
-				a = "NoobTier"
-			elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("CasualTier")):
-				a = "CasualTier"
-			elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("CommonTier")):
-				a = "CommonTier"
-			elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("GoodTier")):
-				a = "GoodTier"
-			elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("ProTier")):
-				a = "ProTier"
-			elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier")):
-				a = "UHCEliteTier"
+				e.npc.world.getTempdata().put("ListOfTakenNames", GlobalNamesList)
+				e.npc.world.getTempdata().put(str(int(e.npc.getFaction().getId()))+"Team", NameHere)
 
+				if NameNow in e.npc.world.getTempdata().get("NameTier"+str("NoobTier")):
+					Level = "NoobTier"
+				elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("CasualTier")):
+					Level = "CasualTier"
+				elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("CommonTier")):
+					Level = "CommonTier"
+				elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("GoodTier")):
+					Level = "GoodTier"
+				elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("ProTier")):
+					Level = "ProTier"
+				elif NameNow in e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier")):
+					Level = "UHCEliteTier"
+
+				else:
+					Level = "CommonTier"
+
+				if Level == "UHCEliteTier" or Level == "ProTier" :
+					if e.npc.world.getStoreddata().get(str(e.npc.getFaction().getId())+"Aggro") == None :
+						e.npc.world.getStoreddata().put(str(e.npc.getFaction().getId())+"Aggro", 1)
+				else:
+					if e.npc.world.getStoreddata().get(str(e.npc.getFaction().getId())+"Aggro") == None :
+						e.npc.world.getStoreddata().put(str(e.npc.getFaction().getId())+"Aggro", 0)
+
+				NameList = e.npc.world.getTempdata().get("NameTier"+str(Level))
+				try:
+					NameList.remove(NameNow)
+				except:
+					pass
+				e.npc.world.getTempdata().put("NameTier"+str(Level),NameList)
+
+				e.npc.getTempdata().put("SelectedType", Level)
+
+				if Level in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
+					Random = random.randint(1, 71)
+					e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
+
+				else :
+					e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+NameNow+'.png')
+
+				RandomForCape = random.randint(1, 3)
+				if RandomForCape == 3:
+					RandomCape = random.randint(1, 25)
+					e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
+
+				if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
+					e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
+				else :
+					pass	
 			else:
-				a = "CommonTier"
-
-			if a == "UHCEliteTier" or a == "ProTier" :
-				if e.npc.world.getStoreddata().get("26Aggro") == None :
-					e.npc.world.getStoreddata().put("26Aggro", 1)
-			else:
-				e.npc.world.getStoreddata().put("26Aggro", e.npc.world.getStoreddata().get(str(e.npc.getFaction().getId())+"26Aggro")+1)
-
-			NameList = e.npc.world.getTempdata().get("NameTier"+str(a))
-			NameList.remove(NameNow)
-			e.npc.world.getTempdata().put("NameTier"+str(a),NameList)
-
-			e.npc.getTempdata().put("SelectedType", a)
-			if a in ["NoobTier","CasualTier","CommonTier","GoodTier"] :
-				Random = random.randint(1, 71)
-				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/Random'+str(Random)+'.png')
-
-			else :
-				e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/'+NameNow+'.png')
-
-			RandomForCape = random.randint(1, 3)
-			if RandomForCape == 3:
-				RandomCape = random.randint(1, 25)
-				e.npc.getDisplay().setCapeTexture('minecraft:textures/cloak/'+str(RandomCape)+'.png')
-			if e.npc.world.getTempdata().get("ScatterMessageEnabled") == True :
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Scatter","color":"blue"},{"text":"] ","color":"gold"},{"text":"Scattered ","color":"dark_red"},{"text":"'+str(SelectedName)+'","color":"gray"}]')
-			else :
-				pass	
-
-			NameHere = "//".join(NameHere)
-			e.npc.world.getTempdata().put("AllyTeam", NameHere)
-		else:
+				SettingEntity(e)
+		elif (Name == "-"):
 			SettingEntity(e)	
-			
-	except Exception as ee:
-		e.npc.despawn()
+	
+	except Exception as err:
+		#e.npc.say(str(err))
+		pass
 
 def ActualisingTeamMembers(e):
+	"""
+	Send team members of every teams in the global list 
+	"""
 	GameRunning = e.npc.world.getTempdata().get("GameRunning")
 	if GameRunning == 1 :
 		Name = e.npc.getDisplay().getName()
@@ -878,27 +1123,34 @@ def ActualisingTeamMembers(e):
 				e.npc.getStoreddata().put("IDPosted", 1)
 
 def ScoreBoardUpdateIII(e):
-
-	FactionID = e.npc.getFaction().getId()
-	Name = e.npc.getDisplay().getName()
-	if FactionID == 0 or FactionID == 1 :
-		e.npc.executeCommand('/scoreboard teams join green '+str(Name)+'')
-	if FactionID == 2 or FactionID == 3 :
-		e.npc.executeCommand('/scoreboard teams join blue '+str(Name)+'')
-	if FactionID == 4 or FactionID == 5 :
-		e.npc.executeCommand('/scoreboard teams join red '+str(Name)+'')
-	if FactionID == 6 or FactionID == 7 :
-		e.npc.executeCommand('/scoreboard teams join gold '+str(Name)+'')
-	if FactionID == 8 or FactionID == 9 :
-		e.npc.executeCommand('/scoreboard teams join aqua '+str(Name)+'')
-	if FactionID == 10 or FactionID == 11 :
-		e.npc.executeCommand('/scoreboard teams join dark_green '+str(Name)+'')
-	if FactionID == 12 or FactionID == 13 :
-		e.npc.executeCommand('/scoreboard teams join purple '+str(Name)+'')
-	if FactionID == 14 or FactionID == 15 :
-		e.npc.executeCommand('/scoreboard teams join yellow '+str(Name)+'')
+	"""
+	Make every bot join the right scoreboard team depending of his faction
+	Used to add color to sidebar when RedditUHCDisplay is true 
+	"""
+	if e.npc.world.getTempdata().get("TeamSize") != 1:
+		FactionID = e.npc.getFaction().getId()
+		Name = e.npc.getDisplay().getName()
+		if FactionID == 0 or FactionID == 1 :
+			e.npc.executeCommand('/scoreboard teams join green '+str(Name)+'')
+		if FactionID == 2 or FactionID == 3 :
+			e.npc.executeCommand('/scoreboard teams join blue '+str(Name)+'')
+		if FactionID == 4 or FactionID == 5 :
+			e.npc.executeCommand('/scoreboard teams join red '+str(Name)+'')
+		if FactionID == 6 or FactionID == 7 :
+			e.npc.executeCommand('/scoreboard teams join gold '+str(Name)+'')
+		if FactionID == 8 or FactionID == 9 :
+			e.npc.executeCommand('/scoreboard teams join aqua '+str(Name)+'')
+		if FactionID == 10 or FactionID == 11 :
+			e.npc.executeCommand('/scoreboard teams join dark_green '+str(Name)+'')
+		if FactionID == 12 or FactionID == 13 :
+			e.npc.executeCommand('/scoreboard teams join purple '+str(Name)+'')
+		if FactionID == 14 or FactionID == 15 :
+			e.npc.executeCommand('/scoreboard teams join yellow '+str(Name)+'')
 
 def SettingInitialKills(e):
+	"""
+	Initialize kills to 0 
+	"""
 	Kills = e.npc.getStoreddata().get("Kills")
 	if Kills == None :
 		e.npc.getStoreddata().put("Kills", 0)
@@ -908,7 +1160,34 @@ def SettingInitialKills(e):
 
 #TEAMER BOTS ONLY functions :
 
+def SharingArmor(e):
+	try:
+		Sword = e.npc.getStoreddata().get("Sword")
+		Armor = e.npc.getStoreddata().get("Armor")
+		Armor = Armor.split("/")
+
+		FactionID = e.npc.getFaction().getId()
+		if FactionID == 26 :
+			Teaming(e)
+			for i in range(0, 4):
+				ArmorToGet = ["helmet",'chestplate',"leggings",'boots']
+				if (e.player.getHeldItem().getName() == "minecraft:diamond_"+str(ArmorToGet[i])) and (str(Armor[i]) == "0"):
+					Armor[i] = "1"
+					e.npc.getInventory().setArmor(i,e.npc.world.createItem("minecraft:diamond_"+str(ArmorToGet[i]),0,1))
+					e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Team","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(e.npc.getDisplay().getName())+'","color":"white"},{"text":":","color":"dark_gray"},{"text":" Thank ! ","color":"gray"}]')
+					Armor = "/".join(Armor)
+					e.npc.getStoreddata().put("Armor", Armor)
+					SettingResistance(e)
+		else :
+			pass
+	except:
+		pass
+
 def GappleSharing(e):
+	"""
+	Giving a golden_apple to the bot when you right click him, if he is in your team, and if you have a gap to give.
+	Display back the number of gap the bot have
+	"""
 	try:
 		FactionID = e.npc.getFaction().getId()
 		if FactionID == 26 :
@@ -916,31 +1195,73 @@ def GappleSharing(e):
 			if e.player.getHeldItem().getName() == "minecraft:golden_apple":
 				e.npc.getTempdata().put("GapCount", e.npc.getTempdata().get("GapCount")+1)
 				e.player.getHeldItem().setStackSize(e.player.getHeldItem().getStackSize()-1)
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Team","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(e.npc.getDisplay().getName())+'","color":"white"},{"text":":","color":"dark_gray"},{"text":" I have ","color":"gray"},{"text":"'+str(e.npc.getTempdata().get("GapCount"))+'","color":"dark_gray"},{"text":" golden apple","color":"gray"}]')
 		else :
 			pass
 	except:
 		pass
 		
 def KillingPlayer(e):
+	"""
+	Sending data to the Server bots to display player elimination message
+	"""
 	try :
 		e.npc.world.getTempdata().put(str(e.entity.getName()+"Killer"), [str(e.npc.getDisplay().getName()),str(e.npc.getFaction().getId()),str(e.npc.getStoreddata().get("Kills"))])
 	except:
 		pass
 		
 def Teaming(e):
-	Source = e.player.getMCEntity()
-	e.npc.getRole().setInfinite(1)
-	e.npc.getRole().setGuiDisabled(1)
-	e.npc.getRole().setOwner(Source)
+	"""
+	Making bots with faction ID = 26 follow the player that interacted with them
+	"""
+	if e.npc.getFaction().getId() == 26 :
+		Source = e.player.getMCEntity()
+		e.npc.getRole().setInfinite(1)
+		e.npc.getRole().setGuiDisabled(1)
+		e.npc.getRole().setOwner(Source)
+
+def AllyResistance(e):		#Not needed but just to prevent ez kill ally bot 
+	"""
+	Give Resistance II to Ally bots, to prevent them from dying easily
+	"""
+	if e.npc.getFaction().getId() == 26 :
+		e.npc.addPotionEffect(11, 100000, 0, False)
 
 
 
 #IN GAME functions :
 
+def NoStackedFights(e):                      # If target stacked avoid fight if stacked too
+	"""
+	Avoid fighting another stacked target, stacked = 4 Kills or more
+	"""
+	try:
+		if (int(e.npc.world.getStoreddata().get("TeamsAlive")) > 12 ) and (e.npc.world.getTempdata().get("TeamSize") == 1):
+			try:
+				if [str(e.npc.getAttackTarget().getDisplay().getName()), str(int(e.npc.getAttackTarget().getStoreddata().get("Kills")))] in e.npc.world.getTempdata().get("StackedList"):
+					e.npc.setAttackTarget(None)
+					ChooseZone(e)
+			except:
+				pass
+	except:
+		pass
+
+def ActualisingHealth(e):
+	'''Calculate the health of the bot with Absorption
+	'''
+	if e.npc.getStoreddata().get("AbsoDisplay") <= 0 :
+		e.npc.getStoreddata().put("AbsoDisplay", 0)
+	else:
+		e.npc.getStoreddata().put("AbsoDisplay", e.npc.getStoreddata().get("AbsoDisplay")-e.damage)
+
 def WeatherClear(e):
+	'''Clear weather
+	'''
 	e.npc.executeCommand("/weather clear")
 
 def WantToRod(e):
+	'''Regulate the use of the rod
+	'''
 	try:
 		if e.npc.world.getTempdata().get("Rodless") != True :
 			if e.npc.getStoreddata().get("IsEating") != True :
@@ -962,48 +1283,61 @@ def WantToRod(e):
 				if (6 <= Dist <= 9) and (random.randint(0, 5) == 0):
 					e.npc.getTempdata().put("NeedRod", e.npc.getTempdata().get("NeedRod")+1)
 			
-				if random.randint(0, 16) == 0 :
+				if random.randint(0, 20) == 0 :
 					e.npc.getTempdata().put("NeedRod", e.npc.getTempdata().get("NeedRod")+1)
 	except:		
 		pass
 
 def Rod(e):
-	if e.npc.world.getTempdata().get("OneShot") != True :
-		if e.npc.getTempdata().get("NeedRod") == None :
-			e.npc.getTempdata().put("NeedRod", 0)
+	'''Throw a snowball as a rod every tick
+	'''
+	if e.npc.world.getTempdata().get("Rodless") != True :
+		if e.npc.world.getTempdata().get("OneShot") != True :
+			if e.npc.getTempdata().get("NeedRod") == None :
+				e.npc.getTempdata().put("NeedRod", 0)
 
-		if e.npc.getTempdata().get("NeedRod") != 0 :
+			if e.npc.getTempdata().get("NeedRod") != 0 :
+				try:
+					Rotate = e.npc.getRotation()
+					if (e.npc.getTempdata().get("SelectedType") != "UHCEliteTier") or (e.npc.getTempdata().get("SelectedType") != "ProTier"):
+						Int = 100
+					else:
+						Int = 85
+					e.npc.shootItem(e.npc.getAttackTarget(),e.npc.world.createItem("minecraft:snowball",0,1), Int)
+					e.npc.getTempdata().put("NeedRod", (e.npc.getTempdata().get("NeedRod")-1))
+				except:
+					pass
+		else :
 			try:
 				Rotate = e.npc.getRotation()
-				e.npc.shootItem(e.npc.getAttackTarget(),e.npc.world.createItem("minecraft:snowball",0,1), 100)
-				e.npc.getTempdata().put("NeedRod", (e.npc.getTempdata().get("NeedRod")-1))
+				e.npc.getStats().getRanged().setStrength(150)
+				if e.npc.getTempdata().get("TickOneShot") == 1 :
+					e.npc.shootItem(e.npc.getAttackTarget(),e.npc.world.createItem("minecraft:arrow",0,1), 65)
+					e.npc.getTempdata().put("NeedRod", (e.npc.getTempdata().get("NeedRod")-1))
+					e.npc.getTempdata().put("TickOneShot", 0)
+				else :
+					e.npc.getTempdata().put("TickOneShot", 1)
 			except:
 				pass
-	else :
-		try:
-			Rotate = e.npc.getRotation()
-			e.npc.getStats().getRanged().setStrength(150)
-			if e.npc.getTempdata().get("TickOneShot") == 1 :
-				e.npc.shootItem(e.npc.getAttackTarget(),e.npc.world.createItem("minecraft:arrow",0,1), 65)
-				e.npc.getTempdata().put("NeedRod", (e.npc.getTempdata().get("NeedRod")-1))
-				e.npc.getTempdata().put("TickOneShot", 0)
-			else :
-				e.npc.getTempdata().put("TickOneShot", 1)
-		except:
-			pass
 
 def AntiFreeDeath(e):
+	'''Cancel lava-death
+	'''
 	Source = str(e.mcDamageSource)
 	Source = Source.split("@")
 	if (Source[0] == "net.minecraft.util.DamageSource") and (e.npc.getHealth() <= 8):
 		e.setCanceled(True)       
 
 def SwordDebug(e):
+	'''Prevent bots from loosing their sword
+	'''
 	if e.npc.getInventory().getRightHand() == None :
 		e.npc.getInventory().setRightHand(e.npc.world.createItem("minecraft:diamond_sword",0,1))
 		SettingResistance(e)
 
 def LifeMessageBow(e):
+	'''Send message to the shooter when he hit his target + play sound
+	'''
 	try:
 		Health = str(e.npc.getHealth() - e.damage)
 		Type = str(e.mcDamageSource)
@@ -1018,7 +1352,7 @@ def LifeMessageBow(e):
 		try :
 			Source = e.source.getName()
 			if Type[37] == "I" :
-				e.npc.executeCommand('/tellraw '+str(Source)+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Bow","color":"aqua"},{"text":"] ","color":"gold"},{"text":"'+str(Name)+'","color":"red"},{"text":" is now at ","color":"white"},{"text":"'+str(Health)+'","color":"dark_red"}]')
+				e.npc.executeCommand('/tellraw '+str(Source)+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color":"gold"},{"text":"Bow","color":"aqua"},{"text":"] ","color":"gold"},{"text":"'+str(Name)+'","color":"red"},{"text":" is now at ","color":"white"},{"text":"'+str(int(round(e.npc.getHealth()))+int(round(e.npc.getStoreddata().get("AbsoDisplay"))))+" "+u'\u2764'+'","color":"dark_red"}]')
 				e.npc.executeCommand('/playsound random.successful_hit '+str(Source)+' '+str(X)+' '+str(Y)+' '+str(Z)+' 1 0.5')
 		except:
 			pass
@@ -1026,6 +1360,8 @@ def LifeMessageBow(e):
 		pass
 
 def Strafing(e):
+	'''Make the bot strafe ( need a fix )
+	'''
 	try :
 		Level = e.npc.getTempdata().get("SelectedType") # Making the Npc strafe left or right with a timer and a side choosing script
 		if Level != "NoobTier" : 							# Only NoobTier doesnt strafe
@@ -1095,6 +1431,8 @@ def Strafing(e):
 	"""		
 	
 def Missing(e):
+	'''Make the bot fail a hit sometime depending on his tier
+	'''
 	SelectedType = e.npc.getTempdata().get("SelectedType")							# Just cancelling the damage event if the Npc fail his hit to simulate an human AIM, better the Npc is, lower his miss chances are.
 	if SelectedType == "CasualTier" :
 		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3]
@@ -1109,30 +1447,32 @@ def Missing(e):
 			e.setCanceled(True)
 
 	if SelectedType == "GoodTier" :
-		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3]
+		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3]
 		MissChance = random.choice(ReachList)
 		if MissChance == 3 :
 			e.setCanceled(True)
 
 	if SelectedType == "ProTier" :
-		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3]
+		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3]
 		MissChance = random.choice(ReachList)
 		if MissChance == 3 :
 			e.setCanceled(True)
 
 	if SelectedType == "UHCEliteTier" :
-		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3]
+		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3]
 		MissChance = random.choice(ReachList)
 		if MissChance == 3 :
 			e.setCanceled(True)
 
 	if SelectedType == "NoobTier" :
-		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3]
+		ReachList = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3]
 		MissChance = random.choice(ReachList)
 		if MissChance == 3 :
 			e.setCanceled(True)
 
 def Targeting(e):
+	'''Make the bot stop the chase if he is too far away
+	'''
 	if e.npc.getAttackTarget() != None :
 		
 		try:
@@ -1143,7 +1483,6 @@ def Targeting(e):
 				e.npc.setAttackTarget(None)
 		except:
 			pass
-
 	"""
 	TeamID = e.npc.getFaction().getId()
 	TeamList = e.npc.world.getStoreddata().get(str(TeamID))
@@ -1184,36 +1523,49 @@ def Targeting(e):
 					e.npc.setAttackTarget(NearestPlayers[i])
 	else :
 		pass
-		"""
+	"""
 
 def UsingWater(e):
+	'''Make the bot place water buckets
+	'''
 	WaterAllowed = e.npc.world.getTempdata().get("WaterAllowed")
-	if WaterAllowed == True and e.npc.getTempdata().get("WaterUsed") == None:			# Checking if the npc didnt spawned a water bucket already to avoid spamming water and create lags and annoying fights
+	if (WaterAllowed == True) and (e.npc.getTempdata().get("WaterUsed") == None) and (1 < e.npc.getHealth()):			# Checking if the npc didnt spawned a water bucket already to avoid spamming water and create lags and annoying fights
 
 		WaterRemaining = e.npc.getTempdata().get("WaterRemaining")
 
-		PosList = [e.npc.getX(),e.npc.getY(),e.npc.getZ()]
-		if ( WaterRemaining > 1):
+		PosList = [e.npc.getX(), e.npc.getY(), e.npc.getZ()]
+		if ( WaterRemaining > 1) and (random.randint(0, 3) == 0):
 			e.npc.executeCommand('/setblock ~ ~ ~ minecraft:water')					# Creating 2 water blocks to update the first and make the water flow
 			e.npc.executeCommand('/setblock ~ ~ ~+1 minecraft:water 1')
-			WaterRemaining -= 1
+			#WaterRemaining -= 1 Canceled right now
 			e.npc.getTempdata().put("WaterRemaining", WaterRemaining)
 			e.npc.getTempdata().put("WaterUsed", PosList)						# Saving the coordinates of the water in a Tempdata to clear it later
+			DeletingWater.TickerMax = 1
 
 def CancelFire(e):
+	'''Make the bot extinguish himself when on fire
+	'''
 	if e.npc.isBurning() == True :
-		if (random.randint(0, 5) == 0) and (e.npc.getTempdata().get("WaterUsed") == None):
+		if (random.randint(0, 3) == 0) and (e.npc.getTempdata().get("WaterUsed") == None) and (1 < e.npc.getHealth()):
 			e.npc.executeCommand('/setblock ~ ~ ~ minecraft:water')					# Creating 2 water blocks to update the first and make the water flow
 			e.npc.executeCommand('/setblock ~ ~ ~+1 minecraft:water 1')
 			PosList = [e.npc.getX(),e.npc.getY(),e.npc.getZ()]
 			e.npc.getTempdata().put("WaterUsed", PosList)
+			DeletingWater.TickerMax = 1
 
 def HealthDisplay(e):
+	'''Display the health of the bot with absorption
+	'''
 	Health = e.npc.getHealth()
-	LifeToDisplay = int(round(Health))
-	e.npc.getDisplay().setTitle(' ' + (str(LifeToDisplay) + " HP "))
+	if e.npc.getStoreddata().get("AbsoDisplay") == None :
+		LifeToDisplay = 0
+		e.npc.getStoreddata().put("AbsoDisplay", 0)
+
+	e.npc.getDisplay().setTitle("  "+str(int(round(e.npc.getHealth()))+int(round(e.npc.getStoreddata().get("AbsoDisplay"))))+" "+u'\u2764'+"  ")
 
 def UsingGap(e):
+	'''Make the bot use a golden_apple
+	'''
 	#e.npc.getTempdata().put("IsEating", False)
 	IsUsingGap = e.npc.getTempdata().get("IsUsingGap")
 	GapCount = e.npc.getTempdata().get("GapCount")
@@ -1239,9 +1591,12 @@ def UsingGap(e):
 		e.npc.executeCommand("/playsound customnpcs:gun.pistol.shot @a")				# Playing eating sound ( only if you have the right texture/sound pack )
 
 	if IsSlowed != -1 :										# Testing if he finished eating
-		if Timer == 2 :
+		if Timer == 3 :
 			e.npc.getStoreddata().put("IsEating", False)						# Allow his reach to change from 0 		( UpdatingReach(e) )
 			e.npc.addPotionEffect(10, 4, 1, False)						# Adding the 2 regeneration and absorption effects
+			e.npc.getStoreddata().put("AbsoDisplay", 4)												# Adding abso to display
+			
+
 			if e.npc.world.getTempdata().get('AbsoLess') != True :
 				e.npc.addPotionEffect(22, 120, 0, False)
 			e.npc.getInventory().setRightHand(e.npc.getTempdata().get("SwordItem"))				# Respawning his sword in his hand
@@ -1258,49 +1613,115 @@ def UsingGap(e):
 	TryStack(e)
 
 def WantToGap(e):
-	List = ["NoobTier","CasualTier","CommonTier","GoodTier"]
-	if not e.npc.getTempdata().get("SelectedType") in List :
-		IsEating = e.npc.getPotionEffect(10)
-		if IsEating != 1 :								# Using Gap classic
-			Health = e.npc.getHealth()
-			HealthNerfed = round(Health)
-			LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-			LimitChoice = random.choice(LifeLimit)
-			GapCount = e.npc.getTempdata().get("GapCount")
-			if GapCount == None :
-				e.npc.getTempdata().put("GapCount", random.randint(8, 17))
+    '''Regulate the use of golden_apple 
+    '''
+    List = ["NoobTier","CasualTier","CommonTier","GoodTier"]            # List of non-strat golden_apple
+    if not e.npc.getTempdata().get("SelectedType") in List :        # If player is good
+        Target = e.npc.getAttackTarget()
+        if Target != None:                                      # Prevent crashes  
+            Regen = e.npc.getPotionEffect(10)                       # Regen effect currently running ?
+            TargetDist = GetDist(e)                             # Target distance
+            Health = e.npc.getHealth()                          # My health
+            TargetHealth = Target.getHealth()                       # Target health
 
-			if (LimitChoice == 1) and (HealthNerfed < 17):
-				IsUsingGap = e.npc.getTempdata().put("IsUsingGap", 1)
+            if ((Regen != 1) and (TargetDist >= 6) and (Health <= 18)) or ((Regen != 1) and (TargetHealth+5 >= Health) and (Health <= 11)) :								# Using Gap classic
+                Health = e.npc.getHealth()
+                HealthNerfed = round(Health)
+                LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+                LimitChoice = random.choice(LifeLimit)
+                GapCount = e.npc.getTempdata().get("GapCount")
+                if GapCount == None :
+                    e.npc.getTempdata().put("GapCount", random.randint(8, 17))
 
-		Health = e.npc.getHealth()
-		HealthNerfed = round(Health)
-		LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-		LimitChoice = random.choice(LifeLimit)
-		if (LimitChoice == 1) and (HealthNerfed <= 13) and (e.npc.getPotionEffect(2) != 1):								# Using Gap chug
-			IsUsingGap = e.npc.getTempdata().put("IsUsingGap", 1)
-			e.npc.getStats().setResistance(3, 1.2)
-			if e.npc.getTempdata().get("GapTickRod") == 1 :
-				e.npc.getTempdata().put("NeedRod", e.npc.getTempdata().get("NeedRod")+1)
-				e.npc.getTempdata().put("GapTickRod", 0)
-			else:
-				if e.npc.getTempdata().get("GapTickRod") == None :
-					e.npc.getTempdata().put("GapTickRod", 0)
-				e.npc.getTempdata().put("GapTickRod", 1)
-			UsingWater(e)
+                if (LimitChoice == 1) and (HealthNerfed < 17):
+                    IsUsingGap = e.npc.getTempdata().put("IsUsingGap", 1)
+
+            elif (e.npc.getTempdata().get("IsUsingGap") != 1) or (random.randint(0, 3) == 0):
+                Health = e.npc.getHealth()
+                HealthNerfed = round(Health)
+                LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+                LimitChoice = random.choice(LifeLimit)
+                if (LimitChoice == 1) and (HealthNerfed <= 13) and (e.npc.getPotionEffect(2) != 1):								# Using Gap chug
+                    e.npc.getTempdata().put("IsUsingGap", 1)
+                    e.npc.getStats().setResistance(3, 1.2)
+                    if e.npc.getTempdata().get("GapTickRod") == 1 :
+                        try:
+                            e.npc.getTempdata().put("NeedRod", e.npc.getTempdata().get("NeedRod")+1)
+                        except:
+                            e.npc.getTempdata().put("NeedRod", 1)
+                        e.npc.getTempdata().put("GapTickRod", 0)
+                    else:
+                        if e.npc.getTempdata().get("GapTickRod") == None :
+                            e.npc.getTempdata().put("GapTickRod", 0)
+                        e.npc.getTempdata().put("GapTickRod", 1)
+                    UsingWater(e)
+
+    else:
+        Health = e.npc.getHealth()
+        HealthNerfed = round(Health)
+        LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+        LimitChoice = random.choice(LifeLimit)
+        GapCount = e.npc.getTempdata().get("GapCount")
+        if GapCount == None :
+            e.npc.getTempdata().put("GapCount", random.randint(8, 17))
+
+        if (LimitChoice == 1) and (HealthNerfed < 17):
+            IsUsingGap = e.npc.getTempdata().put("IsUsingGap", 1)
+
+def NerfingReach(e):
+	"""
+	Prevent reach from being too far if damaged, to make rod tricks possible
+	"""
+	if e.npc.getTempdata().get("ReachTick") == None:
+		e.npc.getTempdata().put("ReachTick", 0)
+
+	elif e.npc.getTempdata().get("ReachTick") == 2:
+		e.npc.getTempdata().put("ReachTick", 0) 
+
+		IsSlowed = e.npc.getPotionEffect(2)
+		if IsSlowed != 1 :
+			if e.npc.getStoreddata().get("IsEating") != True :
+				Rodless = e.npc.world.getTempdata().get("Rodless")
+				if Rodless != True :	
+					SelectedType = e.npc.getTempdata().get("SelectedType")
+					if SelectedType == "CasualTier" :
+						ReachList = [2]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+
+					if SelectedType == "CommonTier" :
+						ReachList = [2]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+
+					if SelectedType == "GoodTier" :
+						ReachList = [2,2,2,2,2,2,3]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+
+					if SelectedType == "ProTier" :
+						ReachList = [2,2,2,2,3,3,3,4]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+
+					if SelectedType == "UHCEliteTier" :
+						ReachList = [2,3,3,3,4]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+
+					if SelectedType == "NoobTier" :
+						ReachList = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+						NewReach = random.choice(ReachList)
+						e.npc.getStats().getMelee().setRange(NewReach)
+		else :
+			e.npc.getStats().getMelee().setRange(0)
+	
 	else:
-		Health = e.npc.getHealth()
-		HealthNerfed = round(Health)
-		LifeLimit = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-		LimitChoice = random.choice(LifeLimit)
-		GapCount = e.npc.getTempdata().get("GapCount")
-		if GapCount == None :
-			e.npc.getTempdata().put("GapCount", random.randint(8, 17))
-
-		if (LimitChoice == 1) and (HealthNerfed < 17):
-			IsUsingGap = e.npc.getTempdata().put("IsUsingGap", 1)
+		e.npc.getTempdata().put("ReachTick", e.npc.getTempdata().get("ReachTick")+1) 
 
 def UpdatingReach(e):
+	'''Handle reach changes
+	'''
 	IsSlowed = e.npc.getPotionEffect(2)
 	if IsSlowed != 1 :
 		if e.npc.getStoreddata().get("IsEating") != True :
@@ -1308,70 +1729,96 @@ def UpdatingReach(e):
 			if Rodless != True :	
 				SelectedType = e.npc.getTempdata().get("SelectedType")
 				if SelectedType == "CasualTier" :
-					ReachList = [1, 2, 2, 2, 2, 2, 2, 3, 3, 3]
+					ReachList = [2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 
 				if SelectedType == "CommonTier" :
-					ReachList = [1, 2, 2, 2, 3, 3, 3, 3, 3, 3]
-					NewReach = random.choice(ReachList)
-					e.npc.getStats().getMelee().setRange(NewReach)
-
-				if SelectedType == "GoodTier" :
-					ReachList = [2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3]
-					NewReach = random.choice(ReachList)
-					e.npc.getStats().getMelee().setRange(NewReach)
-
-				if SelectedType == "ProTier" :
 					ReachList = [2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 
+				if SelectedType == "GoodTier" :
+					ReachList = [2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4]
+					NewReach = random.choice(ReachList)
+					e.npc.getStats().getMelee().setRange(NewReach)
+
+				if SelectedType == "ProTier" :
+					ReachList = [2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4]
+					NewReach = random.choice(ReachList)
+					e.npc.getStats().getMelee().setRange(NewReach)
+
 				if SelectedType == "UHCEliteTier" :
-					ReachList = [2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4]
+					ReachList = [2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 
 				if SelectedType == "NoobTier" :
-					ReachList = [2, 2, 2, 2, 1, 1, 1, 1, 1, 1]
+					ReachList = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 	else :
 		e.npc.getStats().getMelee().setRange(0)
 
-def MeetUpChecking(e):				
-	pass
+def MeetUpChecking(e):	
+	'''Force bots to go to 0 ; 0 
+	'''			
+	MeetUp = e.npc.world.getStoreddata().get("MeetUp")
+	if e.npc.getFaction().getId() != 26 :
+		try:
+			if (e.npc.world.getTotalTime() >= MeetUp) and (e.npc.getAttackTarget() == None):		# Navigating to 0 0 when Meet Up start
+				X = 0
+				Z = 0
+
+				if e.npc.getX() >= 0 :
+					X -= 5
+				else:
+					X += 5
+
+				if e.npc.getZ() >= 0 :
+					Z -= 5
+				else :
+					Z += 5
+
+				e.npc.navigateTo(e.npc.getX()+X, e.npc.getY(), e.npc.getZ()+Z, 2)
+		except:
+			pass
 
 def DeletingWater(e):
+	'''Delete water on certain time
+	'''
 	try:
-		if ( e.npc.getTempdata().get("WaterUsed") != None ) and (DeletingWater.Ticker == 5) :
+		if (e.npc.getTempdata().get("WaterUsed") != None) and (DeletingWater.Ticker == DeletingWater.TickerMax) :
 			e.npc.executeCommand("/fill "+str(e.npc.getTempdata().get("WaterUsed")[0])+" "+str(e.npc.getTempdata().get("WaterUsed")[1])+" "+str(e.npc.getTempdata().get("WaterUsed")[2])+" "+str(e.npc.getTempdata().get("WaterUsed")[0])+" "+str(e.npc.getTempdata().get("WaterUsed")[1]+1)+" "+str(e.npc.getTempdata().get("WaterUsed")[2])+" minecraft:air")
-			e.npc.getTempdata().put("WaterRemaining", e.npc.getTempdata().get("WaterRemaining")+1)
-		elif DeletingWater.Ticker == 5 :
-			DeletingWater.Ticker = 0
-		else :
-			DeletingWater.Ticker += 1
+			e.npc.extinguish()
+			e.npc.getTempdata().put("WaterRemaining", 3)
+			e.npc.getTempdata().put("WaterUsed", None)					# Saving that there is a water bucket usable
+
+		if (e.npc.getTempdata().get("WaterUsed") != None):
+			if DeletingWater.Ticker == 5 :
+				DeletingWater.Ticker = 0
+			else :
+				DeletingWater.Ticker += 1
 	except :
 		DeletingWater.Ticker = 0
+		DeletingWater.TickerMax = 2
 
 def BadlionKB(e):
+	'''Reduce knockbcak to force melee
+	'''
 	if e.npc.world.getTempdata().get("BadlionKB") == True :
-		e.npc.getStats().setResistance(3, (random.uniform(1.4, 1.8)))
+		e.npc.getStats().setResistance(3, (random.uniform(1.4, 1.75)))
+
 
 
 #ON DEATH ONLY functions :
 
 def CountingPlayers(e):
-	pass
-
-def ScoreBoardUpdateVI(e):
-	try :
-		Name = e.npc.getDisplay().getName()
-		RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")
-		if RedditUHCDisplay == True :
-			e.npc.executeCommand("/scoreboard teams leave "+str(Name)+"")
-			e.npc.executeCommand('/scoreboard teams join deads '+str(Name)+'')
+	try:
+		if e.npc.getFaction().getId() != 26 :
+			e.npc.world.getStoreddata().put("Players", int(e.npc.world.getStoreddata().get("Players"))-1)
 	except:
+		e.npc.world.broadcast("Game already ended !")
 		pass
 
 def CountingKills(e):
@@ -1395,12 +1842,6 @@ def CountingKills(e):
 			NewList = ("//" + e.npc.getDisplay().getName())+ '|' +(str(int(MyKills)))
 			e.npc.world.getStoreddata().put("KillList", KillList+NewList)
 
-def TeamReduction(e):
-	try :
-		pass
-	except:
-		pass
-	
 def CountingPlayersLeft(e):
 	try:
 		List = [200, 150, 100, 50, 25, 10, 5, 3]
@@ -1408,6 +1849,50 @@ def CountingPlayersLeft(e):
 			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": dark_gray,"bold":false},{"text":"Players","color" : dark_green},{"text":"] ","color": dark_gray,"bold":false},{"text":" - There is ","color": gray,"bold":false},{"text":"'+str(int(e.npc.world.getStoreddata().get("TeamsAlive")))+'","color": light_purple,"bold":false},{"text":" teams alive. ","color": gray,"bold":false},{"text":" (With","color":"white"},{"text":" '+str(int(e.npc.world.getStoreddata().get("Players")))+'","color":"aqua"},{"text":" players)","color":"white"}]')
 	except:
 		pass
+
+def TeamReduction(e):
+	try :
+		TeamID = e.npc.getFaction().getId()
+		e.npc.world.getStoreddata().put(str(TeamID), e.npc.world.getStoreddata().get(str(TeamID))-1)
+		if (e.npc.world.getStoreddata().get(str(TeamID))) <= 0 :
+			Factions = e.npc.world.getStoreddata().get("Factions")
+			Factions = Factions.split("/")
+			Factions.append(str(TeamID))
+			Factions = "/".join(Factions)
+			e.npc.world.getStoreddata().put("Factions", Factions)
+			e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")-1)
+			e.npc.world.getTempdata().put(str(TeamID)+"Team", None)						# For the LoadTeam thingy
+			CountingPlayersLeft(e)
+			if e.npc.world.getTempdata().get("TeamSize") != 1 :
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":" Team ","color":"gray"},{"text":"'+str(TeamID)+', is now eliminated","color":"red"}]')
+
+	except:
+		pass
+
+def WinnerStats(e):
+	try:
+		if e.npc.getHealth() > 0 :
+			if (int(e.npc.world.getStoreddata().get("TeamsAlive")) <= 5) and (e.npc.getStoreddata().get("SentWin") != 1) and (e.npc.getDisplay().getName() != "-") and (e.npc.getDisplay().getName() != "Disabled"):
+				if e.npc.world.getTempdata().get("WinnerList") == None :
+					e.npc.world.getTempdata().put("WinnerList", [str(e.npc.getDisplay().getName())])
+				else :
+					A = e.npc.world.getTempdata().get("WinnerList")
+					A.append(str(e.npc.getDisplay().getName()))
+					e.npc.world.getTempdata().put("WinnerList", A)
+				e.npc.getStoreddata().put("SentWin", 1)
+	except Exception as err:
+		#e.npc.world.broadcast(str(err))
+		pass
+
+def DelWinnerStats(e):
+	try:
+		if e.npc.world.getTempdata().get("WinnerList") != None :
+			A = e.npc.world.getTempdata().get("WinnerList")
+			A.remove(str(e.npc.getDisplay().getName()))
+			e.npc.world.getTempdata().put("WinnerList", A)
+	except Exception as err:
+		#e.npc.world.broadcast(str(err))
+		pass	
 
 def ScoreBoardUpdateII(e):
 	try :
@@ -1417,15 +1902,14 @@ def ScoreBoardUpdateII(e):
 	except:
 		pass	
 
-
-
 def ScoreBoardUpdateV(e):
 	try :
 		RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")
 		if RedditUHCDisplay == True :
 			Name = e.npc.getDisplay().getName()
+			e.npc.executeCommand("/scoreboard players remove "+u'\xa7'+"c"+u'\xa7'+"oPlayers Kills 1")
 			e.npc.executeCommand('/scoreboard teams leave '+str(Name)+'')	
-			e.npc.executeCommand('/scoreboard teams join '+str(Name)+' deads')
+			e.npc.executeCommand('/scoreboard teams join deads '+str(Name)+'')
 	except:
 		pass
 
@@ -1435,7 +1919,13 @@ def NoRespawn(e):
 	elif (e.npc.getTempdata().get("Respawn") == 1) or (e.npc.getTempdata().get("Respawn") == 0) :
 		e.npc.getTempdata().put("Respawn", e.npc.getTempdata().get("Respawn")+1)
 
-
+def UnStack(e):
+    Kills = e.npc.getStoreddata().get("Kills")
+    List = e.npc.world.getTempdata().get("StackedList")          
+    try:
+        List.remove([str(e.npc.getDisplay().getName()), str(int(Kills))])
+    except:
+        pass
 		
 
 #POST GAME functions :
@@ -1494,7 +1984,8 @@ def EndGame(e):
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"[","color": gray,"bold":true},{"text":"Kills","color" : blue},{"text":"] ","color": gray,"bold":true},{ "text" :"'+str(i+1)+' : ","bold":flase},{ "text" :"'+str(FinalList[i][0])+' --- ","color": '+str(ColorList[i])+',"bold":false},{ "text" :"'+str(FinalList[i][1])+' Kills ","bold":false}]')
 
 	e.npc.world.getTempdata().put("GameStarted", 0)
-	e.npc.world.spawnClone(13, 203, 0, 2, "Host UHC")
+	#e.npc.world.spawnClone(13, 203, 0, 2, "Host UHC")
+
 
 
 #Misc
@@ -1566,7 +2057,7 @@ def GettingZone(e):
 def TryStack(e):
 	try:
 		Around = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 8, 2).tolist()
-		if int(e.npc.world.getTempdata().get("TeamSize"))*3 <= len(Around) :
+		if int(e.npc.world.getTempdata().get("TeamSize"))*4 <= len(Around) :
 			List = []
 			for i in range(0, len(Around)):
 				if not ([Around[i].getFaction().getId(), e.npc.world.getStoreddata().get(str(Around[i].getFaction().getId())+"Aggro")]) in List :
@@ -1635,17 +2126,17 @@ def BorderShrink(e):
             Y = e.npc.getY()
             if (e.npc.getX() >= 45) :
                 X = 40
-                Y = 75
+                Y = 95
             elif (-45 >= e.npc.getX()):
                 X = -40
-                Y = 75
+                Y = 95
 
             if (e.npc.getZ() >= 45) :
                 Z = 40
-                Y = 75
+                Y = 95
             elif (-45 >= e.npc.getZ()):
                 Z = -40
-                Y = 75
+                Y = 95
             
             e.npc.setPosition(X, Y, Z)
             e.npc.getStoreddata().put("HasShrunkFinal", "Done")
@@ -1657,17 +2148,17 @@ def BorderShrink(e):
             Y = e.npc.getY()
             if (e.npc.getX() >= 80) :
                 X = 75
-                Y = 75
+                Y = 95
             elif (-80 >= e.npc.getX()):
                 X = -75
-                Y = 75
+                Y = 95
 
             if (e.npc.getZ() >= 80) :
                 Z = 75
-                Y = 75
+                Y = 95
             elif (-80 >= e.npc.getZ()):
                 Z = -75
-                Y = 75
+                Y = 95
             
             e.npc.setPosition(X, Y, Z)
             e.npc.getStoreddata().put("HasShrunkSecond", "Done")
@@ -1680,33 +2171,33 @@ def BorderShrink(e):
             Y = e.npc.getY()
             if (e.npc.getX() >= 120) :
                 X = 115
-                Y = 75
+                Y = 95
             elif (-120 >= e.npc.getX()):
                 X = -115
-                Y = 75
+                Y = 95
 
             if (e.npc.getZ() >= 120) :
                 Z = 115
-                Y = 75
+                Y = 95
             elif (-120 >= e.npc.getZ()):
                 Z = -115
-                Y = 75
+                Y = 95
             
             e.npc.setPosition(X, Y, Z)
             e.npc.getStoreddata().put("HasShrunkFirst", "Done")
-
 
 def Crit(e):
 	List = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1]
 	if random.choice(List) == 1 :
 		e.npc.getStats().getMelee().setStrength(e.npc.getStats().getMelee().getStrength()+3)
 
-
 def AntiGapHit(e):
-	if e.npc.getPotionEffect(2) == 0 :
-		e.setCanceled(True)
-
-
+	try:
+		if e.npc.getInventory().getRightHand().getName() == "minecraft:golden_apple" :
+			e.setCanceled(True)
+	except:
+		pass
+	
 def GetDist(e):
     if e.npc.getAttackTarget() != None :
         Target = e.npc.getAttackTarget()
@@ -1726,7 +2217,76 @@ def Clicks(e):
         if GetDist(e) <= 4 :
             e.npc.swingHand()
 
-#Classes :
+def PlayerDeath(e):
+	try:
+		if (int(e.npc.world.getStoreddata().get("TeamsAlive")) <= 10):
+			Source = e.entity.getName()
+			Killer = e.npc.world.getTempdata().get(str(Source)+"Killer")
+			KilledKills = e.npc.world.getStoreddata().get(str(Source) +"Kills")
+			Special = '{"text":"","color":"light_purple"}'
+			SpecialKiller = '{"text":"","color":"light_purple"}'
+			SpecialList = ["Natsu91","Yvant2000Games","Frizou","iKowz","MASTEEKH","jdegoederen","reb_hi","Strykerss","Etoiles","xGokuuuh","Pikachu","TryHqrd_","_Mik0GODESS","SqndSt0rm","Divinity_Kirito","slooonay","Pxdro","Restump","Nardcoo","Ladak","VERSKUUUH","seltix_x","Pacoima","MarkiLokuras","Boosta","DANTEH","Rzmeur","GrzyLight","Mqyland_hi","Mentally","BiboyQG"]
+			try :
+				int(KilledKills)
+			except:
+				KilledKills = 0
+
+			e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")-1)
+
+			if e.npc.world.getTempdata().get("PlayerDeads") == None :
+				e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers())-1)
+			else :
+				e.npc.world.getTempdata().put("PlayerDeads", e.npc.world.getTempdata().get("PlayerDeads")-1)
+
+			e.npc.executeCommand("/gamemode 3 @p")
+
+			NameKiller = Killer[0]
+			KillerFaction = int(Killer[1])
+			KillerKills = Killer[2].split(".")
+			KillerKills = KillerKills[0]
+			FactionArgList = [["green","false","false"],["green","false","false"],["blue","false","false"],["red","false","false"],["yellow","false","false"],["dark_gray","false","false"],["dark_blue","false","false"],["dark_red","false","false"],["dark_green","false","false"],["gold","false","false"],["aqua","false","false"],["light_purple","false","false"],["dark_aqua","false","false"],["dark_purple","false","false"],["green","false","true"],["blue","false","true"],["red","false","true"],["yellow","false","true"],["dark_gray","false","true"],["dark_blue","false","true"],["dark_red","false","true"],["dark_green","false","true"],["gold","false","true"],["aqua","false","true"],["light_purple","false","true"],["dark_aqua","false","true"],["white","false","false"]]
+			TeamColorKiller = FactionArgList[KillerFaction][0]
+			UnderlinedKiller = FactionArgList[KillerFaction][1]
+			ItalicKiller = FactionArgList[KillerFaction][2]
+			
+			if NameKiller in SpecialList :
+				SpecialKiller = '{"text":"['+u'\u2764'+']","color":"light_purple"}'    
+
+			if Source in SpecialList :
+				Special = '{"text":"['+u'\u2764'+']","color":"light_purple"}'
+
+			if e.npc.world.getTempdata().get("BadlionKillsSystem") == True :
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(Source)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KilledKills))+'","color":"white"},{"text":"]","color":"white"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"},{"text":"[","color":"white"},{"text":"'+str(int(KillerKills)) +'","color":"white"},{"text":"]","color":"white"}]')
+			else:
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},'+Special+',{"text":"'+str(Source)+'"},{"text":" was slain by ","color":"gray"},'+SpecialKiller+',{"text":"'+str(NameKiller)+'","color":"'+str(TeamColorKiller)+'","underlined":"'+str(UnderlinedKiller)+'","italic":"'+str(ItalicKiller)+'"}]')
+		
+			if e.npc.world.getTempdata().get("PlayerDeads") == 0 or e.npc.world.getTempdata().get("PlayerDeads") == 0.0 :
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"Team ","color":"gray"},{"text":"Players, is now eliminated","color":"red"}]')
+				e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")-1)
+
+			e.npc.executeCommand("/scoreboard players remove "+u'\xa7'+"c"+u'\xa7'+"oPlayers Kills 1")
+			e.npc.executeCommand("/scoreboard players reset "+str(Source)+" Kills ")
+			e.npc.executeCommand("/scoreboard players reset "+str(Source)+" Arena ")
+
+			try:
+				A = e.npc.world.getTempdata().get("WinnerList")
+				A.remove(str(e.entity.getName()))
+				e.npc.world.getTempdata().put("WinnerList", A)
+			except:
+				pass
+
+	except Exception as err:
+		#e.npc.world.broadcast(str(err))
+		pass
+
+def RodBlock(e):
+	List = e.npc.world.getAllPlayers()
+	for i in range (0, len(List)):
+		try:
+			List[i].getMCEntity().field_71104_cf.field_146043_c = None
+		except Exception as err:
+			pass
+	#Classes :
 # nah joking im too bad
 
 
@@ -1737,7 +2297,13 @@ def Clicks(e):
 
 
 def init(e):
-	GameStarted = 1
+	GameStarted = e.npc.world.getTempdata().get("GameStarted")
+	try:
+		e.npc.getTimers().start(2, 0, True)			# The Rod block timer
+		e.npc.getTempdata().put("NeedRod", 0)
+	except:
+		pass
+
 	if GameStarted == 1:
 		if e.npc.world.getTempdata().get("LoadTeams") != True :
 			SettingEntity(e)
@@ -1747,28 +2313,31 @@ def init(e):
 		SettingResistance(e)
 		SettingInitialKills(e)
 		SuperHeroes(e)
-		MasterLevel(e)
 		DoubleHealth(e)
-		CatEyes(e)
 		OneShot(e)
 		RodlessActivation(e)
 		MoleReveal(e)
 		UpdatingReach(e)
+		AllyResistance(e)
 		
 		
 def damaged(e):
+	RodBlock(e)
+	SettingEntityForced(e)
+	SettingEntity(e)
 	Clicks(e)
-	e.npc.world.getTempdata().put("GameRunning", 1)
 	SwordDebug(e)
 	SettingResistance(e)
 	LifeMessageBow(e)
-	UpdatingReach(e)
+	NerfingReach(e)
 	MoleReveal(e)
 	BadlionKB(e)
 	AntiFreeDeath(e)
 	AbsoLess(e)
+	ActualisingHealth(e)
 
 def meleeAttack(e):
+	RodBlock(e)
 	Clicks(e)
 	AntiGapHit(e)
 	Crit(e)
@@ -1779,6 +2348,7 @@ def meleeAttack(e):
 	AbsoLess(e)
 
 def kill(e):
+	RodBlock(e)
 	ScoreBoardUpdateIII(e)
 	BadlionKillsSystem(e)
 	ScoreBoardUpdateI(e)
@@ -1787,15 +2357,19 @@ def kill(e):
 	CountingKills(e)
 	KillingPlayer(e)
 	UpdateAggro(e)
+	UpdateStackedList(e)
+	PlayerDeath(e)
 
 def died(e):
-	InventorySpawn.isDone = False		# To spawn a full inv if he had kills ( more armor and blocks)
-	e.npc.getTempdata().put("Respawn", 0) 			# To avoid glitched respawn, which will make the player counter false
+	try:
+		InventorySpawn.isDone = False		# To spawn a full inv if he had kills ( more armor and blocks)
+		e.npc.getTempdata().put("Respawn", 0) 			# To avoid glitched respawn, which will make the player counter false
+	except:
+		pass
+	RodBlock(e)
 	CountingPlayers(e)
-	TeamReduction(e)
-	CountingPlayersLeft(e)
-	ScoreBoardUpdateII(e)
 	ThunderStrike(e)
+	ScoreBoardUpdateII(e)
 	BadlionDeathTchatMessage(e)
 	DeathTchatMessage(e)
 	IronGolemSound(e)
@@ -1804,25 +2378,26 @@ def died(e):
 	NoCleanUpActivation(e)
 	BookCeption(e)
 	ScoreBoardUpdateV(e)
-	ScoreBoardUpdateVI(e)
 	HeadPost(e)
 	VanillaDeathStyle(e)
+	TeamReduction(e)
+	DelWinnerStats(e)
 	ExplodeOnDeath(e)
-	
+	UnStack(e)
+
 def tick(e):
-	GameStarted = 1
+	GameStarted = e.npc.world.getTempdata().get("GameStarted")
+	SettingEntityForced(e)
 	if GameStarted == 1:
 		if e.npc.getAi().getRetaliateType() == 3:
 			GoToZone(e, int(e.npc.getStoreddata().get("GoTozone")),"Ext")
 		BorderShrink(e)
-		SettingEntityForced(e)
 		CancelFire(e)
 		NoRespawn(e)
 		MoleReveal(e)
 		ActualisingTeamMembers(e)
 		MeetUpChecking(e)
 		HealthDisplay(e)
-		BadlionKB(e)
 		WantToGap(e)
 		UsingGap(e)
 		Strafing(e)
@@ -1832,7 +2407,9 @@ def tick(e):
 		Rod(e)
 		Targeting(e)
 		Clicks(e)
-		#LastSending(e)
+		WinnerStats(e)
+		NoStackedFights(e)
+		RodBlock(e)
 		try:
 			e.npc.getTempdata().put("RunOn", e.npc.getTempdata().get("RunOn")-1 )
 		except:
@@ -1840,16 +2417,24 @@ def tick(e):
 
 
 def interact(e):
+	SharingArmor(e)
 	GappleSharing(e)
 	#e.npc.getTempdata().put("SelectedType", "UHCEliteTier")
 	#e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")+1)
 	e.setCanceled(True)
 	
 def target(e):
+	RodBlock(e)
+	UpdatingReach(e)
 	Clicks(e)
+	SettingEntityForced(e)
+	SettingEntity(e)
 	Targeting(e)
+	NoStackedFights(e)
 	pass
 
+def timer(e):			# Rod Block
+	RodBlock(e)
 
 
     #============================#
@@ -1860,5 +2445,4 @@ def target(e):
 #   and to every people of the CustomNPC discord server
 #   for helping me with commands and creating scripts
 
-
-
+# /tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Spec","color":"green"},{"text":"]","color":"dark_gray"},{"text":" ====","color":"dark_purple"},{"text":" / ","color":"dark_gray"},{"text":"====","color":"dark_purple"},{"text":" / ","color":"dark_gray"},{"text":"====","color":"dark_purple"},{"text":" /","color":"dark_gray"},{"text":" ====","color":"dark_purple"},{"text":" / ","color":"dark_gray"},{"text":"=======","color":"light_purple"},{"text":" /","color":"dark_gray"},{"text":" =======","color":"gold"}]

@@ -9,8 +9,10 @@ import math
 
 def CheckTimer(e):
     Players = e.npc.world.getStoreddata().get("Players") - len(e.npc.world.getAllPlayers())		# Getting data for bots spawn
-    if Players <= 0 :
+    GameStarted = e.npc.world.getTempdata().get("GameStarted")
+    if (Players <= 0) or (GameStarted != 1) :
         e.npc.despawn()
+        
 
     try:
         if Chosed == 1 :
@@ -22,10 +24,10 @@ def CheckTimer(e):
     
 
     BotsToSpawn = e.npc.world.getStoreddata().get("BotsToSpawn")
-
+    
     if BotsToSpawn <= 0 :
         e.npc.despawn()
-
+    
     MeetUp = e.npc.world.getStoreddata().get("MeetUp")
     Factions = e.npc.world.getStoreddata().get("Factions")
     #e.npc.say("&1=====================")
@@ -43,10 +45,10 @@ def CheckTimer(e):
         Test = int(Factions[0])
 
 
-        if e.npc.world.getTotalTime() >= MeetUp :
+        if (e.npc.world.getTotalTime() >= MeetUp) :             # if PvP enabled
             try :
                 Test = float(e.npc.getTempdata().get("Spawn")) + 1                # Just make the try except bug at the first loop, maybe not ideal
-                if e.npc.world.getTotalTime() >= e.npc.getTempdata().get("Spawn") :             # If TimeSelected is passed
+                if (e.npc.world.getTotalTime() >= e.npc.getTempdata().get("Spawn")) or (e.npc.world.getTempdata().get("ForceSpawn") == 1):             # If TimeSelected is passed
                     if len(Factions) != 0:                      # If there is empty faction 
                         IdHere = random.choice(Factions)
                         Factions.remove(IdHere)
@@ -71,13 +73,14 @@ def CheckTimer(e):
 
 
                 # IMPORTANT, if in FFA, to avoid 1Spawner - 1 NPC, Make the others Spawner spawn.
-
-                            X = random.randint(-120, 120)
-                            Z = random.randint(-120, 120)
+                            Radius = int(e.npc.world.getTempdata().get("Radius"))
+                            X = random.randint(-Radius, Radius)
+                            Z = random.randint(-Radius, Radius)
 
                             BotsToSpawn = e.npc.world.getStoreddata().get("BotsToSpawn")
                             if BotsToSpawn <= 0 :
                                 e.npc.despawn()
+                                
                             else :
                                e.npc.world.spawnClone( X, 120, Z, 2, "Spawner").setFaction(0)
 
@@ -125,6 +128,9 @@ def tick(e):
     GameStarted = e.npc.world.getTempdata().get("GameStarted")
     if GameStarted == 1:
         CheckTimer(e)
+    else:
+        e.npc.despawn()
+        
 
 
 def interact(e):

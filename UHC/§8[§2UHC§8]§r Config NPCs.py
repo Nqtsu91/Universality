@@ -15,8 +15,8 @@ def GettingVarToMod(e):
 def ModifingVar(e):
     Name = e.npc.getDisplay().getName()
     VarToMod = GettingVarToMod(e)
-    VarToAdd = ["BotNumber","TeamSize","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","LoadInventory"]
-    VarToReWrite = ["CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled"]
+    VarToAdd = ["BotNumber","TeamSize","TeamAliveLimit","PvPTime","MinTimeSpread","MaxTimeSpread","FinalBorder","SecondBorder","FirstBorder","DiamondProbability","EnchantProbability","XpMultiplicator","AppleRate","FlintRate","NoCleanRegen","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam","TimeBombTime","KBValue","StartDeathmatchAt"]
+    VarToReWrite = ['MeetUpMode',"ClearedLoot","TimeBomb","CutClean","HasteyBoys","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","BleedingSweets","Rodless","Mole","OneShot","GoldenHeads","FireAspectAllowed","AbsoLess","WaterAllowed","ForcedType","ArcticMeta","LoadTeams","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled","TimeBombExplode"]
     if VarToMod in VarToAdd :
 		VarValue = e.npc.world.getTempdata().get(VarToMod)
 		if VarValue == None :
@@ -47,12 +47,12 @@ def Switching(e):
 	Tick = e.npc.world.getTempdata().get("Tick")
 	Tick -= 1
 	if CurrentConfig == "Scenarios" :
-		ListOfVar = ["CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","BadlionKB","ArcticMeta","ScatterMessageEnabled","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate"]
+		ListOfVar = ["HasteyBoys","TimeBomb","CutClean","BadlionKillsSystem","NoCleanUpEnabled","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","WaterAllowed","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","OneShot","BleedingSweets","Rodless","Mole","RedditUHCDisplay","GoldenHeads","ExplodeOnDeath","FireAspectAllowed","AbsoLess","ForcedType","ArcticMeta","ScatterMessageEnabled","FinalBorder","SecondBorder","FirstBorder","AppleRate","FlintRate","TimeBombExplode","TimeBombTime","StartDeathmatchAt"]
 		e.npc.world.getTempdata().put("CurrentVarToMod" , ListOfVar[Tick])
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 	
 	elif CurrentConfig == "Bots" :
-		ListOfVar = ["BotNumber","TeamSize","TeamAliveLimit","DiamondProbability","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam","LoadInventory"]
+		ListOfVar = ["BotNumber","TeamSize","TeamAliveLimit","DiamondProbability","KBValue","NoCleanRegen","BleedingDiamonds","BleedingIron","BleedingGold","PvPTime","MinTimeSpread","MaxTimeSpread","MolePerTeam"]
 		e.npc.world.getTempdata().put("CurrentVarToMod" , ListOfVar[Tick])
 		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Config"},{"text":"]","color":"dark_gray"},{"text":" Now editing :","color":"gray"},{"text":" '+ListOfVar[Tick]+'","color":"blue"}]')
 
@@ -60,11 +60,11 @@ def Switching(e):
 
 def damaged(e):
 	try:
-		if e.npc.getDisplay().getName() == "Hit me to change variable" :
+		if e.npc.getDisplay().getName() == "Change Variable" :
 			Tick = e.npc.world.getTempdata().get("Tick")
 			CurrentConfig = e.npc.world.getTempdata().get("CurrentConfig")
 			if CurrentConfig == "Scenarios" :
-				if (Tick == 31):
+				if (Tick == 35):
 					Tick = 0
 					e.npc.world.getTempdata().put("Tick", 0)
 			if CurrentConfig == "Bots" and (Tick == 12):

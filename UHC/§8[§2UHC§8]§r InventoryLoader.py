@@ -11,9 +11,9 @@ import os
 
 def SaveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
-    Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
+    Path += "\\CustomNPC Config\\UHC\\config "+str(e.npc.getTempdata().get("InvToRead"))+"\\inventory"
     Path = Path.replace("\\", str(os.path.sep))
-    with open (str(Path)+str(e.npc.getTempdata().get("InvToRead"))+".txt", "w") as Config :
+    with open (str(Path)+".txt", "w") as Config :
         for i in range(0, len(e.player.getInventory())):
             try:
                 Config.write(str(e.player.getInventory()[i].getName()))

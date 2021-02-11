@@ -18,7 +18,7 @@ def Config(e):
 
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' -30 203 0')
-    e.npc.executeCommand('/title '+str(e.source.getName())+' times 20 100 20')
+    e.npc.executeCommand('/title '+str(e.source.getName())+' times 20 40 20')
     e.npc.executeCommand('/title '+str(e.source.getName())+' subtitle ["",{"text":"You can now ","color":"gray"},{"text":"edit","color":"green"},{"text":" or ","color":"gray"},{"text":"load","color":"aqua"},{"text":" a config","color":"gray"}]')
     e.npc.executeCommand('/title '+str(e.source.getName())+' title {"text":"Config Mode","color":"gold"}')
 
@@ -35,7 +35,7 @@ def Config(e):
     ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
     for i in range (0, len(TierToList)):
         Path = os.path.dirname(os.path.abspath("__file__"))
-        Path += "\\CustomNPC Config\\UHC\\Pseudos\\"
+        Path += "\\CustomNPC Config\\FFA\\Pseudos\\"
         Path = Path.replace("\\", str(os.path.sep))
         with open (str(Path)+str(TierToList[i])+".txt", "r") as TierList :
             TierList = TierList.read()
@@ -44,18 +44,9 @@ def Config(e):
             Total += len(TierList)
 
     # Spawning NPCs
-    e.npc.world.spawnClone(-22, 203, 0, 2, "Handler").getDisplay().setName("Ready")
+    e.npc.world.spawnClone(-22, 203, 0, 3, "Handler").getDisplay().setName("Ready")
     e.npc.executeCommand('/gamemode 2 @a')
-    e.npc.world.spawnClone(-38, 203, 0, 2, "Host Settings UHC").getDisplay().setName("Change Variable")
-    e.npc.world.spawnClone(-38, 203, 2, 2, "Host Settings UHC").getDisplay().setName("+1")
-    e.npc.world.spawnClone(-38, 203, 4, 2, "Host Settings UHC").getDisplay().setName("+5")
-    e.npc.world.spawnClone(-38, 203, 6, 2, "Host Settings UHC").getDisplay().setName("+10")
-    e.npc.world.spawnClone(-38, 203, -2, 2, "Host Settings UHC").getDisplay().setName("-1")
-    e.npc.world.spawnClone(-38, 203, -4, 2, "Host Settings UHC").getDisplay().setName("-5")
-    e.npc.world.spawnClone(-38, 203, -6, 2, "Host Settings UHC").getDisplay().setName("-10")
-    e.npc.world.spawnClone(-22, 203, -4, 2, "Host Settings UHC").getDisplay().setName("Config Bots")
-    e.npc.world.spawnClone(-22, 203, 4, 2, "Host Settings UHC").getDisplay().setName("Config Scenarios")
-    e.npc.world.spawnClone(-30, 203, -8, 2, "Config Loader")
+    e.npc.world.spawnClone(-30, 203, -8, 3, "Config Loader")
 
 def Inv(e):
     # Filling zone
@@ -72,7 +63,7 @@ def Inv(e):
 
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' 30 203 0')
-    e.npc.executeCommand('/title '+str(e.source.getName())+' times 20 100 20')
+    e.npc.executeCommand('/title '+str(e.source.getName())+' times 20 40 20')
     e.npc.executeCommand('/title '+str(e.source.getName())+' subtitle ["",{"text":"You can now ","color":"gray"},{"text":"custom","color":"green"},{"text":" or ","color":"gray"},{"text":"load","color":"aqua"},{"text":" an inventory","color":"gray"}]')
     e.npc.executeCommand('/title '+str(e.source.getName())+' title {"text":"Inventory Mode","color":"gold"}')
 
@@ -89,19 +80,21 @@ def Inv(e):
     e.npc.executeCommand("/setblock 37 201 0 minecraft:stone_slab")
     e.npc.executeCommand("/setblock 38 201 -1 minecraft:stone_slab")
     e.npc.executeCommand("/setblock 38 201 1 minecraft:stone_slab")
-    e.npc.executeCommand("/setblock 32 201 8 minecraft:ender_chest")
 
     # Spawning NPCs
-    e.npc.world.spawnClone(22, 203, 0, 2, "Handler").getDisplay().setName("Inv Ready")
-    e.npc.world.spawnClone(38, 203, 0, 2, "Inventory Loader")
-    e.npc.world.spawnClone(30, 203, 8, 2, "LoadTeam")
-    e.npc.executeCommand('/gamemode 1 @a')
+    e.npc.world.spawnClone(22, 203, 0, 3, "Handler").getDisplay().setName("Inv Ready")
+    if e.npc.world.getTempdata().get("CurrentGame") == "bow":
+        e.npc.world.spawnClone(38, 203, 0, 3, "Bow mode")
+    else:
+        e.npc.world.spawnClone(38, 203, 0, 3, "Melee mode")
+
+    e.npc.executeCommand('/gamemode 2 @a')
     
 
 def ClearConfig(e):
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 201 0')
-    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
+    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
     # Clearing hub
     e.npc.executeCommand('/fill -19 200 11 -40 205 -11 minecraft:air')
     e.npc.world.getTempdata().put("ConfigMode", False)
@@ -110,7 +103,7 @@ def ClearConfig(e):
 def ClearInv(e):
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 201 0')
-    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
+    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
 
     # Clearing hub
     e.npc.executeCommand('/fill 19 200 11 40 205 -11 minecraft:air')
@@ -137,7 +130,7 @@ def Redirect(e):
         Config(e)
     elif Name == "Ready" :
         ClearConfig(e)
-    elif Name == "Inventories":
+    elif Name == "See inventories":
         Inv(e)
     elif Name == "Inv Ready":
         ClearInv(e)
@@ -150,7 +143,10 @@ def Redirect(e):
 
 
 def damaged(e):
-    Redirect(e)
+    try:
+        Redirect(e)
+    except:
+        pass
     e.setCanceled(True)
 
 
@@ -159,5 +155,5 @@ def tick(e):
 
 
 def interact(e):
-    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Hit the ","color":"gray"},{"text":"\"Ready\"","color":"green"},{"text":" NPC to save your changes","color":"gray"}]')
+    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Hit the ","color":"gray"},{"text":"\"Ready\"","color":"green"},{"text":" NPC to save your changes","color":"gray"}]')
     e.setCanceled(True)

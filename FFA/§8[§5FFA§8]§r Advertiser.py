@@ -11,3 +11,6 @@ def interact(e):
 		
 def damaged(e):
 	e.setCanceled(True)
+
+
+

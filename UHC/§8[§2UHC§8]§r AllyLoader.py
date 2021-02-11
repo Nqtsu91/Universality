@@ -11,9 +11,10 @@ import os
 
 def SaveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
-    Path += "\\CustomNPC Config\\UHC\\Ally\\"
+    Path += "\\CustomNPC Config\\UHC\\config "+str(e.npc.world.getTempdata().get("ConfigToRead"))+"\\Allies"
     Path = Path.replace("\\", str(os.path.sep))
-    with open (str(Path)+"Team.txt", "r") as Config :
+    Path = Path.replace("\\", str(os.path.sep))
+    with open (str(Path)+".txt", "r") as Config :
         try:
             Config = Config.read()
 
@@ -21,9 +22,9 @@ def SaveInventory(e):
             IdHere = 26   
             X = e.npc.getX()
             Z = e.npc.getZ()
-            for i in range (0, TeamMode):
-                e.npc.world.spawnClone( 30, 203, 0, 2, "DisabledAlly").setFaction(int(IdHere))             #Spawning a team with the deleted faction id
-                e.npc.world.getTempdata().put("AllyTeam", Config)
+            for i in range (0, TeamMode-1):
+                e.npc.world.spawnClone( 30, 203, 0, 2, "Disabled").setFaction(int(26))             #Spawning a team with the deleted faction id
+                e.npc.world.getTempdata().put("26Team", Config)
                 e.npc.executeCommand('/give Natsu91 customnpcs:npcSoulstoneEmpty')
                 e.npc.executeCommand('/setblock 32 201 8 minecraft:ender_chest 4')
         except Exception as eee:

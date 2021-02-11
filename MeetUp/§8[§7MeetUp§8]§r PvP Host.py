@@ -8,6 +8,18 @@ import os
 #_______{ Creating Algorithm }______#
 #===================================#
 
+def CheckingConfig(e):
+	IntList = ["ProtIncreaseTime","SharpIncreaseTime","EnchantIncreaseTime","DiamondIncreaseTime","DiamondIncreaseRate","GapIncreaseTime","GapIncreaseRate","BotNumber","TeamSize","LoadInventory","TeamAliveLimit","PvPTime","MinTimeSpread","MaxTimeSpread","FinalBorder","SecondBorder","FirstBorder","DiamondProbability","EnchantProbability","XpMultiplicator","AppleRate","FlintRate","NoCleanRegen","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam"]
+	BooleanList = ["ClearedLoot","CutClean","HasteyBoys","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","BleedingSweets","Rodless","Mole","OneShot","GoldenHeads","FireAspectAllowed","AbsoLess","WaterAllowed","ForcedType","BadlionKB","ArcticMeta","LoadTeams","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled"]
+	for i in range(0, len(IntList)):
+		if isinstance(e.npc.world.getTempdata().get(str(IntList[i])), int) != True:
+			e.npc.executeCommand('/noppes script reload')
+	for i in range(0, len(BooleanList)):
+		if isinstance(e.npc.world.getTempdata().get(str(BooleanList[i])), bool) != True:
+			e.npc.executeCommand('/noppes script reload')
+
+
+
 def GiveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
     Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
@@ -48,6 +60,7 @@ def GiveInventory(e):
                     pass
 
 def SpawningBots(e) :
+	e.npc.world.getTempdata().put("Radius", 220)
 	List = [100, 50, 25, 10, 5, 3, 2]
 	e.npc.world.getTempdata().put("TeamToDisplay", List)
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
@@ -59,9 +72,11 @@ def SpawningBots(e) :
 	if 0 >= e.npc.world.getTempdata().get("TeamAliveLimit") :
 		e.npc.world.getTempdata().put("TeamAliveLimit", 1)
 
-	for i in range(1, int(e.npc.world.getTempdata().get("TeamAliveLimit"))):
+	for i in range(1, int(e.npc.world.getTempdata().get("TeamAliveLimit"))+1):
 		Faction += str("/"+str(i))
 	e.npc.world.getStoreddata().put("Factions", str(Faction))				# For the latest scatter method
+
+	e.npc.world.getTempdata().put("ListOfTakenNames", [])
 
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
 	TeamMode = e.npc.world.getTempdata().get("TeamSize")
@@ -97,12 +112,11 @@ def SpawningBots(e) :
 
 	RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")				# Adding the sidebar scenario
 	if RedditUHCDisplay == True :
-		e.npc.executeCommand("/scoreboard objectives add Kills dummy")
+		e.npc.executeCommand("/scoreboard objectives add Kills dummy "+u'\xa7'+"4"+u'\xa7'+"l Universality UHC")
 		e.npc.executeCommand("/scoreboard objectives setdisplay sidebar Kills")
-		e.npc.executeCommand("/scoreboard players set Players Kills "+str(int(e.npc.world.getStoreddata().get("Players")))+"")
+		e.npc.executeCommand("/scoreboard players set "+u'\xa7'+"c"+u'\xa7'+"oPlayers Kills "+str(int(e.npc.world.getStoreddata().get("Players")))+"")
 
 	Spawned = e.npc.getTempdata().get("Spawned")
-	e.npc.setPosition(0, 204, 0)
 	TeamID = -1
 	SpecialsOn = e.npc.world.getTempdata().get("SpecialsOn")
 	Specials = 0
@@ -111,17 +125,19 @@ def SpawningBots(e) :
 
 	i = 0      # Tick for spawning specials bot
 	
-	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chuks......","color":"gray"}]')
+	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chunks......","color":"gray"}]')
 
 	e.npc.executeCommand('/playsound note.pling @a')
 
+
+	e.npc.world.getTempdata().put("StackedList", [])					# To prevent stacked fights
+
 	for i in range (0, 20):
-		SpawnerX = random.randint(-150,150)
-		SpawnerY = random.randint(-150,150)
+		SpawnerX = random.randint(-220,220)
+		SpawnerY = random.randint(-220,220)
 		e.npc.world.spawnClone( int(SpawnerX), 150, int(SpawnerY), 2, "Spawner").setFaction(0)			# spawning classic bots
 			
 
-	e.npc.setPosition(0, 204, 0)
 	e.npc.world.getTempdata().put("GameStarted", 1)
 	e.npc.executeCommand('/fill 20 203 0 200 205 0 minecraft:air')
 	e.npc.executeCommand('/fill -20 203 0 -200 205 0 minecraft:air')
@@ -129,11 +145,18 @@ def SpawningBots(e) :
 
 def StartingGame(e) :						# Initiating in-game objectives for the sidebar display 
 	try:
-		e.npc.getTimers().start(2, 0, True)				# The Rod block timer
+		e.npc.getTimers().start(2, 0, True)			# The Rod block timer
 	except:
 		pass
 
+	#Adding player to potential winner list
+	List = []
+	for i in range(0, len(e.npc.world.getAllPlayers())):
+		List.append(e.npc.world.getAllPlayers()[i].getName())
 
+	e.npc.world.getTempdata().put("WinnerList", List)
+
+	e.npc.executeCommand("/scoreboard teams empty deads")
 	e.npc.executeCommand("/scoreboard teams add green")
 	e.npc.executeCommand("/scoreboard teams option green color green")
 	e.npc.executeCommand("/scoreboard teams add blue")
@@ -155,12 +178,25 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.executeCommand("/scoreboard teams add Players")
 	e.npc.executeCommand("/scoreboard teams option Players color dark_aqua")
 	e.npc.executeCommand("/scoreboard teams join Players Players")
+	e.npc.executeCommand("/scoreboard objectives remove Arena")
+	e.npc.executeCommand("/scoreboard objectives remove Kills")
+
+	e.npc.executeCommand("/scoreboard objectives add border trigger")
+	e.npc.executeCommand("/scoreboard objectives add PvP trigger")
 
 	e.npc.executeCommand("/gamerule doFireTick false")								# Few gamerules to avoid game lags and to add more game stability
 	e.npc.executeCommand("/gamerule naturalRegeneration false")
 	e.npc.executeCommand("/gamerule commandBlockOutput false")
 
 	e.npc.world.getTempdata().put("KillList", [])								# Clearing the Kill list, to not clone kill leaderboard
+
+
+	e.npc.executeCommand('/scoreboard objectives add HealTrigger trigger')
+	e.npc.executeCommand('/scoreboard objectives add 1BorderTrigger trigger')
+	e.npc.executeCommand('/scoreboard objectives add 2BorderTrigger trigger')
+	e.npc.executeCommand('/scoreboard objectives add 3BorderTrigger trigger')
+	e.npc.executeCommand('/scoreboard objectives add PvPTrigger trigger')
+
 
 	# Sending potential name in the cloud data
 
@@ -173,7 +209,22 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 		TierList = TierList.read()
 		TierList = TierList.split(\n)
 		e.npc.world.getTempdata().put("TeamNameList", TierList)
-		
+		Variable = e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier"))
+		Variable_2 = e.npc.world.getTempdata().get("NameTier"+str("ProTier"))
+		NewList = e.npc.world.getTempdata().get("AlreadyTaken")
+		if NewList == None :
+			e.npc.world.getTempdata().put("AlreadyTaken", [])
+
+		for j in range(0, len(TierList)):
+			ToDelete = TierList[j].split("//")
+			for i in range(0, len(ToDelete)):
+				NewList = e.npc.world.getTempdata().get("AlreadyTaken")
+				NewList.append(ToDelete[i])
+				try:
+					e.npc.world.getTempdata().put("AlreadyTaken", NewList)
+				except Exception as err:
+					#e.npc.world.broadcast(str(err)+" "+str(ToDelete))
+					pass
 
 	e.npc.world.getStoreddata().put("KillList", "")
 
@@ -181,37 +232,44 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.executeCommand("/worldborder set 40000")
 
 
+
+
 def VisualEffects(e):
 	if e.npc.world.getTempdata().get("GameStarted") == 1 :
 		if e.npc.getTempdata().get("Tick") == None :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Chunks loaded","color":"gray"}]')
+			e.npc.executeCommand("/xp -10000l @a")
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Chunks loaded","color":"gray"}]')
 			e.npc.executeCommand("/clear @a")
 			e.npc.executeCommand("/gamemode 2 @a")
 			e.npc.executeCommand('/playsound note.bass @a')
+			Host = e.npc.getTempdata().get("Host")
+			e.npc.executeCommand('/title @a times 20 120 20')
+			e.npc.executeCommand('/title @a subtitle ["",{"text":"Hosted by : ","color":"gray"},{"text":"'+str(Host)+'","color":"red"}]')
+			e.npc.executeCommand('/title @a title ["",{"text":"The ","color":"gray"},{"text":"UHC","color":"dark_red"},{"text":" Started !","color":"gray"}]')
 
 		if e.npc.getTempdata().get("Tick") == 2 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing Bots data....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing Bots data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.hat @a')
 
 			
 
 		if e.npc.getTempdata().get("Tick") == 4 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing border data....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing border data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 6 :
-			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Preparing CutClean.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing CutClean.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @p')
 			
 
 		if e.npc.getTempdata().get("Tick") == 8 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Saving scenarios.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Saving scenarios.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 10 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Scattering players.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Scattering players.....","color":"gray"}]')
 			e.npc.executeCommand("/tp @a 0 72 0")
 			e.npc.executeCommand("/effect @a minecraft:resistance 7 45 true")
 			e.npc.executeCommand("/effect @a minecraft:slowness 7 45 true")
@@ -225,6 +283,7 @@ def VisualEffects(e):
 			e.npc.executeCommand("/gamemode 0 @a")
 			for i in range (0, len(e.npc.world.getAllPlayers())):
 				e.npc.executeCommand('/tellraw '+str(e.npc.world.getAllPlayers()[i].getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Players CrossTeaming is allowed","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Final Heal in 10 minutes !","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Good luck have fun ","color":"gray"},{"text":"'+str(e.npc.world.getAllPlayers()[i].getName())+'","color":"red"},{"text":" !","color":"gray"}]')
+
 
 			e.npc.executeCommand('/playsound note.pling @p')
 
@@ -243,7 +302,20 @@ def VisualEffects(e):
 
 			PvPTime = int(e.npc.world.getTempdata().get("FinalBorder")) * 1200
 			MeetUp = e.npc.world.getStoreddata().put("FinalBorder", e.npc.world.getTotalTime() + PvPTime)
-			e.npc.world.spawnClone( 0, 250, 0, 2, "Border").reset()
+			e.npc.world.getTempdata().put("Percent", 30)
+			
+
+			e.npc.world.spawnClone(200, 250, 200, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(-200, 250, 200, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(200, 250, -200, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(-200, 250, -200, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(200, 250, 0, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(-200, 250, 0, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(0, 250, 200, 2, "Chunk").getStoreddata().clear()
+			e.npc.world.spawnClone(0, 250, -200, 2, "Chunk").getStoreddata().clear()
+
+			e.npc.world.spawnClone( 0, 250, 0, 2, "Border").getStoreddata().clear()
+			CheckingConfig(e)
 			
 			e.npc.despawn()
 
@@ -254,13 +326,18 @@ def damaged(e):
 	if e.npc.getTempdata().get("Confirmed") == True :
 		e.npc.getTempdata().put("SpecialsOn", True)
 		e.npc.getTempdata().put("Spawned", 0)
+		try:
+			e.npc.getTempdata().put("Host", e.source.getName())
+		except:
+			pass
 		try :
 			e.source.getName()
 			StartingGame(e)
 			SpawningBots(e)
 		except Exception as err :
+			#e.npc.world.broadcast(str(err))
 			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
-		e.npc.getTempdata().put("Confirmed", False)
+			e.npc.getTempdata().put("Confirmed", False)
 	else :
 		e.npc.getTempdata().put("Confirmed", True)
 		e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Reminder","color":"dark_aqua"},{"text":"]","color":"dark_gray"},{"text":" - Click again to start but please ensure you loaded the right team file by right clicking this NPC.","color":"gray"}]')
