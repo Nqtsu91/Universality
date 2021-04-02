@@ -35,18 +35,18 @@ def Config(e):
     ToSend = ["NameTierNoobTier","NameTierCasualTier","NameTierCommonTier","NameTierGoodTier","NameTierProTier","NameTierUHCEliteTier"]
     for i in range (0, len(TierToList)):
         Path = os.path.dirname(os.path.abspath("__file__"))
-        Path += "\\CustomNPC Config\\FFA\\Pseudos\\"
+        Path += "\\CustomNPC Config\\DS\\Pseudos\\"
         Path = Path.replace("\\", str(os.path.sep))
         with open (str(Path)+str(TierToList[i])+".txt", "r") as TierList :
             TierList = TierList.read()
             TierList = TierList.split(u"\n")
             e.npc.world.getTempdata().put(str(ToSend[i]), TierList)
             Total += len(TierList)
-
+            
     # Spawning NPCs
-    e.npc.world.spawnClone(-22, 203, 0, 3, "Handler").getDisplay().setName("Ready")
+    e.npc.world.spawnClone(-22, 203, 0, 4, "Handler").getDisplay().setName("Ready")
     e.npc.executeCommand('/gamemode 2 @a')
-    e.npc.world.spawnClone(-30, 203, -8, 3, "Config Loader")
+    e.npc.world.spawnClone(-30, 203, -8, 4, "Config Loader")
 
 def Inv(e):
     # Filling zone
@@ -80,19 +80,18 @@ def Inv(e):
     e.npc.executeCommand("/setblock 37 201 0 minecraft:stone_slab")
     e.npc.executeCommand("/setblock 38 201 -1 minecraft:stone_slab")
     e.npc.executeCommand("/setblock 38 201 1 minecraft:stone_slab")
+    e.npc.executeCommand("/setblock 32 201 8 minecraft:ender_chest")
 
     # Spawning NPCs
-    e.npc.world.spawnClone(22, 203, 0, 3, "Handler").getDisplay().setName("Inv Ready")
-    e.npc.world.spawnClone(38, 203, 0, 3, str(e.npc.world.getTempdata().get("CurrentGame"))+" mode")
-
-
-    e.npc.executeCommand('/gamemode 2 @a')
+    e.npc.world.spawnClone(22, 203, 0, 4, "Handler").getDisplay().setName("Inv Ready")
+    e.npc.world.spawnClone(38, 203, 0, 4, "Inventory Loader")
+    e.npc.executeCommand('/gamemode 1 @a')
     
 
 def ClearConfig(e):
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 201 0')
-    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
+    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"DS","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
     # Clearing hub
     e.npc.executeCommand('/fill -19 200 11 -40 205 -11 minecraft:air')
     e.npc.world.getTempdata().put("ConfigMode", False)
@@ -101,7 +100,7 @@ def ClearConfig(e):
 def ClearInv(e):
     # Teleporting Host
     e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 201 0')
-    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
+    e.npc.executeCommand('/tellraw '+str(e.source.getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"DS","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Changes saved ","color":"gray"},{"text":"successfully","color":"dark_green"}]')
 
     # Clearing hub
     e.npc.executeCommand('/fill 19 200 11 40 205 -11 minecraft:air')
@@ -128,7 +127,7 @@ def Redirect(e):
         Config(e)
     elif Name == "Ready" :
         ClearConfig(e)
-    elif Name == "See inventories":
+    elif Name == "Inventories":
         Inv(e)
     elif Name == "Inv Ready":
         ClearInv(e)
@@ -153,5 +152,5 @@ def tick(e):
 
 
 def interact(e):
-    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Hit the ","color":"gray"},{"text":"\"Ready\"","color":"green"},{"text":" NPC to save your changes","color":"gray"}]')
+    e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"DS","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Hit the ","color":"gray"},{"text":"\"Ready\"","color":"green"},{"text":" NPC to save your changes","color":"gray"}]')
     e.setCanceled(True)

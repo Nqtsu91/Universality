@@ -82,7 +82,10 @@ def CheckTimer(e):
                                 e.npc.despawn()
                                 
                             else :
-                               e.npc.world.spawnClone( X, 120, Z, 2, "Spawner").setFaction(0)
+                                if random.randint(1, 3) == 2:
+                                    e.npc.world.spawnClone( int(e.npc.getX()), 120, int(e.npc.getZ()), 2, "Spawner").setFaction(0)
+                                else:
+                                    e.npc.world.spawnClone( X, 120, Z, 2, "Spawner").setFaction(0)
 
                             e.npc.world.getStoreddata().put(str(IdHere), TeamMode)
 

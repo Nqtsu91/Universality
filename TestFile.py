@@ -34,7 +34,7 @@ def kill(e):
 
 
 def interact(e):
-	e.npc.executeCommand('/tellraw @a ["",{"text":"    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510    \n\u2524\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u251c\n  "},{"text":"Thank you for downloading:","color":"aqua"},{"text":"\n         "},{"text":"Universality","bold":true,"color":"dark_red"},{"text":" !\n    Made by ","color":"gray"},{"text":"Natsu91","color":"gray","hoverEvent":{"action":"show_text","value":"Hey baguette !"}},{"text":" ! ","color":"gray"},{"text":"\u2588","color":"dark_blue"},{"text":"\u2588","color":"white"},{"text":"\u2588","color":"dark_red"},{"text":" \n         "},{"text":"Follow me on :\n      - ","color":"gray"},{"text":"Youtube","color":"red","clickEvent":{"action":"open_url","value":"https://www.youtube.com/channel/UCC11O0EUfQowZVu92RQZK8w"},"hoverEvent":{"action":"show_text","value":"Click here !"}},{"text":" \n      - ","color":"gray"},{"text":"Discord","color":"blue","clickEvent":{"action":"open_url","value":"https://discord.gg/XKhrjqs"},"hoverEvent":{"action":"show_text","value":"Click here"}},{"text":"\n\u2524\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u251c"}]')
+	e.npc.executeCommand('/tellraw @a ["",{"text":"	\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510	\n\u2524\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u251c\n  "},{"text":"Thank you for downloading:","color":"aqua"},{"text":"\n		 "},{"text":"Universality","bold":true,"color":"dark_red"},{"text":" !\n	Made by ","color":"gray"},{"text":"Natsu91","color":"gray","hoverEvent":{"action":"show_text","value":"Hey baguette !"}},{"text":" ! ","color":"gray"},{"text":"\u2588","color":"dark_blue"},{"text":"\u2588","color":"white"},{"text":"\u2588","color":"dark_red"},{"text":" \n		 "},{"text":"Follow me on :\n	  - ","color":"gray"},{"text":"Youtube","color":"red","clickEvent":{"action":"open_url","value":"https://www.youtube.com/channel/UCC11O0EUfQowZVu92RQZK8w"},"hoverEvent":{"action":"show_text","value":"Click here !"}},{"text":" \n	  - ","color":"gray"},{"text":"Discord","color":"blue","clickEvent":{"action":"open_url","value":"https://discord.gg/XKhrjqs"},"hoverEvent":{"action":"show_text","value":"Click here"}},{"text":"\n\u2524\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u251c"}]')
 	e.setCanceled(True)
 	#e.npc.executeCommand("/scoreboard objectives setdisplay sidebar Arena")
 
@@ -95,8 +95,8 @@ def interact(e):
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:obsidian')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:planks')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:obsidian')
-		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:tallgrass')
-		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:tallgrass')
+		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:cobblestone')
+		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:cobblestone')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:double_plant')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:double_plant')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:red_flower')
@@ -133,7 +133,7 @@ def SharingArmor(e):
 
 
 def interact(e):
-	for i in range(57, 108):						# Terraforming
+	for i in range(0, 8):						# Terraforming
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:tallgrass')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:tallgrass')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:tallgrass')
@@ -141,16 +141,16 @@ def interact(e):
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:double_plant')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:cobblestone')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:cobblestone')
-		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:obsidian')
-		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:obsidian')
+		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:lava')
+		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:lava')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:planks')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:planks')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:planks')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:fence')
 		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:planks')
 		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:fence')
-		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:skull')
-		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:skull')
+		e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:obsidian')
+		e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:obsidian')
 
 
 def interact(e):
@@ -158,8 +158,8 @@ def interact(e):
 	e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")+1)
 	e.npc.world.getTempdata().put("PlayerDeads",e.npc.world.getTempdata().get("PlayerDeads")+1)
 	A = e.npc.world.getTempdata().get("WinnerList")
-    A.append(str(e.player.getName()))
-    e.npc.world.getTempdata().put("WinnerList", A)
+	A.append(str(e.player.getName()))
+	e.npc.world.getTempdata().put("WinnerList", A)
 	"""
 	"""
 	e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")+2)
@@ -169,18 +169,18 @@ def interact(e):
 
 
 def GetDist(e):
-    if e.npc.getAttackTarget() != None :
-        Target = e.npc.getAttackTarget()
-        X = e.npc.getX()
-        Z = e.npc.getZ()
-        TX = Target.getX()
-        TZ = Target.getZ()
-        
-        a = TX - X
-        b = TZ - Z
+	if e.npc.getAttackTarget() != None :
+		Target = e.npc.getAttackTarget()
+		X = e.npc.getX()
+		Z = e.npc.getZ()
+		TX = Target.getX()
+		TZ = Target.getZ()
+		
+		a = TX - X
+		b = TZ - Z
 
-        Dist = math.sqrt((a)**2 + (b)**2)
-        return(Dist)
+		Dist = math.sqrt((a)**2 + (b)**2)
+		return(Dist)
 
 
 import random
@@ -281,7 +281,8 @@ def interact(e):
 	e.npc.say("say")
 
 def interact(e):
-	e.npc.say("say2")
+	e.npc.world.getTempdata().put("TeamsAlive", 3)
+	e.npc.world.getStoreddata().put("Players", 3)
 
 
 def interact(e):
@@ -599,21 +600,21 @@ def TimeBomb(e):
 			e.npc.executeCommand(str(Com))
 
 def HasteyBoys(e):
-    if True:
-        Players = e.npc.world.getAllPlayers()
-        for i in range(0, len(Players)):
-            for z in range(0, len(Players[i].getInventory())):
-                try:
-                    if Players[i].getInventory()[z] != None:
-                        e.npc.say(str(Players[i].getInventory()[z].getTag('ench')))
-                        List = ["minecraft:iron_pickaxe","minecraft:iron_axe","minecraft:iron_shovel","minecraft:diamond_pickaxe","minecraft:diamond_axe","minecraft:diamond_shovel","minecraft:gold_pickaxe","minecraft:gold_axe","minecraft:gold_shovel","minecraft:stone_pickaxe","minecraft:stone_axe","minecraft:stone_shovel","minecraft:wooden_pickaxe","minecraft:wooden_axe","minecraft:wooden_shovel"]
-                        if (Players[i].getInventory()[z].getName() in List) and (Players[i].getInventory()[z].getTag('ench') == None):
-                            Ench = '{ench:[{id:32,lvl:3},{id:34,lvl:2}]}'
-                            e.npc.executeCommand('/replaceitem entity '+str(Players[i].getName())+' slot.container.'+str(int(round(z)))+' '+str(Players[i].getInventory()[z].getName())+' 1 0 '+str(Ench)+'')
-                            #e.npc.executeCommand("/give "+str(Players[i].getName())+" "+str(Stack)+" 1 0 {ench:[{id:32,lvl:3},{id:34,lvl:2}]}")
-                except Exception as ess:
-                    e.npc.say(str(ess))
-                    pass
+	if True:
+		Players = e.npc.world.getAllPlayers()
+		for i in range(0, len(Players)):
+			for z in range(0, len(Players[i].getInventory())):
+				try:
+					if Players[i].getInventory()[z] != None:
+						e.npc.say(str(Players[i].getInventory()[z].getTag('ench')))
+						List = ["minecraft:iron_pickaxe","minecraft:iron_axe","minecraft:iron_shovel","minecraft:diamond_pickaxe","minecraft:diamond_axe","minecraft:diamond_shovel","minecraft:gold_pickaxe","minecraft:gold_axe","minecraft:gold_shovel","minecraft:stone_pickaxe","minecraft:stone_axe","minecraft:stone_shovel","minecraft:wooden_pickaxe","minecraft:wooden_axe","minecraft:wooden_shovel"]
+						if (Players[i].getInventory()[z].getName() in List) and (Players[i].getInventory()[z].getTag('ench') == None):
+							Ench = '{ench:[{id:32,lvl:3},{id:34,lvl:2}]}'
+							e.npc.executeCommand('/replaceitem entity '+str(Players[i].getName())+' slot.container.'+str(int(round(z)))+' '+str(Players[i].getInventory()[z].getName())+' 1 0 '+str(Ench)+'')
+							#e.npc.executeCommand("/give "+str(Players[i].getName())+" "+str(Stack)+" 1 0 {ench:[{id:32,lvl:3},{id:34,lvl:2}]}")
+				except Exception as ess:
+					e.npc.say(str(ess))
+					pass
 
 
 def damaged(e):
@@ -800,3 +801,596 @@ def interact(e):
 	for i in range(-240, 250, 10):
 		for j in range(-240, 250, 10):
 			e.npc.executeCommand('/setblock '+str(i)+' 250 '+str(j)+' simplechunkloader:tile.simplechunkloader')
+
+def damaged(e):
+	'''Cancel thunder damage
+	'''
+	Source = str(e.mcDamageSource)
+	Source = Source.split("@")
+	if (Source[0] == "net.minecraft.util.DamageSource") and (e.npc.getHealth() <= 8):
+		e.setCanceled(True) 
+
+
+
+def interact(e):
+	e.npc.executeCommand('/give @a minecraft:iron_helmet 1 0 {Unbreakable:1,ench:[{id:0,lvl:2}]}')
+	e.npc.executeCommand('/give @a minecraft:diamond_chestplate 1 0 {Unbreakable:1,ench:[{id:0,lvl:2}]}')
+	e.npc.executeCommand('/give @a minecraft:iron_leggings 1 0 {Unbreakable:1,ench:[{id:0,lvl:2}]}')
+	e.npc.executeCommand('/give @a minecraft:diamond_boots 1 0 {Unbreakable:1,ench:[{id:0,lvl:2}]}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def SaveAssigns(e):
+	"""
+	Lists teams alive
+	"""
+	if e.npc.world.getTempdata().get("TeamToNextAssign") == 0:
+		NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+		FactionListName = {}
+		for i in range(0, len(NearbyBots)):				# Getting all teams ID still in the game
+			if not NearbyBots[i].getFaction().getId() in FactionListName:
+				New = {int(NearbyBots[i].getFaction().getId()): str(NearbyBots[i].getDisplay().getName())+'//'}
+				FactionListName.update(New)
+			else:
+				FactionListName[NearbyBots[i].getFaction().getId()] += str(NearbyBots[i].getDisplay().getName())+'//'
+
+
+		e.npc.world.getTempdata().put("AssignsList", FactionListName)
+		AssignsPlayers(e)
+
+def AssignsPlayers(e):
+	"""
+	Say who will fight
+	"""
+	FactionListName = e.npc.world.getTempdata().get("AssignsList")
+	if FactionListName != None :
+		FactionList = []
+		for i, j in FactionListName.items():
+			FactionList.append(i)
+
+		TeamToNext = 0
+		Team1 = None
+		Team2 = None
+		Ticker = 1
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Assigning team :","color":"white"}]')
+		for i in range(0, len(FactionList)):
+			if Ticker == 1:
+				if i+1 < len(FactionList):
+					e.npc.world.getTempdata().put("Assign"+str(FactionList[i+1]),FactionList[i])
+					e.npc.world.getTempdata().put("Assign"+str(FactionList[i]),FactionList[i+1])
+					Team2 = FactionListName[FactionList[i+1]].split("//")
+					Team1 = FactionListName[FactionList[i]].split("//")
+					Team1 = ", ".join(Team1)
+					Team2 = ", ".join(Team2)
+					Com = '/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(Team1)+'","color":"gray"},{"text":"VS ","color":"white"},{"text":"'+str(Team2)+'","color":"gray"}]'
+					e.npc.executeCommand(Com)
+					TeamToNext += 1
+				else:
+					Team1 = FactionListName[FactionList[i]].split("//")
+					Team1 = ", ".join(Team1)
+					e.npc.world.getTempdata().put("Assign"+str(FactionList[i]), "Players")
+					Com = '/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(Team1)+'","color":"gray"},{"text":"VS ","color":"white"},{"text":"Players","color":"yellow"}]'
+					e.npc.executeCommand(Com)
+					TeamToNext += 1
+				Ticker = 0
+			else:
+				Ticker = 1
+
+		e.npc.world.getTempdata().put("TeamToNextAssign", TeamToNext)
+
+def interact(e):
+	SaveAssigns(e)
+	#e.npc.world.broadcast(str(e.npc.world.getTempdata().get("AssignsList")))
+	AssignsPlayers(e)
+	a = 'team 24 will fight team '+str(e.npc.world.getTempdata().get("Assign24"))
+	e.npc.say(a)
+
+
+
+def PreventAssign(e):
+	"""
+	Prevent bots from being cleaned during assigns
+	"""
+	try:
+		if (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) == "Players") and (e.source.getType() != 1):
+			e.setCanceled(True)
+		elif (e.source.getType() == 1) and (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != "Players"):
+			e.setCanceled(True)
+		elif (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != e.source.getFaction().getId()):
+			e.setCanceled(True)
+	except Exception as err:
+		#e.npc.say(str(err))
+		pass
+
+def PreventCleaning(e):
+	"""
+	Prevent the bot from attacking non-assigned target
+	"""
+	try:
+		if True:
+			if (e.npc.getAttackTarget().getType() == 1) and (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != "Players"):
+				NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+				for i in range(0, len(NearbyBots)):
+					if NearbyBots[i].getFaction().getId() == e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())):
+						e.npc.setAttackTarget(NearbyBots[i])
+					else:
+						e.setAttackTarget(None)	
+
+			elif (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != e.npc.getAttackTarget().getFaction().getId()):
+				for i in range(0, len(NearbyBots)):
+					if NearbyBots[i].getFaction().getId() == e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())):
+						e.npc.setAttackTarget(NearbyBots[i])
+					else:
+						e.setAttackTarget(None)	
+
+	except Exception as err:
+		#e.npc.say(str(err))
+		pass
+
+def damaged(e):
+	PreventAssign(e)
+	PreventCleaning(e)
+
+def meleeAttack(e):
+	PreventCleaning(e)
+
+def target(e):
+	PreventCleaning(e)
+
+
+def interact(e):
+	e.npc.say(str(e.npc.world.getTempdata().get("Assign26")))
+	e.npc.say(str(e.npc.world.getTempdata().get("PlayerDeads")))
+
+
+
+
+INSERT INTO Playerds (Pseudo, Kills, Deaths, Wins, KDR)
+VALUES("atsu91", 1, 1, 1, 5.5)
+
+
+import os
+def UpdateStats(e):
+	"""
+	Update stats database
+	"""
+	#Getting datas from the game
+	WinnerList = e.npc.world.getTempdata().get("WinnerList")
+	KillList = e.npc.world.getStoreddata().get("KillList")
+	KillList = KillList.split("//")
+	for i in range(len(KillList)-1, -1, -1):
+		if KillList[i] == "":
+			KillList.pop(i)
+		else:
+			KillList[i] = KillList[i].split("|")
+
+
+	#Preparing datas for stats update
+	AllData = []
+	NewAllData = []
+
+
+	#Hooking to csv file
+	Path = os.path.dirname(os.path.abspath("__file__"))
+	Path += "\\CustomNPC Config\\UHC\\Stats\\stats"
+	Path = Path.replace("\\", str(os.path.sep))
+	with open (str(Path)+".csv", "r") as File :
+		Config = File.read()
+		Config = Config.split(u'\n')
+		Title = Config[0]
+		Config.pop(0)
+
+		for i in range(0, len(Config)):
+			LocalLine = Config[i].split(";")
+			if LocalLine[0] != "":
+				AllData.append(LocalLine)
+
+
+	#Exploiting datas
+	for i in range(len(KillList)-1, -1, -1):
+		for j in range(len(AllData)-1, -1, -1):				#If player already have stats
+			if KillList[i][0] == AllData[j][0]:
+				NewLine = []
+				NewLine.append(str(KillList[i][0]))						# Saving name
+				NewLine.append(str(int(KillList[i][1]) + int(AllData[j][1])))			# Updating kills
+				if KillList[i][0] in WinnerList:
+					NewLine.append(str(AllData[j][2]))					#Keeping Death if won the game
+					NewLine.append(str(int(AllData[j][3])+1))				#Increasing Wins also
+				else:
+					NewLine.append(str(int(AllData[j][2])+1))		#Increasing Deaths
+					NewLine.append(str(int(AllData[j][3])))					#Keeping Wins if loose the game	
+
+				if int(NewLine[2]) != 0:					# if player died once
+					NewLine.append(str(int(round(int(NewLine[1])/int(NewLine[2])))))
+				else:
+					NewLine.append(str(NewLine[1]))
+				KillList.pop(i)
+				AllData.pop(j)
+				NewAllData.append(';'.join(NewLine))			#Saving into new stats
+
+	# if player have no stats
+	for i in range(0, len(KillList)):			
+		NewLine = []
+		NewLine.append(str(KillList[i][0]))			#Saving name
+		NewLine.append(str(KillList[i][1]))
+		if KillList[i][0] in WinnerList:			# if player won the game
+			NewLine.append("0")
+			NewLine.append("1")
+		else:
+			NewLine.append("1")
+			NewLine.append("0")
+
+		if int(NewLine[2]) != 0:					# if player died once
+			NewLine.append(str(int(round(int(NewLine[1])/int(NewLine[2])))))
+		else:
+			NewLine.append(str(NewLine[1]))
+		NewAllData.append(';'.join(NewLine))			#Saving into new stats	
+
+	e.npc.say(str(AllData))
+	#If player have stats but isnt in the game
+	for i in range(0, len(AllData)):
+		NewAllData.append(AllData)
+
+	# Re-hooking to csv file to save
+	Path = os.path.dirname(os.path.abspath("__file__"))
+	Path += "\\CustomNPC Config\\UHC\\Stats\\stats"
+	Path = Path.replace("\\", str(os.path.sep))
+	with open (str(Path)+".csv", "w") as File :
+		File.write( )
+		for i in range(0, len(NewAllData)):
+			File.write(NewAllData[i])
+			File.write(u'\n')
+
+
+def interact(e):
+	NickList = {"Natsu91":'MadlyLovingClara',
+				"_ClaraGODESS_":"AyZ_",
+				"_Mik0GODESS":"LaBelleRousse",
+				"Tylarzz":"SweetieGames",
+				"reb_hi":"Stylbay",
+				"jdegoederen":"pokemonfan89",
+				"xGokuuuh":"iSkyZ_",
+				"HalfDumb":"trojann_",
+				"Pydro":"tigerfun69",
+				"Pacoima":"youngplayerz855",
+				"Ladak":"noads",
+				"Acespads":"awesomegamer73",
+				"Cawrson":"ollia",
+				"Mqyland_hi":"ziitah",
+				"Mentally":"FrxshShxpe",
+				"TryHard":"20cps",
+				"VERSKUUH":"versku378",
+				"VictorHxgo":"xGoaaan",
+				"Eauscar":"ggloser"}
+
+	e.npc.world.getTempdata().put("NickList", NickList)
+
+
+
+
+
+
+
+
+import random
+def LoadRole(e):
+	RolesList = []
+	for i in range(0, 6):
+		RolesList.append("Demon")
+
+	for i in range(0, 11):
+		RolesList.append("Slayer")
+
+	RolesList.append("Kaguya")
+	RolesList.append("Sabito")
+	RolesList.append("Domu")
+	RolesList.append("Nakime")
+	RolesList.append("Muzan")
+
+	e.npc.world.getTempdata().put('RolesList', RolesList)
+
+def interact(e):
+	LoadRole(e)
+
+import random
+def GettingRole(e):
+	"""
+	Select a role at game starting
+	"""
+	if e.npc.getStoreddata().get("Role") == None:		#if no role
+		RolesList = e.npc.world.getTempdata().get('RolesList')
+		RoleSelected = random.choice(RolesList)
+		e.npc.getStoreddata().put("Role", RoleSelected)
+		RolesList.remove(RoleSelected)
+		e.npc.world.getTempdata().put('RolesList', RolesList)
+
+		e.npc.say(str(e.npc.getDisplay().getName())+" is now "+str(e.npc.getStoreddata().get("Role")))
+
+def EnableDeathTimer(e):
+	"""
+	Start the death timer to show death after a period of time
+	"""
+	if e.source.getType() == 1:				#Only if killed by player
+		e.npc.getTempdata().put("DeathTimer", 0)
+	else:										#Else just count as dead and looted already
+		pass
+
+def DeathTimer(e):
+	"""
+	Tick the death timer after death
+	"""
+	try:			#To avoid error when not dead
+		if e.npc.getTempdata().get("DeathTimer") == 10:				#Showing death message
+			e.npc.world.broadcast("=====================")
+			e.npc.world.broadcast(str(e.npc.getDisplay().getName())+" est mort, il etait "+str(e.npc.getStoreddata().get("Role")))
+			e.npc.world.broadcast("=====================")
+			e.npc.despawn()
+		else:
+			e.npc.getTempdata().put("DeathTimer", e.npc.getTempdata().get("DeathTimer")+1)
+	except:
+		pass
+
+
+
+def tick(e):
+	DeathTimer(e)
+
+def died(e):
+	EnableDeathTimer(e)
+
+def init(e):
+	try:
+		GettingRole(e)
+	except:
+		pass
+
+
+
+def TestingDeath(e):
+	"""
+	Prevent glitched death due to manual damage increase
+	"""
+	if e.npc.isAlive() == False:
+		died(e)
+
+def DamageIncrease(e):
+	"""
+	Increase damage depending on the attacker's role
+	"""
+	Role = e.npc.getStoreddata().get("Role")
+	Time = e.npc.world.isDay()
+	if e.source.getType() == 1:
+		AtkRole = e.npc.world.getStoreddata().get(str(e.source.getName())+"Role")
+		AtkName = e.source.getName()
+	else:
+		AtkRole = e.source.getStoreddata().get("Role")
+		AtkName = e.source.getDisplay().getName()
+
+	#Muzan blood damage increase
+	if str(AtkName) == str(e.npc.world.getTempdata().get("MuzanBoost")):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.1))
+
+	#Tanjiro damage increase
+	if (AtkRole == "Tanjiro") and (e.npc.world.getTempdata().get("TanjiroKilledTarget") == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Zenitsu damage increase
+	elif (AtkRole == "Zenitsu") and (e.source.getHealth() <= 10):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Tomioka damage increase
+	elif (AtkRole == "Tomioka") and (Time == True) and (e.npc.world.getTempdata().get("TomiokaKilledTanjiroKiller") == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+	elif (AtkRole == "Tomioka") and (Time == False) and (e.npc.world.getTempdata().get("TomiokaKilledSabitoKiller") == True)
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Gyomei damage increase
+	elif (AtkRole == "Gyomei") and (Time == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Urokodaki damage increase
+	elif (AtkRole == "Urokodaki") and (e.source.inWater() == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Jigoro damage increase
+	elif (AtkRole == "Jigoro") and (e.npc.world.getTempdata().get("JigoroKilledKaigaku") == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Yoriichi damage increase
+	elif (AtkRole == "Yoriichi"):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Muzan damage increase
+	elif (AtkRole == "Muzan") and (e.npc.world.getTempdata().get("MuzanKilledNezzuko") == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Kokushibo damage increase
+	elif (AtkRole == "Kokushibo") and (Time == False):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Doma damage increase
+	elif (AtkRole == "Doma") and (Time == False):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Gyokko damage increase
+	elif (AtkRole == "Gyokko") and (Time == False):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Akaza damage increase
+	elif (AtkRole == "Akaza"):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Daki/Gyutaro damage increase
+	elif (AtkRole in ["Daki","Gyutaro"]) and (Time == False):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Yahaba damage increase
+	elif (AtkRole == "Yahaba") and (e.npc.world.getTempdata().get("YahabaKilledTarget") == True):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+	#Demon damage increase
+	elif (AtkRole == "Demon") and (Time == False):
+		Kills = e.npc.getStoreddata().get("Kills")
+		if Kills == None:
+			Kills = 0
+		Damage = 1.2 + (0.03*Kills)
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*Damage))
+
+	#Nezuko damage increase
+	elif (AtkRole == "Nezuko") and (Time == False):
+		e.npc.setHealth(e.npc.getHealth()-(e.damage*1.2))
+
+def damaged(e):
+	DamageIncrease(e)
+	TestingDeath(e)
+
+def died(e):
+	e.npc.say(str(e.npc.getName()))
+	e.npc.say(str(e.source))
+
+
+def damaged(e):
+	e.npc.say(str(e.damage))
+	e.npc.say(str(e.damage*1.2))
+
+def interact(e):
+	e.npc.damage(5)
+
+
+def damaged(e):
+	e.npc.say(str((e.npc.world.getBlock(int(round(e.source.getX())), int(round(e.source.getY()-1)), int(round(e.source.getZ())))).getName()))
+
+
+RoleList = ["Tanjiro",
+			"Zenitsu",
+			"Inosuke",
+			"Kagaya",
+			"Tomioka",
+			"Shinobu",
+			"Kyojuro",
+			"Tengen",
+			"Muichiro",
+			"Mitsuri",
+			"Sanemi",
+			"Obanai",
+			"Gyomei",
+			"Urokodaki",
+			"Kanae",
+			"Sabito",
+			"Kanao",
+			"Genya",
+			"Hotaru",
+			"Slayer",
+			"Jigoro",
+			"Yoriichi",
+			"Shinjuro",
+			"Muzan",
+			"Nakime",
+			"Kokushibo",
+			"Doma",
+			"Akaza",
+			"Gyokko",
+			"Daki",
+			"Gyutaro",
+			"Rui",
+			"Kaigaku",
+			"Sasumaru",
+			"Kyogai",
+			"Yahaba",
+			"Kumo",
+			"Furuto",
+			"Nezuko",
+			"Demon",
+			]
+
+
+def DeathTchatMessage(e):
+	"""
+	Saying death message
+	"""
+	GoodList = ["Tanjiro",
+			"Zenitsu",
+			"Inosuke",
+			"Kagaya",
+			"Tomioka",
+			"Shinobu",
+			"Kyojuro",
+			"Tengen",
+			"Muichiro",
+			"Mitsuri",
+			"Sanemi",
+			"Obanai",
+			"Gyomei",
+			"Urokodaki",
+			"Kanae",
+			"Sabito",
+			"Kanao",
+			"Genya",
+			"Hotaru",
+			"Slayer",
+			"Jigoro",
+			"Yoriichi",
+			"Shinjuro"]
+	BadList = ["Muzan",
+			"Nakime",
+			"Kokushibo",
+			"Doma",
+			"Akaza",
+			"Gyokko",
+			"Daki",
+			"Gyutaro",
+			"Rui",
+			"Kaigaku",
+			"Sasumaru",
+			"Kyogai",
+			"Yahaba",
+			"Kumo",
+			"Furuto",
+			"Nezuko",
+			"Demon",
+			]
+	if e.npc.getDisplay().getName() in BadList:
+		RoleColor = "red"
+	else:
+		RoleColor = "green"
+
+	e.npc.executeCommand('/tellraw @a {"text":"\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582","color":"dark_gray"}')
+	e.npc.executeCommand('/tellraw @a ["",{"text":"'+str(e.npc.getDisplay().getName())+'","color":"gray"},{"text":" est mort, il etait ","color":"dark_gray"},{"text":"'+str()+'","color":"'+str(RoleColor)+'"}]')
+	e.npc.executeCommand('/tellraw @a {"text":"\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582","color":"dark_gray"}')
+
+
+def interact(e):
+	RoleColor = "red"
+	e.npc.executeCommand('/tellraw @a {"text":"                                                                                 ","color":"dark_gray","strikethrough":true}')
+	e.npc.executeCommand('/tellraw @a ["",{"text":"'+str(e.npc.getDisplay().getName())+'","color":"yellow"},{"text":" est mort.","color":"dark_gray"}]')
+	e.npc.executeCommand('/tellraw @a ["",{"text":"Son role etait : ","color":"dark_gray"},{"text":"'+str(e.npc.getStoreddata().get("Role"))+'","color":"'+str(RoleColor)+'"}]')
+	e.npc.executeCommand('/tellraw @a {"text":"                                                                                 ","color":"dark_gray","strikethrough":true}')
+
+def interact(e):
+	GdList = e.npc.world.getTempdata().get("GoodList")
+	BdList = e.npc.world.getTempdata().get("BadList")
+	MList = e.npc.world.getTempdata().get("MoonList")
+	UpMList = e.npc.world.getTempdata().get("UpperMoonList")
+	e.npc.say(str(GdList))
+	e.npc.say(str(BdList))
+	e.npc.say(str(MList))
+	e.npc.say(str(UpMList))
+
+def interact(e):
+	e.npc.world.getTempdata().put("Natsu91","Muzan")

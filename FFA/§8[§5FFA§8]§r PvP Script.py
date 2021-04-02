@@ -1169,7 +1169,7 @@ def UsingGap(e):
 		Timer = 0																					# Creating a 2sec timer for the eating
 		e.npc.executeCommand("/playsound customnpcs:gun.pistol.shot @a")				# Playing eating sound ( only if you have the right texture/sound pack )
 
-	if IsSlowed != -1 :										# Testing if he finished eating
+	elif IsSlowed != -1 :										# Testing if he finished eating
 		if Timer == 3 :
 			e.npc.getStoreddata().put("IsEating", False)						# Allow his reach to change from 0 		( UpdatingReach(e) )
 			e.npc.addPotionEffect(10, 4, 1, False)						# Adding the 2 regeneration and absorption effects

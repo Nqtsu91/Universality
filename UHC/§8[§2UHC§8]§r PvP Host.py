@@ -13,8 +13,6 @@ def LoadAdvanced(e):
 
     e.npc.world.getTempdata().put("MaxProt", 2)
     e.npc.world.getTempdata().put("MaxSharp", 3)
-    e.npc.world.getTempdata().put("MaxGap", 10)
-
 
     Path = os.path.dirname(os.path.abspath("__file__"))
     Path += "\\CustomNPC Config\\UHC\\config "+str(e.npc.world.getTempdata().get("ConfigToRead"))+"\\advanced"
@@ -24,7 +22,7 @@ def LoadAdvanced(e):
         Config = Config.split(u'\n')
         Name = Config[0]
         del Config[0]
-        ToConfigList = ["AnvilTicks","ProtIncreaseTime","SharpIncreaseTime","EnchantIncreaseTime","DiamondIncreaseTime","DiamondIncreaseRate","ClearedLoot","GapIncreaseTime","GapIncreaseRate","GapAtKill","ForcedHelm","ForcedChest","ForcedLegg","ForcedBoots","ForcedSword","HelmProt","ChestProt","LeggProt","BootsProt","HelmProj","ChestProj","LeggProj","BootsProj","SwordSharp","ForcedGap"]
+        ToConfigList = ["AnvilTicks","ProtIncreaseTime","SharpIncreaseTime","EnchantIncreaseTime","EnchantIncreaseRate","DiamondIncreaseTime","DiamondIncreaseRate","ClearedLoot","GapIncreaseTime","GapIncreaseRate","MaxGap","GapAtKill","ForcedHelm","ForcedChest","ForcedLegg","ForcedBoots","ForcedSword","HelmProt","ChestProt","LeggProt","BootsProt","HelmProj","ChestProj","LeggProj","BootsProj","SwordSharp","ForcedGap"]
 
 
     for i in range (len(Config)-1, -1, -1):
@@ -141,7 +139,7 @@ def SpawningBots(e) :
 
 	TeamsAlive = (BotsToSpawn/TeamMode) + 1
 	e.npc.world.getStoreddata().put("TeamsAlive", TeamsAlive)
-
+	e.npc.world.getTempdata().put("TeamToNextAssign", 0)
 	e.npc.world.getStoreddata().put("BotsToSpawn", BotsToSpawn)				# For the latest scatter method
 
 	for i in range(0,41):					# Initialize team data
@@ -149,6 +147,7 @@ def SpawningBots(e) :
 		e.npc.world.getStoreddata().put(str(i)+"Aggro", 0)
 
 	PlayerList = len(e.npc.world.getAllPlayers())
+	e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers()))
 	e.npc.world.getStoreddata().put("Players", BotsToSpawn + PlayerList)			# Getting data for bots spawn
 	e.npc.world.getStoreddata().put("PlayersMax", BotsToSpawn + PlayerList)
 
@@ -241,6 +240,7 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.executeCommand('/scoreboard objectives add 2BorderTrigger trigger')
 	e.npc.executeCommand('/scoreboard objectives add 3BorderTrigger trigger')
 	e.npc.executeCommand('/scoreboard objectives add PvPTrigger trigger')
+	e.npc.executeCommand('/scoreboard objectives add Ally trigger')
 
 
 	# Sending potential name in the cloud data
@@ -251,9 +251,13 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	with open (str(Path)+".txt", "r") as TierList :
 		TierList = TierList.read()
 		TierList = TierList.split(\n)
+		while (e.npc.world.getTempdata().get("BotNumber")//e.npc.world.getTempdata().get("TeamSize")) > len(TierList):			#Adding name in the TeamFile if there is not enough
+			TeamForced = "-"
+			for i in range(0, e.npc.world.getTempdata().get("TeamSize")+1):
+				TeamForced += "//-"
+			TierList.append(TeamForced)
+			e.npc.world.broadcast("added 1 team")
 		e.npc.world.getTempdata().put("TeamNameList", TierList)
-		Variable = e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier"))
-		Variable_2 = e.npc.world.getTempdata().get("NameTier"+str("ProTier"))
 		NewList = e.npc.world.getTempdata().get("AlreadyTaken")
 		if NewList == None :
 			e.npc.world.getTempdata().put("AlreadyTaken", [])
@@ -330,6 +334,7 @@ def VisualEffects(e):
 
 			e.npc.executeCommand('/playsound note.pling @p')
 
+			e.npc.world.getTempdata().put("NickList", {})
 			e.npc.world.spawnClone(1, 195, 3, 2, "Accept Fate")
 			e.npc.world.spawnClone(1, 195, -3, 2, "Accept Fate").getDisplay().setName("Respawn")
 
@@ -348,7 +353,7 @@ def VisualEffects(e):
 			LoadAdvanced(e)
 
 			e.npc.world.spawnClone( 0, 250, 0, 2, "Border").getStoreddata().clear()
-			
+			e.npc.world.getTempdata().put("NickList", {"Natsu91":"NqtsuG0D"})
 			e.npc.despawn()
 
 

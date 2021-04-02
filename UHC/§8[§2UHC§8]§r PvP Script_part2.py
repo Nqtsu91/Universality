@@ -28,7 +28,7 @@ def TimeBomb(e):
 		e.npc.executeCommand("/fill ~ ~+1 ~+1 ~ ~+1 ~ minecraft:air")			# Spawning a chest at death coordinates
 		e.npc.executeCommand("/fill ~ ~ ~+1 ~ ~ ~ minecraft:chest")
 		e.npc.executeCommand("/playsound random.levelup @a ~ ~ ~")			# Just a sound
-		e.npc.executeCommand("/xp 40 "+ str(e.source.getName()))		# Looting xp
+		e.npc.executeCommand("/xp 20 "+ str(e.source.getName()))		# Looting xp
 		TimeBombList = e.npc.world.getTempdata().get("TimeBombList")
 		X = e.npc.getX()												# Saving coordinates
 		Y = e.npc.getY()
@@ -108,7 +108,7 @@ def TimeBomb(e):
 		# Adding the golden apples
 		GoldenAppleLoot = e.npc.getTempdata().get("GapCount")
 		if (GoldenAppleLoot == None) or (0 >= GoldenAppleLoot):
-			GoldenAppleLoot = 1 + int(round(e.npc.world.getTempdata().get("GapAtKill")))
+			GoldenAppleLoot = 1 + int(round(int(round(e.npc.world.getTempdata().get("GapAtKill")))/2))
 		if GoldenAppleLoot >= 64:
 			while GoldenAppleLoot > 64:
 				GoldenAppleLoot -= 64
@@ -197,6 +197,23 @@ def VanillaDeathStyle(e):
 		e.npc.despawn()
 		pass
 
+def HeadPost(e):
+	'''Spawn a head on a fence at the location of the death of the bot
+	'''
+	try:
+		e.source.getName()
+		if (e.npc.world.getTempdata().get("GoldenHeads") == True) and (e.npc.world.getTempdata().get("TimeBomb") == False):
+			e.npc.executeCommand("/setblock ~ ~ ~ minecraft:fence")	
+			e.npc.executeCommand("/setblock ~ ~+1 ~ minecraft:skull 1")
+	except:
+		pass
+
+def ExplodeOnDeath(e):
+	'''Display an explosion at the location of the death of the bot
+	'''
+	if e.npc.world.getTempdata().get("ExplodeOnDeath") == True :
+		e.npc.world.explode(e.npc.getX(),e.npc.getY()+1,e.npc.getZ(),0, False, False)
+
 #ON KILL ONLY functions :	
 
 
@@ -241,10 +258,45 @@ def RodlessActivation(e):
 	else :
 		e.npc.getStats().getMelee().setRange(0)
 
+def BookCeption(e):
+	'''Spawn a randomly enchanted book at death
+	'''
+	BookCeption = e.npc.world.getTempdata().get("BookCeption")
+	if BookCeption == True :
+		Tier4 = ["16","0","1","17","3","32","48","2","4","18"]
+		Tier3 = ["34","61","62","8"]
+		Tier2 = ["49","19","20","5","7"]
+		Tier1 = ["6","50","51","33"]
+		randomTier = random.randint(1, 4)
+		if randomTier == 1 :
+			randomBook = random.choice(Tier1)
+			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:403,Count:1,tag:{StoredEnchantments:[{id:"+str(randomBook)+",lvl:1}]}}}")
+		elif randomTier == 2 :
+			randomBook = random.choice(Tier2)
+			randomLevel = random.randint(1,2)
+			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:403,Count:1,tag:{StoredEnchantments:[{id:"+str(randomBook)+",lvl:"+str(randomLevel)+"}]}}}")
+		elif randomTier == 3 :
+			randomBook = random.choice(Tier3)
+			randomLevel = random.randint(1,3)
+			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:403,Count:1,tag:{StoredEnchantments:[{id:"+str(randomBook)+",lvl:"+str(randomLevel)+"}]}}}")
+		elif randomTier == 4 :
+			randomBook = random.choice(Tier4)
+			randomLevel = random.randint(1,4)
+			e.npc.executeCommand("/summon Item ~ ~ ~+0.35 {Item:{id:403,Count:1,tag:{StoredEnchantments:[{id:"+str(randomBook)+",lvl:"+str(randomLevel)+"}]}}}")
+
 
 #INIT GAME functions :
 
-
+def SettingMeleeDelay(e):
+	"""
+	Decide how fast the NPC hit depending on his tier
+	"""
+	if (e.npc.getTempdata().get("SelectedType") == "UHCEliteTier") or (e.npc.getFaction().getId() == 26) :
+		e.npc.getStats().getMelee().setDelay(8)
+	elif e.npc.getTempdata().get("SelectedType") == "ProTier" :
+		e.npc.getStats().getMelee().setDelay(9)
+	else:
+		e.npc.getStats().getMelee().setDelay(10)
 
 #TEAMER BOTS ONLY functions :
 
@@ -335,12 +387,12 @@ def Knocked(e):
 				SelectedType = e.npc.getTempdata().get("SelectedType")
 
 				if SelectedType == "UHCEliteTier" :
-					ReachList = [2,2,2,2,3,3,3,4]
+					ReachList = [2,3,3,3,3,3,4,4]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 
 				elif SelectedType == "ProTier" :
-					ReachList = [2,2,2,2,3,3,3,3]
+					ReachList = [2,2,3,3,3,3,3,3]
 					NewReach = random.choice(ReachList)
 					e.npc.getStats().getMelee().setRange(NewReach)
 
@@ -367,7 +419,7 @@ def Combo(e):
 		elif e.npc.getTempdata().get("ComboTick") == 2:
 			e.npc.getTempdata().put("ComboTick", 0) 
 
-			if e.npc.getStats().getMelee().getRange() == 3:
+			if e.npc.getStats().getMelee().getRange() == 4:
 				e.npc.getStats().getMelee().setKnockback(1)
 				e.npc.getStats().getMelee().setRange(3)
 			else:
@@ -610,24 +662,32 @@ def SpecDisplay(e):
 
 def UseLava(e):
 	try:
-		Dist = GetDist(e)
-		List = ["NoobTier","CasualTier","GoodTier","CommonTier"]            # List of non lava user
-		if not e.npc.getTempdata().get("SelectedType") in List :  
-			Target = e.npc.getAttackTarget()
-			Y = int(round(Target.getY()))
-			MyY = int(round(e.npc.getY()))
-			if (Dist <= 5) and (random.randint(0,8) == 2) and (e.npc.getHealth() >= 8) and (e.npc.getTempdata().get("LavaTick") == 0) and (Y-3 <= MyY <= Y+3):
+		if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+			Cond1 = True
+			Cond2 = (int(e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId()))) == int(e.npc.getAttackTarget().getFaction().getId()))
+		else:
+			Cond1 = True
+			Cond2 = True
+
+		if (e.npc.getAi().getRetaliateType() == 0) and ((Cond1 == True) and (Cond2 == True)):
+			Dist = GetDist(e)
+			List = ["NoobTier","CasualTier","GoodTier","CommonTier"]            # List of non lava user
+			if not e.npc.getTempdata().get("SelectedType") in List :  
 				Target = e.npc.getAttackTarget()
-				X = int(round(Target.getX()))
 				Y = int(round(Target.getY()))
-				Z = int(round(Target.getZ()))
-				if (e.npc.world.getBlock(X, Y-1, Z).getName() == "minecraft:air"):
-					Y -= 1
-				e.npc.world.setBlock(X, Y, Z, "minecraft:lava", 0)
-				e.npc.world.setBlock(X, Y, Z+1, "minecraft:lava", 1)
-				e.npc.getTempdata().put("LavaTick", 2)
-				e.npc.getTempdata().put("LavaCoord", [X, Y, Z])
-						
+				MyY = int(round(e.npc.getY()))
+				if (Dist <= 5) and (random.randint(0,8) == 2) and (e.npc.getHealth() >= 8) and (e.npc.getTempdata().get("LavaTick") == 0) and (Y-3 <= MyY <= Y+3):
+					Target = e.npc.getAttackTarget()
+					X = int(round(Target.getX()))
+					Y = int(round(Target.getY()))
+					Z = int(round(Target.getZ()))
+					if (e.npc.world.getBlock(X, Y-1, Z).getName() == "minecraft:air"):
+						Y -= 1
+					e.npc.world.setBlock(X, Y, Z, "minecraft:lava", 0)
+					e.npc.world.setBlock(X, Y, Z+1, "minecraft:lava", 1)
+					e.npc.getTempdata().put("LavaTick", 2)
+					e.npc.getTempdata().put("LavaCoord", [X, Y, Z])
+							
 
 	except Exception as err:
 		pass
@@ -656,18 +716,35 @@ def MeetUpChecking(e):
 	MeetUp = e.npc.world.getStoreddata().get("MeetUp")
 	if (e.npc.getFaction().getId() != 26) and (e.npc.getAttackTarget() == None):
 		try:
-			if (e.npc.world.getTotalTime() >= MeetUp) and (e.npc.getAttackTarget() == None):		# Navigating to 0 0 when Meet Up start
+			if (e.npc.getTempdata().get("IsDeathMatch") == None):
+				if (e.npc.world.getTotalTime() >= MeetUp) and (e.npc.getAttackTarget() == None):		# Navigating to 0 0 when Meet Up start
+					X = 0
+					Z = 0
+
+					if e.npc.getX() >= 0 :
+						X -= 5
+					else:
+						X += 5
+
+					if e.npc.getZ() >= 0 :
+						Z -= 5
+					else :
+						Z += 5
+
+					e.npc.navigateTo(e.npc.getX()+X, e.npc.getY(), e.npc.getZ()+Z, 2)
+
+			elif e.npc.getAttackTarget() == None:						#Navigating to a range of -20/220 when assign are running
 				X = 0
 				Z = 0
 
-				if e.npc.getX() >= 0 :
+				if e.npc.getX() >= 10 :
 					X -= 5
-				else:
+				elif -10 >= e.npc.getX():
 					X += 5
 
-				if e.npc.getZ() >= 0 :
+				if e.npc.getZ() >= 10 :
 					Z -= 5
-				else :
+				elif -10 >= e.npc.getZ():
 					Z += 5
 
 				e.npc.navigateTo(e.npc.getX()+X, e.npc.getY(), e.npc.getZ()+Z, 2)
@@ -749,6 +826,7 @@ def LastFight(e):
 	if (e.npc.world.getStoreddata().get("TeamsAlive") == e.npc.world.getTempdata().get("StartDeathmatchAt")) and (e.npc.getTempdata().get("IsDeathMatch") == None):
 		e.npc.setPosition(0, 155, 0)
 		e.npc.getTempdata().put("IsDeathMatch", "True")
+		e.npc.getAi().setRetaliateType(3)
 
 def SpecMessageDeath(e):
 	"""
@@ -760,6 +838,270 @@ def SpecMessageDeath(e):
 		a = '/tellraw @a ["",{"text":"[","color":"gray"},{"text":"Host","color":"dark_aqua"},{"text":"] ","color":"gray"},{"text":"[","color":"gray"},{"text":"Spec","color":"aqua"},{"text":"] ","color":"gray"},{"text":"'+str(random.choice(SpecList))+'","color":"gold"},{"text":" : ","color":"white"},{"text":"'+str(random.choice(MessageList))+'","color":"white"}]'
 		e.npc.executeCommand(a)
 
+def PreventCleaning(e):
+	"""
+	Prevent the bot from attacking non-assigned target
+	"""
+	try:
+		if (e.npc.world.getTempdata().get("DeathMatchTP") == True) and (e.npc.getAi().getRetaliateType() == 3):
+			if (e.npc.getAttackTarget().getType() == 1) and (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != 26):
+				NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+				for i in range(0, len(NearbyBots)):
+					if int(NearbyBots[i].getFaction().getId()) == int(e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId()))):
+						e.npc.getAi().setRetaliateType(0)
+						e.npc.setAttackTarget(NearbyBots[i])
+						#e.npc.world.broadcast(str(e.npc.getAttackTarget().getDisplay().getName()))
+
+			elif (int(e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId()))) != int(e.npc.getAttackTarget().getFaction().getId())):
+				NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+				for i in range(0, len(NearbyBots)):
+					if int(NearbyBots[i].getFaction().getId()) == e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())):
+						e.npc.getAi().setRetaliateType(0)
+						e.npc.setAttackTarget(NearbyBots[i])
+						#e.npc.world.broadcast(str(e.npc.getAttackTarget().getDisplay().getName()))
+
+		elif (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+			e.npc.getAi().setRetaliateType(0)
+
+	except Exception as err:
+		#e.npc.say(str(err))
+		e.npc.getAi().setRetaliateType(0)
+		pass
+
+def PreventCleaningII(e):
+	"""
+	Prevent the bot from attacking non-assigned target
+	"""
+	try:
+		if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+			if (e.npc.getAttackTarget().getType() == 1) and (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != 26):
+				e.npc.getAi().setRetaliateType(3)
+				e.setCanceled(True)
+
+			elif (int(e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId()))) != int(e.npc.getAttackTarget().getFaction().getId())):
+				e.npc.getAi().setRetaliateType(3)
+				e.setCanceled(True)
+
+	except Exception as err:
+		#e.npc.say(str(err))
+		pass
+
+def SaveAssigns(e):
+	"""
+	Lists teams alive
+	"""
+	if e.npc.world.getTempdata().get("TeamToNextAssign") == 0:
+		if (e.npc.getTempdata().get("TimerToAssign") == None):
+			e.npc.getTempdata().put("TimerToAssign", 1)
+		elif (e.npc.getTempdata().get("TimerToAssign") < 30):
+			e.npc.getTempdata().put("TimerToAssign", e.npc.getTempdata().get("TimerToAssign")+1)
+		elif (e.npc.getTempdata().get("TimerToAssign") == 30):
+			NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+			FactionListName = {}
+			for i in range(0, len(NearbyBots)):				# Getting all teams ID still in the game
+				if (NearbyBots[i].getFaction().getId() == 0) or (NearbyBots[i].isAlive() != True) or (NearbyBots[i].getFaction().getId() == 26):
+					pass
+				elif not NearbyBots[i].getFaction().getId() in FactionListName:
+					New = {int(NearbyBots[i].getFaction().getId()): str(NearbyBots[i].getDisplay().getName())+'//'}
+					FactionListName.update(New)
+				else:
+					FactionListName[NearbyBots[i].getFaction().getId()] += str(NearbyBots[i].getDisplay().getName())+'//'
+
+
+			e.npc.world.getTempdata().put("AssignsList", FactionListName)
+			AssignsPlayers(e)
+
+def AssignsPlayers(e):
+	"""
+	Say who will fight
+	"""
+	FactionListName = e.npc.world.getTempdata().get("AssignsList")
+	if (FactionListName != None) and (e.npc.isAlive() == True):
+		FactionList = []
+		for i, j in FactionListName.items():
+			FactionList.append(i)
+		
+
+		TeamToNext = 0
+		Team1 = None
+		Team2 = None
+		Ticker = 1
+		e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Assigning teams :","color":"white"}]')
+		for i in range(0, len(FactionList)):
+			if Ticker == 1:
+				if i+1 < len(FactionList):
+					e.npc.world.getTempdata().put("Assign"+str(FactionList[i+1]),FactionList[i])
+					e.npc.world.getTempdata().put("Assign"+str(FactionList[i]),FactionList[i+1])
+					Team2 = FactionListName[FactionList[i+1]].split("//")
+					Team1 = FactionListName[FactionList[i]].split("//")
+					Team1 = ", ".join(Team1)
+					Team2 = ", ".join(Team2)
+					Com = '/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(Team1)+'","color":"gray"},{"text":"VS ","color":"white"},{"text":"'+str(Team2)+'","color":"gray"}]'
+					e.npc.executeCommand(Com)
+					TeamToNext += 1
+				else:
+					if (e.npc.world.getTempdata().get("PlayerDeads") != 0):
+						Team1 = FactionListName[FactionList[i]].split("//")
+						Team1 = ", ".join(Team1)
+						e.npc.world.getTempdata().put("Assign"+str(FactionList[i]), 26)
+						e.npc.world.getTempdata().put("Assign26", FactionList[i])
+						Com = '/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Assigns","color":"red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(Team1)+'","color":"gray"},{"text":"VS ","color":"white"},{"text":"Players","color":"yellow"}]'
+						e.npc.executeCommand(Com)
+						TeamToNext += 1
+				Ticker = 0
+			else:
+				Ticker = 1
+
+		e.npc.world.getTempdata().put("TeamToNextAssign", TeamToNext)
+
+def TeamSharingHealing(e):
+    """
+    Sending healing to his teammates when kill an entity
+    """
+    try:
+        NearbyBots = e.npc.world.getNearbyEntities(int(e.npc.getX()), int(e.npc.getY()), int(e.npc.getZ()), 40, 2).tolist()
+
+        for i in range(0, len(NearbyBots)):
+            if (NearbyBots[i].getFaction().getId() == e.npc.getFaction().getId()) and (NearbyBots[i].getDisplay().getName() != e.npc.getDisplay().getName()):
+                NearbyBots[i].getTempdata().put("GapCount", NearbyBots[i].getTempdata().get("GapCount")+e.npc.world.getTempdata().get("GapAtKill")//2)
+    except:
+        pass
+
+def TeamSplitingHealing(e):
+    """
+    Share healing when collide with ally
+    """
+    try:
+        if e.entity.getFaction().getId() == e.npc.getFaction().getId(): #If collide ally
+            HisHealing = e.entity.getTempdata().get("GapCount")
+            MyHealing = e.npc.getTempdata().get("GapCount")
+
+            TotalHealing = (HisHealing + MyHealing)
+            HalfHealing = TotalHealing//2
+
+            e.entity.getTempdata().put("GapCount", HalfHealing)
+            e.npc.getTempdata().put("GapCount", TotalHealing-HalfHealing)
+    except:
+        pass
+
+def TargetingCollide(e):
+    """
+    Change target if colliding with another entity
+    """
+    try:
+        Target = e.npc.getAttackTarget()
+        Entity = e.entity
+        if Entity.getFaction().getId() != e.npc.getFaction().getId():
+
+            #If health of entity is low
+            if (Entity.getHealth() <= (35/100)*e.npc.getMaxHealth()) and (Entity.getHealth() > 0):
+                e.npc.setAttackTarget(Entity)
+
+            #If target is too far
+            elif (GetDist(e) >= 6):
+                e.npc.setAttackTarget(Entity)
+    except:
+        pass
+
+def AntiWrongTarget(e):
+    """
+    Prevent from targeting something weird
+    """
+    try:
+        if (e.npc.getAttackTarget().getFaction().getId() == e.npc.getFaction().getId()) or (e.npc.getAttackTarget().isAlive() == False):
+            e.npc.setAttackTarget(None)
+    except:
+        pass
+
+def PreventAssign(e):
+	"""
+	Prevent bots from being cleaned during assigns
+	"""
+	try:
+		if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+			if (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) == 26) and ((e.source.getType() != 1) and (e.source.getFaction().getId() != 26)):
+				e.setCanceled(True)
+			elif (e.source.getType() == 1) and (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != 26):
+				e.setCanceled(True)
+			elif (e.npc.world.getTempdata().get("Assign"+str(e.npc.getFaction().getId())) != e.source.getFaction().getId()):
+				e.setCanceled(True)
+	except Exception as err:
+		#e.npc.say(str(err))
+		pass
+
+def IncreasePlayerNumber(e):
+	"""
+	Increase player number when Ally bot spawn
+	"""
+	if (e.npc.world.getTempdata().get("GameStarted") == 1) and (e.npc.getTempdata().get("JoinedPlayerTeam") == None) and (e.npc.getFaction().getId() == 26):
+		e.npc.getTempdata().put("JoinedPlayerTeam", True)
+		if e.npc.world.getTempdata().get("PlayerDeads") == None :
+			e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers())+1)
+		else :
+			e.npc.world.getTempdata().put("PlayerDeads", e.npc.world.getTempdata().get("PlayerDeads")+1)
+
+def DecreasePlayerNumber(e):
+	"""
+	Decrease player number when Ally bot dies
+	"""
+	if (e.npc.world.getTempdata().get("GameStarted") == 1) and (e.npc.getFaction().getId() == 26):
+		e.npc.world.getTempdata().put("PlayerDeads", e.npc.world.getTempdata().get("PlayerDeads")-1)
+
+		if e.npc.world.getTempdata().get("PlayerDeads") == 0 or e.npc.world.getTempdata().get("PlayerDeads") == 0.0 :
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"Team ","color":"gray"},{"text":"Players, is now eliminated","color":"red"}]')
+			e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")-1)
+		if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+				e.npc.world.getTempdata().put("TeamToNextAssign", e.npc.world.getTempdata().get("TeamToNextAssign")-1)
+
+def FriendlyFireOff(e):
+	"""
+	if Ally bot attack player
+	"""
+	try:
+		if (e.npc.getFaction().getId() == 26) and (e.npc.getAttackTarget().getType() == 1):
+			e.setCanceled(True)
+			e.npc.setAttackTarget(None)
+	except:
+		pass
+
+def AdminControl(e):
+	"""
+	Some commands for admins during games
+	"""
+	try:
+		if (e.player.getHeldItem().getDisplayName() == "Ban") and (e.player.getGamemode() == 1):
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_red"},{"text":"FAC","color":"dark_purple"},{"text":"] ","color":"dark_red"},{"text":"========================","color":"red"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_red"},{"text":"FAC","color":"dark_purple"},{"text":"]","color":"dark_red"},{"text":" '+str(e.npc.getDisplay().getName())+'","color":"red"},{"text":" has been banned by :","color":"gold"},{"text":" '+str(e.player.getName())+'","color":"red"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_red"},{"text":"FAC","color":"dark_purple"},{"text":"] ","color":"dark_red"},{"text":"========================","color":"red"}]')		
+			e.npc.getStats().getMelee().setStrength(0)
+			e.npc.getStats().setAggroRange(0)
+			e.npc.getAi().setWalkingSpeed(0)
+			e.npc.getDisplay().setSkinTexture('minecraft:textures/entity/zombie/zombie.png')
+
+		elif e.player.getHeldItem().getDisplayName() == "Give Healing":
+			e.npc.getTempdata().put("GapCount", e.npc.getTempdata().get("GapCount")+1)
+
+		elif e.player.getHeldItem().getDisplayName() == "Kill":
+			#e.npc.addPotionEffect(7, 1, 5, False)
+			pass
+	except:
+		pass
+
+def SettingTeamLeader(e):
+	"""
+	Set a team leader if there is no one selected
+	"""
+	if (e.npc.world.getTempdata().get("Leader"+str(e.npc.getFaction().getId())) == None) and (e.npc.getFaction().getId() != 26) and (e.npc.getDisplay().getName() != "Disabled") and (e.npc.getDisplay().getName() != "-"):
+		e.npc.world.getTempdata().put("Leader"+str(e.npc.getFaction().getId()), e.npc.getDisplay().getName())
+	else:
+		e.npc.getJob().setFollowing(str(e.npc.world.getTempdata().get("Leader"+str(e.npc.getFaction().getId()))))
+
+def ClearingTeamLeader(e):
+	"""
+	Clear team leader if he dies
+	"""
+	if (str(e.npc.getJob().getFollowing()) == str(e.npc.getDisplay().getName())):
+		e.npc.world.getTempdata().put("Leader"+str(e.npc.getFaction().getId()), None)
 
 #Classes :
 # nah joking im too bad
@@ -780,24 +1122,29 @@ def init(e):
 	MasterLevel(e)
 	RodlessActivation(e)
 	AllyResistance(e)
+	SettingMeleeDelay(e)
+	IncreasePlayerNumber(e)
 		
 		
 def damaged(e):
 	if not (e.npc.world.getTempdata().get("MeetUpMode") == True):
 		BreakingStuff(e)
+	PreventAssign(e)
 	RodlessActivation(e)
 	Knocked(e)
 	StopCombo(e)
 	Rod(e)
 
 def meleeAttack(e):
+	PreventCleaningII(e)
 	RodlessActivation(e)
 	Banning(e)
 	Strafing(e)
 	Combo(e)
+	FriendlyFireOff(e)
 
 def kill(e):
-	pass
+	TeamSharingHealing(e)
 
 def died(e):
 	try :			# Only if Killed by player
@@ -808,6 +1155,12 @@ def died(e):
 		pass
 	SpecMessageDeath(e)
 	VanillaDeathStyle(e)
+	DecreasePlayerNumber(e)
+	ClearingTeamLeader(e)
+	HeadPost(e)
+	BookCeption(e)
+	ExplodeOnDeath(e)
+
 
 def tick(e):
 	if (e.npc.world.getTempdata().get("GameStarted") != 1) and (e.npc.getFaction().getId() != 26) and (e.npc.getFaction().getId() != 0):
@@ -820,16 +1173,23 @@ def tick(e):
 		MeetUpChecking(e)
 		Rod(e)
 		LastFight(e)
+		SettingTeamLeader(e)
+
+	if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+		PreventCleaning(e)
+		SaveAssigns(e)
 
 
 def interact(e):
+	AdminControl(e)
 	SpecDisplay(e)
 	GappleSharing(e)
 	SharingArmor(e)
 	e.setCanceled(True)
 	
 def target(e):
-
+	PreventCleaning(e)
+	AntiWrongTarget(e)
 	pass
 
 def timer(e):			# Rod Block
@@ -839,7 +1199,11 @@ def timer(e):			# Rod Block
 			List[i].getMCEntity().field_71104_cf.field_146043_c = None
 		except Exception as err:
 			pass
-		
+
+
+def collide(e):
+	TargetingCollide(e)
+	TeamSplitingHealing(e)	
     #============================#
     #___{ Credits and thanks }___#
     #============================#

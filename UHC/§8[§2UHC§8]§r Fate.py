@@ -22,11 +22,14 @@ def AcceptFate(e):
     e.npc.world.getStoreddata().put("Players", e.npc.world.getStoreddata().get("Players")-1)
 
     if e.npc.world.getTempdata().get("PlayerDeads") == None :
-        e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers())-1)
+        e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers()))
     else :
         e.npc.world.getTempdata().put("PlayerDeads", e.npc.world.getTempdata().get("PlayerDeads")-1)
 
     e.npc.executeCommand("/gamemode 3 @p")
+
+    if Killer == None:
+        Killer = ["PvE","26","0.0"]
 
     NameKiller = Killer[0]
     KillerFaction = int(Killer[1])
@@ -51,6 +54,8 @@ def AcceptFate(e):
     if e.npc.world.getTempdata().get("PlayerDeads") == 0 or e.npc.world.getTempdata().get("PlayerDeads") == 0.0 :
         e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"Team ","color":"gray"},{"text":"Players, is now eliminated","color":"red"}]')
         e.npc.world.getStoreddata().put("TeamsAlive", e.npc.world.getStoreddata().get("TeamsAlive")-1)
+        if (e.npc.world.getTempdata().get("DeathMatchTP") == True):
+            e.npc.world.getTempdata().put("TeamToNextAssign", e.npc.world.getTempdata().get("TeamToNextAssign")-1)
 
     e.npc.executeCommand("/scoreboard players remove "+u'\xa7'+"c"+u'\xa7'+"oPlayers Kills 1")
     e.npc.executeCommand("/scoreboard players reset "+str(Source)+" Kills ")
@@ -78,7 +83,7 @@ def interact(e):
             try:
                 AcceptFate(e)
             except Exception as err:
-                e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(Source)+'","color":"white"},{"text":" died in PvE ! ","color":"dark_gray"}]')
+                e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"] ","color":"dark_gray"},{"text":"'+str(e.player.getName())+'","color":"white"},{"text":" died in PvE ! ","color":"dark_gray"}]')
                 e.npc.world.broadcast(str(err))
         else :
             NeverDie(e)

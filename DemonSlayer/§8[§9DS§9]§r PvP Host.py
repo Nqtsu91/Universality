@@ -2,29 +2,61 @@ import random
 import math
 import os
 #API Link :http://www.kodevelopment.nl/customnpcs/api/1.8.9/
-#Credits : Script UHC vs Bots Bot Scattering By Natsu91
+#Credits : Script DS vs Bots Bot Scattering By Natsu91
 
 #===================================#
 #_______{ Creating Algorithm }______#
 #===================================#
 
-def CheckingConfig(e):
-	IntList = ["ProtIncreaseTime","SharpIncreaseTime","EnchantIncreaseTime","DiamondIncreaseTime","DiamondIncreaseRate","GapIncreaseTime","GapIncreaseRate","BotNumber","TeamSize","LoadInventory","TeamAliveLimit","PvPTime","MinTimeSpread","MaxTimeSpread","FinalBorder","SecondBorder","FirstBorder","DiamondProbability","EnchantProbability","XpMultiplicator","AppleRate","FlintRate","NoCleanRegen","BleedingDiamond","BleedingIron","BleedingGold","MolePerTeam"]
-	BooleanList = ["ClearedLoot","CutClean","HasteyBoys","NoCleanUpEnabled","CatEyes","MasterLevel","SuperHeroes","BookCeption","DoubleHealth","BleedingSweets","Rodless","Mole","OneShot","GoldenHeads","FireAspectAllowed","AbsoLess","WaterAllowed","ForcedType","BadlionKB","ArcticMeta","LoadTeams","RedditUHCDisplay","BadlionKillsSystem","ThunderStrike","WitherSoundI","WitherSoundII","IronGolemSound","VanillaDeathStyle","ExplodeOnDeath","ScatterMessageEnabled"]
-	for i in range(0, len(IntList)):
-		if isinstance(e.npc.world.getTempdata().get(str(IntList[i])), int) != True:
-			e.npc.executeCommand('/noppes script reload')
-	for i in range(0, len(BooleanList)):
-		if isinstance(e.npc.world.getTempdata().get(str(BooleanList[i])), bool) != True:
-			e.npc.executeCommand('/noppes script reload')
 
+def LoadAdvanced(e):
+
+    e.npc.world.getTempdata().put("MaxProt", 2)
+    e.npc.world.getTempdata().put("MaxSharp", 3)
+    e.npc.world.getTempdata().put("MaxGap", 10)
+
+
+    Path = os.path.dirname(os.path.abspath("__file__"))
+    Path += "\\CustomNPC Config\\DS\\config\\advanced"
+    Path = Path.replace("\\", str(os.path.sep))
+    with open (str(Path)+".txt", "r") as Config :
+        Config = Config.read()
+        Config = Config.split(u'\n')
+        Name = Config[0]
+        del Config[0]
+        ToConfigList = ["ClearedLoot","GapAtKill","ForcedHelm","ForcedChest","ForcedLegg","ForcedBoots","ForcedSword","HelmProt","ChestProt","LeggProt","BootsProt","HelmProj","ChestProj","LeggProj","BootsProj","SwordSharp","ForcedGap"]
+
+
+    for i in range (len(Config)-1, -1, -1):
+        if Config[i] == "" :
+            del Config[i]
+        elif Config[i] == " " :
+            del Config[i]
+        elif Config[i][0] == "#" :
+            del Config[i]
+        elif Config[i] == u'\r' :
+            del Config[i]
+
+    for i in range (0, len(ToConfigList)):
+        List = Config[i].split(":")
+        try :
+            e.npc.world.getTempdata().put(str(ToConfigList[i]), int(List[1]))
+        except:
+            if List[1] == "True":
+                List[1] = True
+            else :
+                List[1] = False  
+            e.npc.world.getTempdata().put(str(ToConfigList[i]), List[1])
+
+    #e.npc.world.getTempdata().put("ListOfTakenNames", [])
+    #e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":"[","color":"dark_gray"},{"text":"Config","color":"purple"},{"text":"]","color":"dark_gray"},{"text":" Loaded config ","color": green,"bold":true,"italic":false},{"text":"'+str(Name)+'", "color" : dark_green, "underlined" : true} , { "text" :" succesfully", "color" : green, "bold":true}]')
 
 
 def GiveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
-    Path += "\\CustomNPC Config\\UHC\\inventories\\inventory_"
+    Path += "\\CustomNPC Config\\DS\\config\\inventory"
     Path = Path.replace("\\", str(os.path.sep))
-    with open (str(Path)+str(e.npc.world.getTempdata().get("LoadInventory"))+".txt", "r") as Config :
+    with open (str(Path)+".txt", "r") as Config :
         e.npc.executeCommand("/clear @a")
         Config = Config.read()
         Config = Config.split('\n')
@@ -60,82 +92,83 @@ def GiveInventory(e):
                     pass
 
 def SpawningBots(e) :
-	e.npc.world.getTempdata().put("Radius", 220)
+	if e.npc.world.getTempdata().get("FirstBorder") == 0:
+		e.npc.world.getTempdata().put("Radius", 110)
+	elif e.npc.world.getTempdata().get("SecondBorder") == 0:
+		e.npc.world.getTempdata().put("Radius", 70)
+	elif e.npc.world.getTempdata().get("LastBorder") == 0:
+		e.npc.world.getTempdata().put("Radius", 40)
+	else:
+		e.npc.world.getTempdata().put("Radius", 220)
+
+	e.npc.world.getTempdata().put("Radius", 15)
+
+
+
+	e.npc.world.getTempdata().put("MeetUpMode", True)
+
 	List = [100, 50, 25, 10, 5, 3, 2]
 	e.npc.world.getTempdata().put("TeamToDisplay", List)
+
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
+	e.npc.world.getTempdata().put("TimeBombList", [])
 
-	Faction = ""
-	if e.npc.world.getTempdata().get("TeamAliveLimit") >= 26 :
-		e.npc.world.getTempdata().put("TeamAliveLimit", 25)
+	Faction = "1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/27/28/29/30/31/32/34/35/33/36/37/38/39/40"
+	if e.npc.world.getTempdata().get("BotNumber") >= 39 :
+		e.npc.world.getTempdata().put("BotNumber", 39)
 
-	if 0 >= e.npc.world.getTempdata().get("TeamAliveLimit") :
-		e.npc.world.getTempdata().put("TeamAliveLimit", 1)
-
-	for i in range(1, int(e.npc.world.getTempdata().get("TeamAliveLimit"))+1):
-		Faction += str("/"+str(i))
 	e.npc.world.getStoreddata().put("Factions", str(Faction))				# For the latest scatter method
 
 	e.npc.world.getTempdata().put("ListOfTakenNames", [])
 
 	BotsToSpawn = e.npc.world.getTempdata().get("BotNumber")
-	TeamMode = e.npc.world.getTempdata().get("TeamSize")
 	
 	e.npc.executeCommand("/spawnpoint @a 0 196 0")
 
-		
-	if BotsToSpawn%TeamMode == 1 :
-		BotsToSpawn = TeamMode * round(BotsToSpawn/TeamMode)
 
-	e.npc.executeCommand("/scoreboard objectives remove Gravel ")
+	e.npc.executeCommand("/scoreboard objectives remove Gravel ")			#Initiating data for the scoreboard
 	e.npc.executeCommand("/scoreboard objectives remove Apple ")
 	e.npc.executeCommand("/scoreboard objectives remove Iron ")
 	e.npc.executeCommand("/scoreboard objectives remove Gold")
-	e.npc.executeCommand("/scoreboard objectives remove Kills")
 
 	e.npc.executeCommand("/scoreboard objectives add Gravel stat.mineBlock.minecraft.gravel")
 	e.npc.executeCommand("/scoreboard objectives add Apple stat.mineBlock.minecraft.leaves")
 	e.npc.executeCommand("/scoreboard objectives add Iron stat.mineBlock.minecraft.iron_ore")
 	e.npc.executeCommand("/scoreboard objectives add Gold stat.mineBlock.minecraft.gold_ore")
+	e.npc.executeCommand("/scoreboard objectives add GHead stat.useItem.minecraft.golden_apple")
 
-	TeamsAlive = (BotsToSpawn/TeamMode) + 1
+
+	TeamsAlive = 8
 	e.npc.world.getStoreddata().put("TeamsAlive", TeamsAlive)
-
+	e.npc.world.getTempdata().put("TeamToNextAssign", 0)
 	e.npc.world.getStoreddata().put("BotsToSpawn", BotsToSpawn)				# For the latest scatter method
 
-	for i in range(0,27):					# Initialize team data
-		e.npc.world.getStoreddata().put(str(i), TeamMode)
+	for i in range(0,41):					# Initialize team data
+		e.npc.world.getStoreddata().put(str(i), 1)
 		e.npc.world.getStoreddata().put(str(i)+"Aggro", 0)
 
-	PlayerList = len(e.npc.world.getAllPlayers())
-	e.npc.world.getStoreddata().put("Players", BotsToSpawn + PlayerList)			# Getting data for bots spawn
 
-	RedditUHCDisplay = e.npc.world.getTempdata().get("RedditUHCDisplay")				# Adding the sidebar scenario
-	if RedditUHCDisplay == True :
-		e.npc.executeCommand("/scoreboard objectives add Kills dummy "+u'\xa7'+"4"+u'\xa7'+"l Universality UHC")
+	PlayerList = len(e.npc.world.getAllPlayers())
+	e.npc.world.getTempdata().put("PlayerDeads", len(e.npc.world.getAllPlayers()))
+	e.npc.world.getStoreddata().put("Players", BotsToSpawn + PlayerList)			# Getting data for bots spawn
+	e.npc.world.getStoreddata().put("PlayersMax", BotsToSpawn + PlayerList)
+
+
+	RedditDSDisplay = e.npc.world.getTempdata().get("RedditDSDisplay")				# Adding the sidebar scenario
+	if RedditDSDisplay == True :
 		e.npc.executeCommand("/scoreboard objectives setdisplay sidebar Kills")
 		e.npc.executeCommand("/scoreboard players set "+u'\xa7'+"c"+u'\xa7'+"oPlayers Kills "+str(int(e.npc.world.getStoreddata().get("Players")))+"")
 
-	Spawned = e.npc.getTempdata().get("Spawned")
-	TeamID = -1
-	SpecialsOn = e.npc.world.getTempdata().get("SpecialsOn")
-	Specials = 0
-	Specials =["_Mik0_","SandSt0rm","Y0z0Ra_","_FeuilleChan_","Kine_Sama"]		# Specials bots list x)
-	SpecialsNumber = 0
-
-	i = 0      # Tick for spawning specials bot
 	
-	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Loading chunks......","color":"gray"}]')
+	e.npc.executeCommand('/tellraw @p ["",{"text":"DemonSlayer |","color":"red"},{"text":" - Loading chunks......","color":"gray"}]')
 
 	e.npc.executeCommand('/playsound note.pling @a')
 
 
-	e.npc.world.getTempdata().put("StackedList", [])					# To prevent stacked fights
-
 	for i in range (0, 20):
-		SpawnerX = random.randint(-220,220)
-		SpawnerY = random.randint(-220,220)
-		e.npc.world.spawnClone( int(SpawnerX), 150, int(SpawnerY), 2, "Spawner").setFaction(0)			# spawning classic bots
+		SpawnerX = random.randint(-int(e.npc.world.getTempdata().get("Radius")), int(e.npc.world.getTempdata().get("Radius")))
+		SpawnerY = random.randint(-int(e.npc.world.getTempdata().get("Radius")), int(e.npc.world.getTempdata().get("Radius")))
+		e.npc.world.spawnClone( int(SpawnerX), 150, int(SpawnerY), 4, "Spawner").setFaction(0)			# spawning classic bots
 			
 
 	e.npc.world.getTempdata().put("GameStarted", 1)
@@ -179,10 +212,14 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 	e.npc.executeCommand("/scoreboard teams option Players color dark_aqua")
 	e.npc.executeCommand("/scoreboard teams join Players Players")
 	e.npc.executeCommand("/scoreboard objectives remove Arena")
+
 	e.npc.executeCommand("/scoreboard objectives remove Kills")
 
-	e.npc.executeCommand("/scoreboard objectives add border trigger")
-	e.npc.executeCommand("/scoreboard objectives add PvP trigger")
+	e.npc.executeCommand("/scoreboard objectives add Kills dummy "+u'\xa7'+"4"+u'\xa7'+"l Universality DS")
+	e.npc.executeCommand("/scoreboard objectives add Kills dummy "+u'\xa7'+"4"+u'\xa7'+"l Universality DS")
+	e.npc.executeCommand("/scoreboard objectives setdisplay sidebar Kills")
+
+	e.npc.executeCommand("/scoreboard objectives add Spawn trigger")
 
 	e.npc.executeCommand("/gamerule doFireTick false")								# Few gamerules to avoid game lags and to add more game stability
 	e.npc.executeCommand("/gamerule naturalRegeneration false")
@@ -200,17 +237,13 @@ def StartingGame(e) :						# Initiating in-game objectives for the sidebar displ
 
 	# Sending potential name in the cloud data
 
-	if e.npc.getTempdata().get("TeamsToRead") == None :
-		e.npc.getTempdata().put("TeamsToRead", 1)
 	Path = os.path.dirname(os.path.abspath("__file__"))
-	Path += "\\CustomNPC Config\\UHC\\Teams\\Teams_"
+	Path += "\\CustomNPC Config\\DS\\config\\Teams"
 	Path = Path.replace("\\", str(os.path.sep))
-	with open (str(Path)+str(e.npc.getTempdata().get("TeamsToRead"))+".txt", "r") as TierList :
+	with open (str(Path)+".txt", "r") as TierList :
 		TierList = TierList.read()
 		TierList = TierList.split(\n)
 		e.npc.world.getTempdata().put("TeamNameList", TierList)
-		Variable = e.npc.world.getTempdata().get("NameTier"+str("UHCEliteTier"))
-		Variable_2 = e.npc.world.getTempdata().get("NameTier"+str("ProTier"))
 		NewList = e.npc.world.getTempdata().get("AlreadyTaken")
 		if NewList == None :
 			e.npc.world.getTempdata().put("AlreadyTaken", [])
@@ -238,38 +271,38 @@ def VisualEffects(e):
 	if e.npc.world.getTempdata().get("GameStarted") == 1 :
 		if e.npc.getTempdata().get("Tick") == None :
 			e.npc.executeCommand("/xp -10000l @a")
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Chunks loaded","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Chunks loaded","color":"gray"}]')
 			e.npc.executeCommand("/clear @a")
 			e.npc.executeCommand("/gamemode 2 @a")
 			e.npc.executeCommand('/playsound note.bass @a')
 			Host = e.npc.getTempdata().get("Host")
 			e.npc.executeCommand('/title @a times 20 120 20')
 			e.npc.executeCommand('/title @a subtitle ["",{"text":"Hosted by : ","color":"gray"},{"text":"'+str(Host)+'","color":"red"}]')
-			e.npc.executeCommand('/title @a title ["",{"text":"The ","color":"gray"},{"text":"UHC","color":"dark_red"},{"text":" Started !","color":"gray"}]')
+			e.npc.executeCommand('/title @a title ["",{"text":"The ","color":"gray"},{"text":"DS","color":"dark_red"},{"text":" Started !","color":"gray"}]')
 
 		if e.npc.getTempdata().get("Tick") == 2 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing Bots data....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing Bots data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.hat @a')
 
 			
 
 		if e.npc.getTempdata().get("Tick") == 4 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing border data....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing border data....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 6 :
-			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing CutClean.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @p ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Preparing CutClean.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @p')
 			
 
 		if e.npc.getTempdata().get("Tick") == 8 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Saving scenarios.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Saving scenarios.....","color":"gray"}]')
 			e.npc.executeCommand('/playsound note.pling @a')
 			
 
 		if e.npc.getTempdata().get("Tick") == 10 :
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Scattering players.....","color":"gray"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" \u22d9 ","bold":true,"color":"gray"},{"text":"Scattering players.....","color":"gray"}]')
 			e.npc.executeCommand("/tp @a 0 72 0")
 			e.npc.executeCommand("/effect @a minecraft:resistance 7 45 true")
 			e.npc.executeCommand("/effect @a minecraft:slowness 7 45 true")
@@ -282,13 +315,10 @@ def VisualEffects(e):
 			e.npc.executeCommand('/effect @a minecraft:instant_health 1 45 true')
 			e.npc.executeCommand("/gamemode 0 @a")
 			for i in range (0, len(e.npc.world.getAllPlayers())):
-				e.npc.executeCommand('/tellraw '+str(e.npc.world.getAllPlayers()[i].getName())+' ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Players CrossTeaming is allowed","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Final Heal in 10 minutes !","color":"gray"},{"text":"\n"},{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" (Reminder) - Good luck have fun ","color":"gray"},{"text":"'+str(e.npc.world.getAllPlayers()[i].getName())+'","color":"red"},{"text":" !","color":"gray"}]')
+				e.npc.executeCommand('/tellraw '+str(e.npc.world.getAllPlayers()[i].getName())+' ["",{"text":"DemonSlayer |","color":"red"},{"text":" (Reminder) - Players CrossTeaming is allowed","color":"gray"},{"text":"\n"},{"text":"DemonSlayer |","color":"red"},{"text":" (Reminder) - Final Heal in 10 minutes !","color":"gray"},{"text":"\n"},{"text":"DemonSlayer |","color":"red"},{"text":" (Reminder) - Good luck have fun ","color":"gray"},{"text":"'+str(e.npc.world.getAllPlayers()[i].getName())+'","color":"red"},{"text":" !","color":"gray"}]')
 
 
 			e.npc.executeCommand('/playsound note.pling @p')
-
-			e.npc.world.spawnClone(1, 195, 3, 2, "Accept Fate")
-			e.npc.world.spawnClone(1, 195, -3, 2, "Accept Fate").getDisplay().setName("Respawn")
 
 
 			PvPTime = int(e.npc.world.getTempdata().get("PvPTime")) * 1200
@@ -302,21 +332,15 @@ def VisualEffects(e):
 
 			PvPTime = int(e.npc.world.getTempdata().get("FinalBorder")) * 1200
 			MeetUp = e.npc.world.getStoreddata().put("FinalBorder", e.npc.world.getTotalTime() + PvPTime)
-			e.npc.world.getTempdata().put("Percent", 30)
-			
+			LoadAdvanced(e)
 
-			e.npc.world.spawnClone(200, 250, 200, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(-200, 250, 200, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(200, 250, -200, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(-200, 250, -200, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(200, 250, 0, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(-200, 250, 0, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(0, 250, 200, 2, "Chunk").getStoreddata().clear()
-			e.npc.world.spawnClone(0, 250, -200, 2, "Chunk").getStoreddata().clear()
-
-			e.npc.world.spawnClone( 0, 250, 0, 2, "Border").getStoreddata().clear()
-			CheckingConfig(e)
+			e.npc.world.spawnClone( 0, 250, 0, 4, "Border").getStoreddata().clear()
 			
+			e.npc.world.getTempdata().put("GoodList", [])
+			e.npc.world.getTempdata().put("BadList", [])
+			e.npc.world.getTempdata().put("MoonList", [])
+			e.npc.world.getTempdata().put("UpperMoonList", [])
+
 			e.npc.despawn()
 
 
@@ -324,8 +348,6 @@ def VisualEffects(e):
 
 def damaged(e):
 	if e.npc.getTempdata().get("Confirmed") == True :
-		e.npc.getTempdata().put("SpecialsOn", True)
-		e.npc.getTempdata().put("Spawned", 0)
 		try:
 			e.npc.getTempdata().put("Host", e.source.getName())
 		except:
@@ -335,12 +357,12 @@ def damaged(e):
 			StartingGame(e)
 			SpawningBots(e)
 		except Exception as err :
-			#e.npc.world.broadcast(str(err))
-			e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
+			e.npc.world.broadcast(str(err))
+			e.npc.executeCommand('/tellraw @p ["",{"text":"DemonSlayer |","color":"red"},{"text":" - Cannot start your game, errored config.","color":"gray"}]')
 			e.npc.getTempdata().put("Confirmed", False)
 	else :
 		e.npc.getTempdata().put("Confirmed", True)
-		e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Reminder","color":"dark_aqua"},{"text":"]","color":"dark_gray"},{"text":" - Click again to start but please ensure you loaded the right team file by right clicking this NPC.","color":"gray"}]')
+		e.npc.executeCommand('/tellraw @a ["",{"text":"DemonSlayer |","color":"red"},{"text":" Click again to start !","color":"red"}]')
 
 def tick(e):
 	VisualEffects(e)
@@ -352,12 +374,5 @@ def tick(e):
 			
 
 def interact(e):
-	if e.npc.getTempdata().get("TeamsToRead") == None :
-		e.npc.getTempdata().put("TeamsToRead", 1)
-	if e.npc.getTempdata().get("TeamsToRead") == 10 :
-		e.npc.getTempdata().put("TeamsToRead", 1)
-	else:
-		e.npc.getTempdata().put("TeamsToRead", e.npc.getTempdata().get("TeamsToRead")+1)
-	e.npc.executeCommand('/tellraw @p ["",{"text":"[","color":"dark_gray"},{"text":"UHC","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Teams","color":"red"},{"text":"]","color":"dark_gray"},{"text":" Ready to load team slot ","color":"gray"},{"text":"' +str(e.npc.getTempdata().get("TeamsToRead"))+'","color":"aqua"}]')
-	e.setCanceled(True)
+	pass
 

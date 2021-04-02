@@ -67,14 +67,12 @@ def Start(e):
 				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Arena","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Version : ","color":"gray"},{"text":"'+str(e.npc.getTempdata().get("FFAVersion"))+' ","color":"aqua"},{"text":"!","color":"dark_red"}]')
 				e.npc.despawn()
 
-
-			if e.npc.getStoreddata().get("GameSelected") == "MeetUp" :
-				HostMeetUp(e)
+			if e.npc.getStoreddata().get("GameSelected") == "DemonSlayer" :
+				HostDS(e)
 				e.npc.executeCommand("/clear @a")
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Main system switched to ","color":"gray"},{"text":"[","color":"dark_gray"},{"text":"MeetUp","color":"dark_red"},{"text":"]","color":"dark_gray"}]')
-				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"MeetUp","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Version : ","color":"gray"},{"text":"'+str(e.npc.getTempdata().get("MeetUpVersion"))+' ","color":"aqua"},{"text":"!","color":"dark_red"}]')
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Main system switched to ","color":"gray"},{"text":"[","color":"dark_gray"},{"text":"FFA","color":"dark_red"},{"text":"]","color":"dark_gray"}]')
+				e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Arena","color":"dark_red"},{"text":"]","color":"dark_gray"},{"text":" Version : ","color":"gray"},{"text":"'+str(e.npc.getTempdata().get("DSVersion"))+' ","color":"aqua"},{"text":"!","color":"dark_red"}]')
 				e.npc.despawn()
-
 
 
 		else :
@@ -85,7 +83,7 @@ def Start(e):
 def GameList(e):
 	try:
 		if e.source.getHeldItem().getDisplayName() == "Games list":
-			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"GameList","color":"dark_purple"},{"text":"]","color":"dark_gray"},{"text":" - For now, ","color":"gray"},{"text":"UHC","color":"dark_blue"},{"text":" is playable, and ","color":"gray"},{"text":"Arena","color":"red"},{"text":" and ","color":"gray"},{"text":"Practice","color":"red"},{"text":" are in developement.","color":"gray"},{"text":"\n "},{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Info","color":"gold"},{"text":"]","color":"dark_gray"},{"text":" Youre selected game is : ","color":"gray"},{"text":"'+str(e.npc.getStoreddata().get("GameSelected"))+'","color":"dark_red"}]')
+			e.npc.executeCommand('/tellraw @a ["",{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"GameList","color":"dark_purple"},{"text":"]","color":"dark_gray"},{"text":" - For now, ","color":"gray"},{"text":"UHC, Arena","color":"dark_blue"},{"text":" are playable, and ","color":"gray"},{"text":"Practice and DemonSlayer","color":"red"},{"text":" are in developement.","color":"gray"},{"text":"\n "},{"text":"[","color":"dark_gray"},{"text":"Universality","color":"dark_red"},{"text":"][","color":"dark_gray"},{"text":"Info","color":"gold"},{"text":"]","color":"dark_gray"},{"text":" Youre selected game is : ","color":"gray"},{"text":"'+str(e.npc.getStoreddata().get("GameSelected"))+'","color":"dark_red"}]')
 
 		else :
 			SwitchGame(e)
@@ -93,7 +91,7 @@ def GameList(e):
 		SwitchGame(e)
 
 def SwitchGame(e):
-	GameList = ["UHC", "FFA", "MeetUp"]			#Playable Games List
+	GameList = ["UHC", "FFA", "DemonSlayer"]			#Playable Games List
 
 	if e.npc.getStoreddata().get("GameTick") == None :				# Initiating List tick data
 		e.npc.getStoreddata().put("GameTick", "0")
@@ -119,7 +117,7 @@ def LoadSettings(e):
 		Config = Config.read()
 		Config = Config.split(u'\n')
 
-	ToConfigList = ["ChunkLoaders","ClearTrees","ClearGrass","Replace water"]
+	ToConfigList = ["ChunkLoaders","ClearTrees","ClearGrass","ClearWater"]
 
 	for i in range (len(Config)-1, -1, -1):
 		if Config[i] == "" :
@@ -153,9 +151,9 @@ def HostFFA(e):
 	SpawningHubFFA(e)
 	SpawningNPCFFA(e)
 
-def HostMeetUp(e):
-	SpawningHubFFA(e)			# Its the same
-	SpawningNPCMeetUp(e)
+def HostDS(e):
+	SpawningHubUHC(e)			# Its the same
+	SpawningNPCDS(e)
 
 
 # Scripts
@@ -168,8 +166,13 @@ def SpawningHubUHC(e):
 	e.npc.executeCommand('/gamemode 2 @a')
 	e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 202 0')
 	if e.npc.world.getTempdata().get("ClearWater") == True:
-		e.npc.executeCommand('/fill 120 62 120 -120 62 0 minecraft:grass')
-		e.npc.executeCommand('/fill 120 62 0 -120 62 -120 minecraft:grass')
+		e.npc.executeCommand('/fill -120 62 -120 120 62 0 minecraft:grass')
+		e.npc.executeCommand('/fill -120 62 0 120 62 120 minecraft:grass')
+		for i in range(55, 90):
+			e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:glass 3 replace minecraft:water')
+			e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:glass 3 replace minecraft:water')
+			e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:glass 1 replace minecraft:water')
+			e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:glass 1 replace minecraft:water')
 
 	e.npc.executeCommand('/fill -15 200 -15 15 200 15 minecraft:stained_glass')					# Hub
 	e.npc.executeCommand('/fill -15 201 -15 -15 205 15 minecraft:stained_glass_pane 11')
@@ -219,7 +222,11 @@ def SpawningHubUHC(e):
 
 	e.npc.executeCommand('/tp '+str(e.source.getName())+' 0 202 0')
 	
-	
+	if e.npc.world.getTempdata().get("ClearWater") == True:
+		e.npc.executeCommand('/fill -120 63 -120 120 63 0 minecraft:air 0 replace minecraft:lava')
+		e.npc.executeCommand('/fill -120 63 -120 120 63 0 minecraft:air 0 replace minecraft:water')
+
+
 	for i in range(57, 106):						# Terraforming
 		if e.npc.world.getTempdata().get("ClearTrees") == True:
 			e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:leaves')
@@ -237,7 +244,8 @@ def SpawningHubUHC(e):
 			e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:lava')
 			e.npc.executeCommand('/fill -120 '+str(i)+' -120 120 '+str(i)+' 0 minecraft:air 0 replace minecraft:water')
 			e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:lava')
-			e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:water')	
+			e.npc.executeCommand('/fill -120 '+str(i)+' 0 120 '+str(i)+' 120 minecraft:air 0 replace minecraft:water')
+
 	
 	
 	e.npc.executeCommand('/gamerule sendCommandFeedback false')
@@ -258,19 +266,18 @@ def SpawningNPCUHC(e):
 	e.npc.world.spawnClone(-13, 202, -3, 2, "Dev").getDisplay().setName("Discord")
 	e.npc.world.spawnClone(-13, 202, 3, 2, "Dev").getDisplay().setName("Youtube")
 
-def SpawningNPCMeetUp(e):
-	e.npc.world.spawnClone(13, 203, 0, 4, "Host MeetUp")
+def SpawningNPCDS(e):
+	e.npc.world.spawnClone(13, 203, 0, 4, "Host DS")
 
 	e.npc.world.spawnClone(0, 203, -13, 4, "Handler").getDisplay().setName("Config")
-	e.npc.world.spawnClone(0, 203, 13, 4, "Handler").getDisplay().setName("See inventories")
-	e.npc.world.spawnClone(14, 195, 0, 4, "Helper").getDisplay().setName("Display Config")
+	e.npc.world.spawnClone(0, 203, 13, 4, "Handler").getDisplay().setName("Inventories")
+	e.npc.world.spawnClone(14, 195, 0, 4, "Helper").getDisplay().setName("Helper")
 	e.npc.world.spawnClone(13, 202, -13, 4, "Helper").getDisplay().setName("Display Config")
 
 	e.npc.world.spawnClone(-13, 202, 0, 2, "Dev")
 	e.npc.world.spawnClone(13, 202, 13, 2, "Helper")
 	e.npc.world.spawnClone(-13, 202, -3, 2, "Dev").getDisplay().setName("Discord")
 	e.npc.world.spawnClone(-13, 202, 3, 2, "Dev").getDisplay().setName("Youtube")
-
 
 def SpawningHubFFA(e):
 	e.npc.executeCommand('/tp @a 0 196 0')
@@ -365,8 +372,8 @@ def interact(e):
 def damaged(e):
 	if e.npc.getDisplay().getName() != "Game Starter": 
 		e.npc.getTempdata().put("FFAVersion", "1.0.0")
-		e.npc.getTempdata().put("UHCVersion", "2.4.0")
-		e.npc.getTempdata().put("MeetUpVersion", "0.1")
+		e.npc.getTempdata().put("UHCVersion", "2.8.9")
+		e.npc.getTempdata().put("DSVersion", "0.1")
 		Help(e)
 	e.setCanceled(True)
 

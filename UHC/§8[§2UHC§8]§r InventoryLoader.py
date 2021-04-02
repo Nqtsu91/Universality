@@ -11,6 +11,8 @@ import os
 
 def SaveInventory(e):
     Path = os.path.dirname(os.path.abspath("__file__"))
+    if e.npc.getTempdata().get("InvToRead") == None :
+        e.npc.getTempdata().put("InvToRead", 1)
     Path += "\\CustomNPC Config\\UHC\\config "+str(e.npc.getTempdata().get("InvToRead"))+"\\inventory"
     Path = Path.replace("\\", str(os.path.sep))
     with open (str(Path)+".txt", "w") as Config :
